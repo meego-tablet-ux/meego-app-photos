@@ -1,0 +1,5 @@
+*~
+*.user
+meego-app-photos
+meego-app-photos-*.tar.bz2
+Makefile
