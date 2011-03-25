@@ -96,7 +96,7 @@ Item {
         anchors.leftMargin: 0
         anchors.rightMargin: 0
 
-        spacing: 2
+        spacing: 3
         cellWidth: {
             // for now, prefer portrait - later pull from platform setting
             var preferLandscape = false
@@ -104,7 +104,7 @@ Item {
 
             // find cell size for at least six wide in landscape, three in portrait
             var sizeL = Math.floor(Math.max(scene.width, scene.height) / 6)
-            var sizeP = Math.floor(Math.min(scene.width, scene.height) / 3)
+            var sizeP = Math.floor(Math.min(scene.width, scene.height) / 4)
 
             // work around bug in MediaGridView
             sizeP -= 1
