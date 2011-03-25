@@ -51,11 +51,11 @@ Item {
     }
 
     function rotateRightward() {
-        photoListView.currentItem.photoRotate = (photoListView.currentItem.photoRotate + 1)%4;
+        photoListView.currentItem.photoRotate = (photoListView.currentItem.photoRotate + 1) % 4;
     }
 
     function rotateLeftward() {
-        photoListView.currentItem.photoRotate = (photoListView.currentItem.photoRotate + 3) %4;
+        photoListView.currentItem.photoRotate = (photoListView.currentItem.photoRotate + 3) % 4;
     }
 
     function determineUsrOrientation(originalOrientation, rotation)
@@ -140,7 +140,7 @@ Item {
             property string pcamera: camera
             property string puri: uri
 
-            property int photoRotate:0
+            property int photoRotate: 0
 
             // thumbnail image
             Image {
@@ -234,16 +234,14 @@ Item {
                 }
                 transform: [
                     Rotation {
-                        id: mirror2
-                        origin.x: fullImage.width/2;
-                        origin.y: fullImage.height/2;
-                        axis { x: 0; y: 0; z: 0 }
+                        origin.x: mirror.origin.x
+                        origin.y: mirror.origin.y
+                        axis { x: mirror.axis.x; y: mirror.axis.y; z: mirror.axis.z }
                     },
                     Rotation {
-                        id: rotation2
-                        origin.x: fullImage.width/2;
-                        origin.y: fullImage.height/2;
-                        axis { x: 0; y: 0; z: 1 }
+                        origin.x: rotation.origin.x
+                        origin.y: rotation.origin.y
+                        axis { x: rotation.axis.x; y: rotation.axis.y; z: rotation.axis.z }
                     }
                 ]
 
@@ -278,51 +276,53 @@ Item {
                 source: uri
                 usrOrientation: determineUsrOrientation(orientation, photoRotate)
                 onOrientationChanged:{
+                    console.debug("*** Orientation Changed: " + orientation)
                     switch(orientation) {
-                    case 1:{
+                    case 1: {
                             mirror.angle = 0;
                             rotation.angle = 0;
+                            break;
                         }
-                        break;
-                    case 2:{
+                    case 2: {
                             mirror.axis.x = 0;
                             mirror.axis.y = 1;
                             mirror.axis.z = 0;
                             mirror.angle = 180;
 
                             rotation.angle = 0;
+                            break;
                         }
-                        break;
-                    case 3:{
+                    case 3: {
                             mirror.angle = 0;
 
                             rotation.angle = 180;
+                            break;
                         }
-                        break;
-                    case 4:{
+                    case 4: {
                             mirror.angle = 180;
                             mirror.axis.x = 1;
                             mirror.axis.y = 0;
                             mirror.axis.z = 0;
 
                             rotation.angle = 0;
+                            break;
                         }
-                        break;
-                    case 5:{
+                    case 5: {
                             mirror = 180;
                             mirror.axis.x = 0;
                             mirror.axis.y = 1;
                             mirror.axis.z = 0;
 
                             rotation.angle = 90;
+                            break;
                         }
-                        break;
                     case 6: {
                             mirror.angle = 0;
+
                             rotation.angle = 90;
+                            break;
                         }
-                        break;
-                    case 7:{
+                    case 7: {
                             mirror.angle = 180;
 
                             mirror.axis.x = 0;
@@ -330,15 +330,16 @@ Item {
                             mirror.axis.z = 0;
 
                             rotation.angle = 270;
+                            break;
                         }
-                        break;
-                    case 8:{
+                    case 8: {
                             mirror.angle = 0;
                             rotation.angle = 270;
-                        }
-                        break;
-                    default:
                             break;
+                        }
+                    default: {
+                            break;
+                        }
                     }
                 }
             }
@@ -350,8 +351,8 @@ Item {
                    // image.height = dinstance.height;
                    //  image.rotation = 0;
                    //  photoRotate = 0;
-                    if (currentItem == dinstance)
-                    {
+                    if (currentItem == dinstance) {
+                        console.debug("SETVIEWED!")
                         photoViewer.model.setViewed(pitemid)
                     }
                 }
@@ -364,10 +365,15 @@ Item {
                     PropertyChanges {
                         target: image
                         rotation: 0
-                        width:dinstance.width
-                        height:dinstance.height
+                        width: dinstance.width
+                        height: dinstance.height
                     }
-
+                    PropertyChanges {
+                        target: fullImage
+                        rotation: 0
+                        width: dinstance.width
+                        height: dinstance.height
+                    }
                 },
                 State {
                     name: "rightward"
@@ -375,8 +381,14 @@ Item {
                     PropertyChanges {
                         target: image
                         rotation: 90
-                        width:dinstance.height
-                        height:dinstance.width
+                        width: dinstance.height
+                        height: dinstance.width
+                    }
+                    PropertyChanges {
+                        target: fullImage
+                        rotation: 90
+                        width: dinstance.height
+                        height: dinstance.width
                     }
                 },
                 State {
@@ -385,8 +397,14 @@ Item {
                     PropertyChanges {
                         target: image
                         rotation: 180
-                        width:dinstance.width
-                        height:dinstance.height
+                        width: dinstance.width
+                        height: dinstance.height
+                    }
+                    PropertyChanges {
+                        target: fullImage
+                        rotation: 180
+                        width: dinstance.width
+                        height: dinstance.height
                     }
                 },
                 State {
@@ -395,8 +413,14 @@ Item {
                     PropertyChanges {
                         target: image
                         rotation: 270
-                        width:dinstance.height
-                        height:dinstance.width
+                        width: dinstance.height
+                        height: dinstance.width
+                    }
+                    PropertyChanges {
+                        target: fullImage
+                        rotation: 270
+                        width: dinstance.height
+                        height: dinstance.width
                     }
                 }
             ]
@@ -406,14 +430,14 @@ Item {
                     reversible: true
                     ParallelAnimation {
                         PropertyAnimation {
-                            properties:"width,height"
-                            duration:300
+                            properties: "width,height"
+                            duration: 300
                         }
 
                         RotationAnimation {
-                            id:rotateAnimation
-                            direction:RotationAnimation.Shortest
-                            duration:300
+                            id: rotateAnimation
+                            direction: RotationAnimation.Shortest
+                            duration: 300
                         }
                     }
                 }
@@ -438,8 +462,7 @@ Item {
                 onClicked: {
                     photoViewer.clickedOnPhoto();
                 }
-                onPressAndHold:
-                {
+                onPressAndHold: {
                     if (!inGesture)
                         photoViewer.pressAndHoldOnPhoto(mouse, dinstance);
                 }
@@ -479,6 +502,7 @@ Item {
         property int flickCount: 0
         property bool movementCausedByFlick: false
         onMovementStarted: {
+            console.debug("*** SaveInfo")
             currentItem.imageExtension.saveInfo();
         }
 
