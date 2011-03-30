@@ -179,8 +179,7 @@ Item {
             Image {
                 id: fullImage
                 anchors.centerIn: parent
-                fillMode:Image.PreserveAspectFit
-                sourceSize.width: scene.width
+                fillMode: Image.PreserveAspectFit
                 width: dinstance.width
                 height: dinstance.height
                 transformOrigin: Item.Center
@@ -191,6 +190,20 @@ Item {
 
                 onStatusChanged: {
                     if (status == Image.Ready) {
+                        if (sourceSize.width > sourceSize.height) {
+                            if (sourceSize.width > scene.width) {
+                                sourceSize.width = scene.width
+                                sourceSize.height = 0
+                                return
+                            }
+                        }
+                        else {
+                            if (sourceSize.height > scene.height) {
+                                sourceSize.height = scene.height
+                                sourceSize.width = 0
+                                return
+                            }
+                        }
                         show = true
                     }
                 }
