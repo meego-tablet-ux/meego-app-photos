@@ -103,10 +103,6 @@ Item {
             property alias imageExtension: extension
             property variant centerPoint
 
-            function updateImage() {
-                fullImage.source = uri
-            }
-
             onWidthChanged: {
                 restorePhoto();
             }
@@ -140,6 +136,29 @@ Item {
             property string puri: uri
 
             property int photoRotate: 0
+
+            function updateImage() {
+                fullImage.source = uri
+            }
+
+            onPhotoRotateChanged: {
+                saveTimer.restart()
+            }
+
+            Component.onDestruction: {
+                if (saveTimer.running) {
+                    saveTimer.stop()
+                    extension.saveInfo()
+                }
+            }
+
+            Timer {
+                id: saveTimer
+                interval: 2000
+                onTriggered: {
+                    extension.saveInfo()
+                }
+            }
 
             // thumbnail image
             Image {
@@ -407,9 +426,6 @@ Item {
         property variant previousTimestamp
         property int flickCount: 0
         property bool movementCausedByFlick: false
-        onMovementStarted: {
-            currentItem.imageExtension.saveInfo();
-        }
 
         onFlickStarted: {
             var t = (new Date()).getTime();
