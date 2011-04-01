@@ -60,20 +60,21 @@ Item {
 
     function determineUsrOrientation(originalOrientation, rotation)
     {
-        var rotmap = [1, 6, 3, 8]
-        var rotmapAlt = [2, 5, 4, 7]
-        var index = rotmap.indexOf(originalOrientation);
+        var index = rotationCombination1.indexOf(originalOrientation);
         if (index != -1) {
-            return rotmap[(index + rotation) % rotmap.length];
+            return rotationCombination1[(index + rotation) % rotationCombination1.length];
         } else {
-            index = rotmapAlt.indexOf(originalOrientation);
+            index = rotationCombination2.indexOf(originalOrientation);
             if (index != -1) {
-                return rotmapAlt[(index + rotation) % rotmapAlt.length];
+                return rotationCombination2[(index + rotation) % rotationCombination2.length];
             }
         }
         // give a default value;
         return 1;
     }
+
+    property variant rotationCombination1: [1, 6, 3, 8]
+    property variant rotationCombination2: [2, 5, 4, 7]
 
     Rectangle {
         id: background
@@ -171,6 +172,21 @@ Item {
                 transformOrigin: Item.Center
                 visible: fullImage.opacity != 1
                 asynchronous: true
+
+                transform: [
+                    Rotation {
+                        id: mirror
+                        origin.x: image.width/2;
+                        origin.y: image.height/2;
+                        axis { x: 0; y: 0; z: 0 }
+                    },
+                    Rotation {
+                        id: rotation
+                        origin.x: image.width/2;
+                        origin.y: image.height/2;
+                        axis { x: 0; y: 0; z: 1 }
+                    }
+                ]
             }
 
             // full res image
@@ -237,6 +253,20 @@ Item {
                         }
                     }
                 }
+
+                transform: [
+                    Rotation {
+                        origin.x: mirror.origin.x
+                        origin.y: mirror.origin.y
+                        axis { x: mirror.axis.x; y: mirror.axis.y; z: mirror.axis.z }
+                    },
+                    Rotation {
+                        origin.x: rotation.origin.x
+                        origin.y: rotation.origin.y
+                        axis { x: rotation.axis.x; y: rotation.axis.y; z: rotation.axis.z }
+                    }
+                ]
+
                 Connections {
                     target: photoListView
                     onMovementEnded: {
@@ -267,6 +297,75 @@ Item {
                 id: extension
                 source: uri
                 usrOrientation: determineUsrOrientation(orientation, photoRotate)
+
+                onOrientationChanged:{
+                    console.debug("*** Orientation Changed: " + orientation)
+                    switch(orientation) {
+                    case 1: {
+                            mirror.angle = 0;
+                            rotation.angle = 0;
+                            break;
+                        }
+                    case 2: {
+                            mirror.axis.x = 0;
+                            mirror.axis.y = 1;
+                            mirror.axis.z = 0;
+                            mirror.angle = 180;
+
+                            rotation.angle = 0;
+                            break;
+                        }
+                    case 3: {
+                            mirror.angle = 0;
+
+                            rotation.angle = 180;
+                            break;
+                        }
+                    case 4: {
+                            mirror.angle = 180;
+                            mirror.axis.x = 1;
+                            mirror.axis.y = 0;
+                            mirror.axis.z = 0;
+
+                            rotation.angle = 0;
+                            break;
+                        }
+                    case 5: {
+                            mirror = 180;
+                            mirror.axis.x = 0;
+                            mirror.axis.y = 1;
+                            mirror.axis.z = 0;
+
+                            rotation.angle = 90;
+                            break;
+                        }
+                    case 6: {
+                            mirror.angle = 0;
+
+                            rotation.angle = 90;
+                            break;
+                        }
+                    case 7: {
+                            mirror.angle = 180;
+
+                            mirror.axis.x = 0;
+                            mirror.axis.y = 1;
+                            mirror.axis.z = 0;
+
+                            rotation.angle = 270;
+                            break;
+                        }
+                    case 8: {
+                            mirror.angle = 0;
+
+                            rotation.angle = 270;
+                            break;
+                        }
+                    default: {
+                            break;
+                        }
+                    }
+                }
             }
 
             Connections {
