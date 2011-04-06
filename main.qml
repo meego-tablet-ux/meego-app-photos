@@ -7,6 +7,7 @@
  */
 
 import Qt 4.7
+import MeeGo.Components 0.1 as Ux
 import MeeGo.Labs.Components 0.1
 import MeeGo.Media 0.1
 import MeeGo.Sharing 0.1
@@ -238,16 +239,6 @@ Window {
         id: dialogLoader
     }
 
-    PhotoPicker {
-        id: photopicker
-        albumSelectionMode: true
-        property variant payload: []
-        onAlbumSelected: {
-            albumEditorModel.album = title;
-            albumEditorModel.addItems(photopicker.payload)
-        }
-    }
-
     Component {
         id: allPhotosComponent
         ApplicationPage {
@@ -283,6 +274,16 @@ Window {
                         updateHeader(allPhotosModel, allPhotosView);
                         allPhotosPage.closeMenu();
                     }
+                }
+            }
+
+            Ux.PhotoPicker {
+                id: photopicker
+                albumSelectionMode: true
+                property variant payload: []
+                onAlbumSelected: {
+                    albumEditorModel.album = title;
+                    albumEditorModel.addItems(photopicker.payload)
                 }
             }
 
@@ -361,11 +362,11 @@ Window {
                     }
                     else if (model[index] == labelAddToAlbum)
                     {
-                        allPhotosView.selected =  [payload.mitemid] ;
-                        allPhotosView.thumburis =  [payload.mthumburi] ;
-                        allPhotosView.currentIndex = payload.mindex;
-                        photopicker.payload = [payload.mitemid];
-                        photopicker.visible = true;
+                        allPhotosView.selected =  [payload.mitemid]
+                        allPhotosView.thumburis =  [payload.mthumburi]
+                        allPhotosView.currentIndex = payload.mindex
+                        photopicker.payload = [payload.mitemid]
+                        photopicker.show()
                     }
                     else if (model[index] == allPhotosView.labelMultiSelMode)
                     {
@@ -404,9 +405,10 @@ Window {
                     allPhotosPage.addApplicationPage(photoDetailComponent)
                 }
                 onAddToAlbum : {
-                   // if (allPhotosModel.getSelectedURIs().length > 0)
-                        photopicker.payload = allPhotosView.selected;
-                        photopicker.visible = true;
+                    // TODO: don't display the item if there are no albums?
+                    // if (allPhotosModel.getSelectedURIs().length > 0)
+                    photopicker.payload = allPhotosView.selected
+                    photopicker.show()
                 }
                 onDeleteSelected: {
                     if (allPhotosView.selected.length == 0) {
@@ -676,6 +678,16 @@ Window {
                 }
             }
 
+            Ux.PhotoPicker {
+                id: photopicker
+                albumSelectionMode: true
+                property variant payload: []
+                onAlbumSelected: {
+                    albumEditorModel.album = title;
+                    albumEditorModel.addItems(photopicker.payload)
+                }
+            }
+
             PhotosView {
                 id: albumDetailsView
                 parent: albumDetailPage.content
@@ -743,7 +755,7 @@ Window {
                         albumDetailsView.thumburis = [payload.mthumburi]
                         albumDetailsView.currentIndex = payload.mindex;
                         photopicker.payload = [payload.mitemid];
-                        photopicker.visible = true;
+                        photopicker.show();
                     }
                     else if (model[index] == labelRemoveFromAlbum)
                     {
@@ -876,6 +888,16 @@ Window {
                 }
             }
 
+            Ux.PhotoPicker {
+                id: photopicker
+                albumSelectionMode: true
+                property variant payload: []
+                onAlbumSelected: {
+                    albumEditorModel.album = title;
+                    albumEditorModel.addItems(photopicker.payload)
+                }
+            }
+
             PhotoDetailsView {
                 id: photodtview
                 parent: photoDetailPage.content
@@ -915,6 +937,7 @@ Window {
                     scene.showsearch = false;
                 }
             }
+
             ContextMenu {
                 id: contextInstance
                 // onClose: contextLoader.sourceComponent = undefined
@@ -947,7 +970,7 @@ Window {
                         // Add to album
                         //photodtview.singleSelectionMode = true;
                         photopicker.payload = [payload.pitemid]
-                        photopicker.visible = true;
+                        photopicker.show()
                     }
                     else if (model[index] == labelSetAsBackground) {
                         backgroundModel.activeWallpaper = payload.puri;
