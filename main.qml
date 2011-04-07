@@ -67,28 +67,6 @@ Window {
     property bool showFullscreen: false
     property bool showSlideshow: false
 
-    function deleteItems(page, model, text, itemids, func) {
-        // requires: func is either 'false' or a function to call after
-        //             deleting the items
-        //           itemids is an array - for a single item, place in [ brackets ]
-        dialogLoader.sourceComponent = confirmDeleteDialog
-        dialogLoader.item.confirmText = text
-        dialogLoader.item.parent = page.content;
-
-        var object = new Object()
-        object.model = model
-        object.items = itemids
-        dialogLoader.item.object = object
-
-        function deleteItemsSlot(object) {
-            object.model.destroyItemsByID(object.items)
-            if (func) {
-                func()
-            }
-        }
-        dialogLoader.item.confirm.connect(deleteItemsSlot)
-    }
-
     function updateHeader(model, view) {
         view.showHeader = true
         if (model.filter == 0) {
@@ -287,6 +265,15 @@ Window {
                 }
             }
 
+            ConfirmDelete {
+                id: confirmer
+                model: allPhotosModel
+
+                onConfirmed: {
+                    allPhotosModel.clearSelected()
+                }
+            }
+
             PhotosView {
                 id: allPhotosView
                 parent: allPhotosPage.content
@@ -377,11 +364,10 @@ Window {
                     }
                     else if (model[index] == labelDelete)
                     {
-                        // Delete
-                        deleteItems(allPhotosPage, allPhotosModel, labelDeletePhotoText,
-                                    [ payload.mitemid ], false)
+                        confirmer.text = labelDeletePhotoText
+                        confirmer.items = [ payload.mitemid ]
+                        confirmer.show()
                     }
-
                 }
             }
 
@@ -419,8 +405,10 @@ Window {
                     if (allPhotosView.selected.length != 1) {
                         text = labelDeletePhotosText.arg(allPhotosView.selected.length)
                     }
-                    deleteItems(allPhotosPage, allPhotosModel, text,
-                                allPhotosView.selected, allPhotosModel.clearSelected)
+
+                    confirmer.text = text
+                    confirmer.items = allPhotosView.selected
+                    confirmer.show()
                 }
 
                 onCancel: {
@@ -432,27 +420,6 @@ Window {
                 scene.fullscreen = false;
                 scene.showsearch = true;
                 updateHeader(allPhotosModel, allPhotosView)
-            }
-        }
-    }
-
-    Component {
-        id: confirmDeleteDialog
-        ModalDialog {
-            property variant object
-            property string confirmText
-
-            signal confirm(variant object)
-
-            leftButtonText: qsTr("Delete")
-            rightButtonText: qsTr("Cancel")
-            dialogTitle: labelConfirmDelete
-            contentLoader.sourceComponent: DialogText { text: confirmText; }
-
-            onDialogClicked: {
-                if (button == 1)
-                    confirm(object)
-                dialogLoader.sourceComponent = undefined
             }
         }
     }
@@ -670,9 +637,11 @@ Window {
                         text: labelDeleteAlbum
                         onClicked: {
                             albumDetailPage.closeMenu()
-                            deleteItems(albumDetailPage, allAlbumsModel,
-                                        labelDeleteAlbumText, [ albumId ],
-                                        scene.previousApplicationPage)
+                            confirmer.model = allAlbumsModel
+                            confirmer.previousPage = true
+                            confirmer.text = labelDeleteAlbumText
+                            confirmer.items = [ albumId ]
+                            confirmer.show()
                         }
                     }
                 }
@@ -685,6 +654,18 @@ Window {
                 onAlbumSelected: {
                     albumEditorModel.album = title;
                     albumEditorModel.addItems(photopicker.payload)
+                }
+            }
+
+            ConfirmDelete {
+                id: confirmer
+
+                property bool previousPage: false
+
+                onConfirmed: {
+                    if (previousPage) {
+                        scene.previousApplicationPage()
+                    }
                 }
             }
 
@@ -763,9 +744,11 @@ Window {
                     }
                     else if (model[index] == labelDelete)
                     {
-                        // Delete
-                        deleteItems(albumDetailPage, albumModel, labelDeletePhotoText,
-                                    [ payload.mitemid ], false)
+                        confirmer.model = albumModel
+                        confirmer.previousPage = false
+                        confirmer.text = labelDeletePhotoText
+                        confirmer.items = [ payload.mitemid ]
+                        confirmer.show()
                     }
                     else if(model[index] == labelSetAsBackground) {
                         backgroundModel.activeWallpaper = payload.muri
@@ -882,8 +865,9 @@ Window {
                     text: labelDeletePhoto
                     onClicked: {
                         photoDetailPage.closeMenu()
-                        deleteItems(photoDetailPage, photoDetailModel, labelDeletePhotoText,
-                                    [ currentPhotoItemId ], scene.previousApplicationPage)
+                        confirmer.text = labelDeletePhotoText
+                        confirmer.items = [ currentPhotoItemId ]
+                        confirmer.show()
                     }
                 }
             }
@@ -895,6 +879,15 @@ Window {
                 onAlbumSelected: {
                     albumEditorModel.album = title;
                     albumEditorModel.addItems(photopicker.payload)
+                }
+            }
+
+            ConfirmDelete {
+                id: confirmer
+                model: photoDetailModel
+
+                onConfirmed: {
+                    scene.previousApplicationPage()
                 }
             }
 
@@ -977,8 +970,9 @@ Window {
                     }
                     else if (model[index] == labelDelete) {
                         // Delete
-                        deleteItems(photoDetailPage, photoDetailModel, labelDeletePhotoText,
-                                    [ payload.pitemid ], scene.previousApplicationPage)
+                        confirmer.text = labelDeletePhotoText
+                        confirmer.items = [ payload.pitemid ]
+                        confirmer.show()
                    }
                 }
             }

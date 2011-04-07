@@ -39,6 +39,15 @@ Item {
         return view.indexAt(x,y);
     }
 
+    ConfirmDelete {
+        id: confirmer
+        model: container.model
+
+        onConfirmed: {
+            allPhotosModel.clearSelected()
+        }
+    }
+
     ContextMenu {
         id: contextInstance
         onTriggered: {
@@ -59,8 +68,9 @@ Item {
             }
             else if (model[index] == labelDelete) {
                 // Delete
-                scene.deleteItems(allAlbumsPage, container.model, labelDeleteAlbumText,
-                                  [ payload.mitemid ], false)
+                confirmer.text = labelDeleteAlbumText
+                confirmer.items = [ payload.mitemid ]
+                confirmer.show()
             }
         }
     }
