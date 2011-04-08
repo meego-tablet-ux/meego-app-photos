@@ -63,10 +63,29 @@ Rectangle {
         }
     }
 
+    Connections {
+        target: scene
+        onForegroundChanged: {
+            if (!scene.foreground) {
+                if (timer.running) {
+                    timer.stop()
+                    timer.paused = true
+                }
+            }
+            else {
+                if (timer.paused) {
+                    timer.start()
+                    timer.paused = false
+                }
+            }
+        }
+    }
+
     Timer {
         id: timer
         interval: 3000
         repeat: true
+        property bool paused: false
 
         onTriggered: {
             var count = model.count
