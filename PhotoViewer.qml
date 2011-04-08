@@ -260,13 +260,11 @@ Item {
             Connections {
                 target: photoListView
                 onCurrentItemChanged: {
-                   // image.width = dinstance.width;
-                   // image.height = dinstance.height;
-                   //  image.rotation = 0;
-                   //  photoRotate = 0;
                     if (currentItem == dinstance) {
-                        console.debug("SETVIEWED!")
-                        photoViewer.model.setViewed(pitemid)
+                        // don't set viewed if we're already looking at last viewed
+                        if (allPhotosModel.filter != 2) {
+                            photoViewer.model.setViewed(pitemid)
+                        }
                     }
                 }
             }
