@@ -68,23 +68,6 @@ Window {
     property bool showFullscreen: false
     property bool showSlideshow: false
 
-    function updateHeader(model, view) {
-        view.showHeader = true
-        if (model.filter == 0) {
-            view.showHeader = false
-            view.headerText = ""
-        }
-        else if (model.filter == 1) {
-            view.headerText = labelFavorites
-        }
-        else if (model.filter == 2) {
-            view.headerText = labelRecentlyViewed
-        }
-        else if (model.filter == 3) {
-            view.headerText = labelRecentlyAdded
-        }
-    }
-
     ShareObj {
         id: shareObj
     }
@@ -266,7 +249,6 @@ Window {
 
                 onTriggered: {
                     setFilter(model[index])
-                    updateHeader(allPhotosModel, allPhotosView);
                     allPhotosPage.closeMenu();
                 }
             }
@@ -296,13 +278,7 @@ Window {
                 anchors.fill: parent
                 anchors.bottom: parent.bottom
                 model: allPhotosModel
-                Connections{
-                    target:scene
-                    onOrientationChanged: {
-                        allPhotosView.contentX = 0;
-                        allPhotosView.contentY = 0;
-                    }
-                }
+                footerHeight: allPhotosToolbar.height
                 onOpenPhoto: {
                     photoDetailModel = allPhotosModel;
                     detailViewIndex = currentIndex;
@@ -435,7 +411,6 @@ Window {
             Component.onCompleted: {
                 scene.fullscreen = false;
                 scene.showsearch = true;
-                updateHeader(allPhotosModel, allPhotosView)
             }
         }
     }
@@ -537,7 +512,6 @@ Window {
 
                     onTriggered: {
                         setFilter(model[index])
-                        updateHeader(allAlbumsModel, albumsView)
                         allAlbumsPage.closeMenu();
                     }
                 }
@@ -576,7 +550,6 @@ Window {
             Component.onCompleted: {
                 scene.fullscreen = false;
                 scene.showsearch = true;
-                updateHeader(allAlbumsModel, albumsView)
             }
         }
     }
@@ -669,6 +642,7 @@ Window {
                 parent: albumDetailPage.content
                 anchors.fill: parent
                 anchors.bottom: parent.bottom
+                footerHeight: albumDetailsToolbar.height
                 model: albumModel
                 cellBackgroundColor: "black"
                 onOpenPhoto: {

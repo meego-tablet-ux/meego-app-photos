@@ -28,12 +28,8 @@ Item {
     property alias model: view.model
     property alias currentItem: view.currentItem
     property alias currentIndex: view.currentIndex
-    property alias flow: view.flow
-    property alias contentX: view.contentX
-    property alias contentY: view.contentY
 
-    property alias showHeader: header.visible
-    property alias headerText: header.text
+    property alias footerHeight: view.footerHeight
 
     property string labelOpen: qsTr("Open")
     property string labelPlay: qsTr("Play slideshow")
@@ -71,25 +67,15 @@ Item {
                     return view.currentItem;
     }
 
-    Text {
-        id: header
-        font.pixelSize: theme_fontPixelSizeLarge
-        color: theme_fontColorNormal
-        visible: false
-
-        anchors.top: parent.top
-        anchors.topMargin: 5
-        anchors.left: parent.left
-    }
-
     MediaGridView {
         id: view
         type: phototype
         selectionMode: container.selectionMode
         defaultThumbnail: "image://theme/media/photo_thumb_default"
+        showHeader: true
 
-        anchors.top: header.visible ? header.bottom : parent.top
-        anchors.topMargin: header.visible ? 5 : 0
+        anchors.top: parent.top
+        anchors.topMargin: 5
         anchors.bottom: parent.bottom
         anchors.left: parent.left
         anchors.right: parent.right
@@ -124,7 +110,6 @@ Item {
             var remain = parent.width - gridWidth
             // workaound MediaGridView miscalculation with +1 below
             anchors.leftMargin = Math.floor(remain / 2) + 1
-            header.anchors.leftMargin = anchors.leftMargin
         }
         Component.onCompleted: setMargins()
 
