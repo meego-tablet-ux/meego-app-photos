@@ -50,8 +50,8 @@ Item {
         IconButton {
             opacity: mode == 0 ? 1.0 : 0.0
             anchors.verticalCenter: parent.verticalCenter
-            icon: "image://theme/media/icn_back_up"
-            iconDown: "image://theme/media/icn_back_dn"
+            icon: "image://meegotheme/icons/toolbar/go-back-active"
+            iconDown: "image://meegotheme/icons/toolbar/go-back"
             onClicked: container.prev()
         }
         IconButton {
@@ -64,8 +64,8 @@ Item {
         IconButton {
             opacity: mode == 0 ? 1.0 : 0.0
             anchors.verticalCenter: parent.verticalCenter
-            icon: "image://theme/media/icn_forward_up"
-            iconDown: "image://theme/media/icn_forward_dn"
+            icon: "image://meegotheme/icons/toolbar/go-forward-active"
+            iconDown: "image://meegotheme/icons/toolbar/go-forward"
             onClicked: container.next()
         }
     }
