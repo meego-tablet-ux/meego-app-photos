@@ -42,6 +42,7 @@ Window {
     property string labelCreateNewAlbum: qsTr("Create new album")
     property string labelCancel: qsTr("Cancel");
     property string labelSetAsBackground: qsTr("Set as background")
+    property string labelViewBy: qsTr("View by:")
 
     property string labelDeletePhotoText: qsTr("Are you sure you want to delete this photo?")
     property string labelDeletePhotosText: qsTr("Are you sure you want to delete the %1 selected photos?")
@@ -227,31 +228,46 @@ Window {
                 allPhotosModel.search = needle;
             }
 
-            menuContent: Column {
-                width: childrenRect.width
+            menuContent: ActionMenu {
+                id: filterMenu
+                title: labelViewBy
+                highlightIndex: getIndexFromFilter(allPhotosModel.filter)
+                model: [ labelAll, labelRecentlyAdded, labelFavorites, labelRecentlyViewed ]
 
-                ActionMenu {
-                    model: [ labelAll, labelRecentlyAdded, labelFavorites, labelRecentlyViewed ]
+                function getIndexFromFilter(filter) {
+                    switch (filter) {
+                            case 0: return 0
+                            case 1: return 2
+                            case 2: return 3
+                            case 3: return 1
+                            default:
+                                    console.log("Unexpected filter in action menu: " + allPhotosModel.filter)
+                                return 0
+                            }
+                }
 
-                    onTriggered: {
-                        if (model[index] == labelAll) {
-                            allPhotosModel.filter = 0
-                        }
-                        else if (model[index] == labelRecentlyAdded) {
-                            allPhotosModel.filter = 3
-                        }
-                        else if (model[index] == labelFavorites) {
-                            allPhotosModel.filter = 1
-                        }
-                        else if (model[index] == labelRecentlyViewed) {
-                            allPhotosModel.filter = 2
-                        }
-                        else {
-                            console.log("Unexpected index triggered from action menu")
-                        }
-                        updateHeader(allPhotosModel, allPhotosView);
-                        allPhotosPage.closeMenu();
+                function setFilter(label) {
+                    if (label == labelAll) {
+                        allPhotosModel.filter = 0
                     }
+                    else if (label == labelRecentlyAdded) {
+                        allPhotosModel.filter = 3
+                    }
+                    else if (label == labelFavorites) {
+                        allPhotosModel.filter = 1
+                    }
+                    else if (label == labelRecentlyViewed) {
+                        allPhotosModel.filter = 2
+                    }
+                    else {
+                        console.log("Unexpected label in action menu: " + label)
+                    }
+                }
+
+                onTriggered: {
+                    setFilter(model[index])
+                    updateHeader(allPhotosModel, allPhotosView);
+                    allPhotosPage.closeMenu();
                 }
             }
 
@@ -474,80 +490,59 @@ Window {
                 allAlbumsModel.search = needle;
             }
 
-            menuContent: Column {
-                id: menucolumn
-                width: childrenRect.width
+            menuContent: Item {
+                width: filterMenu.width
+                height: filterMenu.height + actionsMenu.height
 
-                property int textMargin: 16
-
-                Item {
-                    width: button.width + 2 * textMargin
-                    height: button.height + 2 * textMargin - 8
-
-                    BlueButton {
-                        id: button
-                        anchors.centerIn: parent
-                        text: labelNewAlbum
-                        onClicked: {
-                            contextLoader.sourceComponent = createAlbumDialog
-                            contextLoader.item.parent = allAlbumsPage.content;
-                            allAlbumsPage.closeMenu();
-                        }
+                ActionMenu {
+                    id: actionsMenu
+                    model: [ labelNewAlbum ]
+                    onTriggered: {
+                        contextLoader.sourceComponent = createAlbumDialog
+                        contextLoader.item.parent = allAlbumsPage.content;
+                        allAlbumsPage.closeMenu();
                     }
                 }
 
                 Image {
                     id: separator
+                    anchors.top: actionsMenu.bottom
+                    width: parent.width
                     source: "image://theme/menu_item_separator"
-                    width: menucolumn.width
                 }
 
-                Repeater {
-                    id: repeater
+                ActionMenu {
+                    id: filterMenu
+                    anchors.top: separator.bottom
+                    anchors.topMargin: 5
+                    title: labelViewBy
+                    highlightIndex: allAlbumsModel.filter ? 1:0
+
                     // FIXME: removed favorites from this list since there is no UI for favorite albums
                     // FIXME: removed recently viewed from this list since it's not clear when
                     //        to tag an album as "viewed" - consult UX team
                     model: [ labelAll, labelRecentlyAdded ]
-                    delegate: Item {
-                        width: Math.max(parent.width, text.width + 2 * textMargin)
-                        height: text.paintedHeight + 2 * textMargin
 
-                        Text {
-                            id: text
-                            anchors.verticalCenter: parent.verticalCenter
-                            anchors.left: parent.left
-                            anchors.leftMargin: textMargin
-                            text: modelData;
-                            color: theme_contextMenuFontColor
-                            font.pixelSize: theme_contextMenuFontPixelSize
+                    function setFilter(label) {
+                        if (label == labelAll) {
+                            allAlbumsModel.filter = 0
                         }
+                        else if (label == labelRecentlyAdded) {
+                            allAlbumsModel.filter = 3
+                        }
+                        else {
+                            console.log("Unexpected label in action menu: " + label)
+                        }
+                    }
 
-                        Image {
-                            anchors.bottom: parent.bottom
-                            source: "image://theme/menu_item_separator"
-                            width: parent.width
-                            visible: index < repeater.count - 1
-                        }
-
-                        MouseArea {
-                            anchors.fill: parent;
-                            onClicked: {
-                                if (repeater.model[index] == labelAll) {
-                                    allAlbumsModel.filter = 0
-                                }
-                                else if (repeater.model[index] == labelRecentlyAdded) {
-                                    allAlbumsModel.filter = 3
-                                }
-                                else if (repeater.model[index] == labelRecentlyViewed) {
-                                    allAlbumsModel.filter = 2
-                                }
-                                updateHeader(allAlbumsModel, albumsView)
-                                allAlbumsPage.closeMenu();
-                            }
-                        }
+                    onTriggered: {
+                        setFilter(model[index])
+                        updateHeader(allAlbumsModel, albumsView)
+                        allAlbumsPage.closeMenu();
                     }
                 }
             }
+
             AlbumsView {
                 id: albumsView
                 parent:allAlbumsPage.content
