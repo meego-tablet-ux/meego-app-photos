@@ -125,11 +125,8 @@ Rectangle {
     }
 
     MouseArea {
-        id: catchall
         anchors.fill: parent
-        onPressed: {
-            stop()
-        }
+        onPressed: stop()
     }
 
     states: [

@@ -8,6 +8,7 @@
 
 import Qt 4.7
 import MeeGo.Labs.Components 0.1
+import Qt.labs.gestures 2.0
 
 // roll our own button for the moment
 
@@ -46,9 +47,16 @@ BorderImage {
         color: theme_buttonFontColor
         text: ""
     }
+
+    GestureArea {
+        anchors.fill: parent
+        Tap {
+            onFinished: button.clicked()
+        }
+    }
+
     MouseArea {
         anchors.fill: parent
-        onClicked: button.clicked()
         onPressed: parent.pressed = true
         onReleased: parent.pressed = false
     }

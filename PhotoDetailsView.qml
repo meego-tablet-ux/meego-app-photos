@@ -109,15 +109,6 @@ Item {
         onFavorite: container.toggleFavorite();
     }
 
-    MouseArea {
-        id: catchall
-        anchors.fill: parent
-        onPressed: {
-            visible = false
-            mouse.accepted = false
-        }
-    }
-
     state:"origin"
     states: [
         State {

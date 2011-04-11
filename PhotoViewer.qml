@@ -9,6 +9,7 @@
 import Qt 4.7
 import MeeGo.Labs.Components 0.1
 import MeeGo.Media 0.1
+import Qt.labs.gestures 2.0
 
 Item {
     id: photoViewer
@@ -365,41 +366,37 @@ Item {
                 }
             }
 
-            MouseArea {
-                id: mouseArea
-                anchors.fill: parent
-                property bool inGesture: false
-
-                onClicked: {
-                    photoViewer.clickedOnPhoto();
-                }
-                onPressAndHold: {
-                    if (!inGesture)
-                        photoViewer.pressAndHoldOnPhoto(mouse, dinstance);
-                }
-            }
-
             GestureArea {
                 anchors.fill: parent
-                onPinchGesture: {
-                    var cw = dinstance.contentWidth;
-                    var ch = dinstance.contentHeight;
-                    image.scale *= gesture.scaleFactor;
-                    fullImage.scale *= gesture.scaleFactor;
-                    dinstance.contentX =  (dinstance.centerPoint.x + dinstance.contentX )/ cw * dinstance.contentWidth - dinstance.centerPoint.x;
-                    dinstance.contentY = (dinstance.centerPoint.y + dinstance.contentY)/ ch * dinstance.contentHeight - dinstance.centerPoint.y;
 
+                Tap {
+                    onFinished: photoViewer.clickedOnPhoto()
                 }
-                onGestureStarted: {
-                    mouseArea.inGesture = true
-                    dinstance.interactive = false;
-                    photoListView.interactive = false;
-                    dinstance.centerPoint = scene.mapToItem(dinstance, gesture.centerPoint.x, gesture.centerPoint.y);
+
+                TapAndHold {
+                    onFinished: photoViewer.pressAndHoldOnPhoto(gesture.position, dinstance);
                 }
-                onGestureEnded: {
-                    mouseArea.inGesture = false
-                    dinstance.interactive = true;
-                    photoListView.interactive = true;
+
+                Pinch {
+                    onStarted: {
+                        dinstance.interactive = false;
+                        photoListView.interactive = false;
+                        dinstance.centerPoint = scene.mapToItem(dinstance, gesture.centerPoint.x, gesture.centerPoint.y);
+                    }
+
+                    onUpdated: {
+                        var cw = dinstance.contentWidth;
+                        var ch = dinstance.contentHeight;
+                        image.scale *= gesture.scaleFactor;
+                        fullImage.scale *= gesture.scaleFactor;
+                        dinstance.contentX =  (dinstance.centerPoint.x + dinstance.contentX )/ cw * dinstance.contentWidth - dinstance.centerPoint.x;
+                        dinstance.contentY = (dinstance.centerPoint.y + dinstance.contentY)/ ch * dinstance.contentHeight - dinstance.centerPoint.y;
+                    }
+
+                    onFinished: {
+                        dinstance.interactive = true;
+                        photoListView.interactive = true;
+                    }
                 }
             }
 
@@ -499,6 +496,8 @@ Item {
                 hideThumbnailTimer.stop();
             }
         }
+        onMovementStarted: hideThumbnailTimer.restart()
+        onMovementEnded: hideThumbnailTimer.restart()
 
         delegate: Image {
             id: thumbnail
@@ -508,21 +507,17 @@ Item {
             fillMode: Image.PreserveAspectCrop
             clip: true
 
-            MouseArea {
+            GestureArea {
                 anchors.fill: parent
-                onClicked: {
-                    photoListView.positionViewAtIndex(index, ListView.Center)
-                    photoListView.currentIndex = index
-                    hideThumbnailTimer.restart()
-                }
-                onPositionChanged: {
-                    hideThumbnailTimer.restart()
+
+                Tap {
+                    onFinished: {
+                        photoListView.positionViewAtIndex(index, ListView.Center)
+                        photoListView.currentIndex = index
+                        hideThumbnailTimer.restart()
+                    }
                 }
             }
-        }
-
-        onFlickStarted: {
-            hideThumbnailTimer.restart();
         }
 
         states: [
@@ -562,7 +557,12 @@ Item {
         id: hideThumbnailTimer;
         interval: 3000; running: false; repeat: false
         onTriggered: {
-            photoThumbnailView.show = false;
+            if (photoThumbnailView.moving) {
+                restart()
+            }
+            else {
+                photoThumbnailView.show = false;
+            }
         }
     }
 
