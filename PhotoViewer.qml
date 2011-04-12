@@ -52,10 +52,12 @@ Item {
     }
 
     function rotateRightward() {
+        photoListView.rotateDuration = 300
         photoListView.currentItem.photoRotate = (photoListView.currentItem.photoRotate + 1) % 4;
     }
 
     function rotateLeftward() {
+        photoListView.rotateDuration = 300
         photoListView.currentItem.photoRotate = (photoListView.currentItem.photoRotate + 3) % 4;
     }
 
@@ -77,6 +79,7 @@ Item {
         pressDelay: 0
         highlightMoveDuration: 300
         property bool initialPhoto: true
+        property int rotateDuration: 0
 
         signal startingSlideshow()
 
@@ -340,16 +343,22 @@ Item {
             transitions: [
                 Transition {
                     reversible: true
-                    ParallelAnimation {
-                        PropertyAnimation {
-                            properties: "width,height"
-                            duration: 300
+                    SequentialAnimation {
+                        ParallelAnimation {
+                            PropertyAnimation {
+                                properties: "width,height"
+                                duration: photoListView.rotateDuration
+                            }
+
+                            RotationAnimation {
+                                id: rotateAnimation
+                                direction: RotationAnimation.Shortest
+                                duration: photoListView.rotateDuration
+                            }
                         }
 
-                        RotationAnimation {
-                            id: rotateAnimation
-                            direction: RotationAnimation.Shortest
-                            duration: 300
+                        ScriptAction {
+                            script: photoListView.rotateDuration = 0
                         }
                     }
                 }
