@@ -7,7 +7,7 @@
  */
 
 import Qt 4.7
-import MeeGo.Labs.Components 0.1
+import MeeGo.Labs.Components 0.1 as Labs
 import MeeGo.Sharing 0.1
 
 Item {
@@ -18,7 +18,7 @@ Item {
     // 0 - single photo view toolbar
     // 1 - grid view toolbar
     // 2 - grid view toolbar with cancel multiple select
-    property int mode:2
+    property int mode: 2
 
     property bool isFavorite: true
     property alias sharing: shareIcon
@@ -47,21 +47,21 @@ Item {
         anchors.verticalCenter: parent.verticalCenter
         spacing: 10
 
-        IconButton {
+        Labs.IconButton {
             opacity: mode == 0 ? 1.0 : 0.0
             anchors.verticalCenter: parent.verticalCenter
             icon: "image://meegotheme/icons/toolbar/go-back-active"
             iconDown: "image://meegotheme/icons/toolbar/go-back"
             onClicked: container.prev()
         }
-        IconButton {
-            opacity: mode == 0 | mode == 1 ? 1.0 : 0.0
+        Labs.IconButton {
+            opacity: mode == 0 || mode == 1 ? 1.0 : 0.0
             anchors.verticalCenter: parent.verticalCenter
             icon: "image://theme/icn_play_up"
             iconDown: "image://theme/icn_play_dn"
             onClicked: container.play()
         }
-        IconButton {
+        Labs.IconButton {
             opacity: mode == 0 ? 1.0 : 0.0
             anchors.verticalCenter: parent.verticalCenter
             icon: "image://meegotheme/icons/toolbar/go-forward-active"
@@ -77,29 +77,29 @@ Item {
         anchors.verticalCenter: parent.verticalCenter
         spacing: (width - 400)/3
         visible: mode == 2
-        IconButton {
+        Labs.IconButton {
             anchors.verticalCenter: parent.verticalCenter
             icon: "image://theme/media/icn_trash_up"
             iconDown: "image://theme/media/icn_trash_dn"
             onClicked: container.deleteSelected()
         }
-        IconButton {
+        Labs.IconButton {
             anchors.verticalCenter: parent.verticalCenter
             icon: "image://theme/media/icn_addtoalbum_up"
             iconDown: "image://theme/media/icn_addtoalbum_dn"
             onClicked: container.addToAlbum()
         }
-        ShareIcon {
+        Labs.ShareIcon {
             id: shareIcon
         }
-        IconButton {
+        Labs.IconButton {
             icon: "image://theme/media/icn_cancel_ms_up"
             iconDown: "image://theme/media/icn_cancel_ms_dn"
             onClicked: container.cancel()
         }
     }
 
-    IconButton {
+    Labs.IconButton {
         opacity: mode == 0 ? 1.0 : 0.0
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: parent.left
@@ -108,7 +108,7 @@ Item {
         iconDown: "image://theme/media/icn_rotate_cw_dn"
         onClicked: container.rotateRight()
     }
-    IconButton {
+    Labs.IconButton {
         opacity: mode == 0 ? 1.0 : 0.0
         anchors.verticalCenter: parent.verticalCenter
         anchors.right: parent.right

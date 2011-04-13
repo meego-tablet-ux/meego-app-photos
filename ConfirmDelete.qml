@@ -7,10 +7,9 @@
  */
 
 import Qt 4.7
-import MeeGo.Components 0.1 as Ux
-//import MeeGo.Labs.Components 0.1
+import MeeGo.Components 0.1
 
-Ux.ModalDialog {
+ModalDialog {
     property alias text: confirmText.text
     property variant model
     property variant items

@@ -7,12 +7,12 @@
  */
 
 import Qt 4.7
-import MeeGo.Components 0.1 as Ux
-import MeeGo.Labs.Components 0.1
+import MeeGo.Labs.Components 0.1 as Labs
+import MeeGo.Components 0.1
 import MeeGo.Media 0.1
 import MeeGo.Sharing 0.1
 
-Window {
+Labs.Window {
     id: scene
 
     property string labelAll: qsTr("All")
@@ -68,11 +68,11 @@ Window {
     property bool showFullscreen: false
     property bool showSlideshow: false
 
-    ShareObj {
+    Labs.ShareObj {
         id: shareObj
     }
 
-    BackgroundModel {
+    Labs.BackgroundModel {
         id: backgroundModel
     }
 
@@ -203,7 +203,7 @@ Window {
 
     Component {
         id: allPhotosComponent
-        ApplicationPage {
+        Labs.ApplicationPage {
             id: allPhotosPage
             anchors.fill: parent
             title: labelAllPhotos
@@ -211,7 +211,7 @@ Window {
                 allPhotosModel.search = needle;
             }
 
-            menuContent: ActionMenu {
+            menuContent: Labs.ActionMenu {
                 id: filterMenu
                 title: labelViewBy
                 highlightIndex: getIndexFromFilter(allPhotosModel.filter)
@@ -253,7 +253,7 @@ Window {
                 }
             }
 
-            Ux.PhotoPicker {
+            PhotoPicker {
                 id: photopicker
                 albumSelectionMode: true
                 property variant payload: []
@@ -309,7 +309,7 @@ Window {
                 }
             }
 
-            ContextMenu {
+            Labs.ContextMenu {
                 id: allPhotosContextMenu
                 onClose: contextLoader.sourceComponent = undefined
                 onTriggered: {
@@ -417,7 +417,7 @@ Window {
 
     Component {
         id: createAlbumDialog
-        ModalDialog {
+        Labs.ModalDialog {
             leftButtonText: qsTr("Create")
             rightButtonText: qsTr("Cancel")
             dialogTitle: labelCreateNewAlbum
@@ -456,7 +456,7 @@ Window {
 
     Component {
         id: allAlbumsComponent
-        ApplicationPage {
+        Labs.ApplicationPage {
             id: allAlbumsPage
             anchors.fill: parent
             title: labelAlbums
@@ -469,7 +469,7 @@ Window {
                 width: filterMenu.width
                 height: filterMenu.height + actionsMenu.height
 
-                ActionMenu {
+                Labs.ActionMenu {
                     id: actionsMenu
                     model: [ labelNewAlbum ]
                     onTriggered: {
@@ -486,7 +486,7 @@ Window {
                     source: "image://theme/menu_item_separator"
                 }
 
-                ActionMenu {
+                Labs.ActionMenu {
                     id: filterMenu
                     anchors.top: separator.bottom
                     anchors.topMargin: 5
@@ -556,7 +556,7 @@ Window {
 
     Component {
         id: albumDetailComponent
-        ApplicationPage {
+        Labs.ApplicationPage {
             id: albumDetailPage
             anchors.fill: parent
             title: labelSingleAlbum
@@ -615,7 +615,7 @@ Window {
                 }
             }
 
-            Ux.PhotoPicker {
+            PhotoPicker {
                 id: photopicker
                 albumSelectionMode: true
                 property variant payload: []
@@ -669,7 +669,7 @@ Window {
                 }
             }
 
-            ContextMenu {
+            Labs.ContextMenu {
                 id: albumDetailContextMenu
                 onClose: contextLoader.sourceComponent = undefined
                 onTriggered: {
@@ -758,14 +758,14 @@ Window {
     Component {
         id: photoDetailComponent
 
-        ApplicationPage {
+        Labs.ApplicationPage {
             id: photoDetailPage
             anchors.fill: parent
             title: labelSinglePhoto
             fullContent: true
 
             resources: [
-                FuzzyDateTime {
+                Labs.FuzzyDateTime {
                     id: fuzzy
                 }
             ]
@@ -775,7 +775,7 @@ Window {
                 width: 300 + 2 * textMargin
                 height: childrenRect.height + 2 * textMargin
 
-                TextEntry {
+                Labs.TextEntry {
                     id: entry
                     anchors.left: parent.left
                     anchors.right: parent.right
@@ -841,7 +841,7 @@ Window {
                 }
             }
 
-            Ux.PhotoPicker {
+            PhotoPicker {
                 id: photopicker
                 albumSelectionMode: true
                 property variant payload: []
@@ -900,7 +900,7 @@ Window {
                 }
             }
 
-            ContextMenu {
+            Labs.ContextMenu {
                 id: contextInstance
                 // onClose: contextLoader.sourceComponent = undefined
 
