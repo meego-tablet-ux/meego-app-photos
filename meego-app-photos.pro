@@ -13,8 +13,7 @@ QML_FILES += \
     *.qml
 
 OTHER_FILES += \
-    $${QML_FILES} \
-    tests/*.qml
+    $${QML_FILES}
 
 TRANSLATIONS += $${QML_FILES}
 PROJECT_NAME = meego-app-photos
