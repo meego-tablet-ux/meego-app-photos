@@ -8,6 +8,7 @@
 
 import Qt 4.7
 import MeeGo.Labs.Components 0.1 as Labs
+import MeeGo.Components 0.1
 import MeeGo.Sharing 0.1
 
 Item {
@@ -47,25 +48,28 @@ Item {
         anchors.verticalCenter: parent.verticalCenter
         spacing: 10
 
-        Labs.IconButton {
+        IconButton {
             opacity: mode == 0 ? 1.0 : 0.0
             anchors.verticalCenter: parent.verticalCenter
             icon: "image://meegotheme/icons/toolbar/go-back-active"
             iconDown: "image://meegotheme/icons/toolbar/go-back"
+            hasBackground: false
             onClicked: container.prev()
         }
-        Labs.IconButton {
+        IconButton {
             opacity: mode == 0 || mode == 1 ? 1.0 : 0.0
             anchors.verticalCenter: parent.verticalCenter
             icon: "image://theme/icn_play_up"
             iconDown: "image://theme/icn_play_dn"
+            hasBackground: false
             onClicked: container.play()
         }
-        Labs.IconButton {
+        IconButton {
             opacity: mode == 0 ? 1.0 : 0.0
             anchors.verticalCenter: parent.verticalCenter
             icon: "image://meegotheme/icons/toolbar/go-forward-active"
             iconDown: "image://meegotheme/icons/toolbar/go-forward"
+            hasBackground: false
             onClicked: container.next()
         }
     }
@@ -77,44 +81,49 @@ Item {
         anchors.verticalCenter: parent.verticalCenter
         spacing: (width - 400)/3
         visible: mode == 2
-        Labs.IconButton {
+        IconButton {
             anchors.verticalCenter: parent.verticalCenter
             icon: "image://theme/media/icn_trash_up"
             iconDown: "image://theme/media/icn_trash_dn"
+            hasBackground: false
             onClicked: container.deleteSelected()
         }
-        Labs.IconButton {
+        IconButton {
             anchors.verticalCenter: parent.verticalCenter
             icon: "image://theme/media/icn_addtoalbum_up"
             iconDown: "image://theme/media/icn_addtoalbum_dn"
+            hasBackground: false
             onClicked: container.addToAlbum()
         }
         Labs.ShareIcon {
             id: shareIcon
         }
-        Labs.IconButton {
+        IconButton {
             icon: "image://theme/media/icn_cancel_ms_up"
             iconDown: "image://theme/media/icn_cancel_ms_dn"
+            hasBackground: false
             onClicked: container.cancel()
         }
     }
 
-    Labs.IconButton {
+    IconButton {
         opacity: mode == 0 ? 1.0 : 0.0
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: parent.left
         anchors.leftMargin: 10
         icon: "image://theme/media/icn_rotate_cw_up"
         iconDown: "image://theme/media/icn_rotate_cw_dn"
+        hasBackground: false
         onClicked: container.rotateRight()
     }
-    Labs.IconButton {
+    IconButton {
         opacity: mode == 0 ? 1.0 : 0.0
         anchors.verticalCenter: parent.verticalCenter
         anchors.right: parent.right
         anchors.rightMargin: 10
         icon: container.isFavorite ? "image://theme/media/icn_favourite_active" : "image://theme/media/icn_favourite_up"
         iconDown: "image://theme/media/icn_favourite_dn"
+        hasBackground: false
         onClicked: {
             container.isFavorite = !container.isFavorite;
             container.favorite();
