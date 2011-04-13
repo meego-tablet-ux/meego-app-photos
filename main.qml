@@ -422,31 +422,20 @@ Labs.Window {
             rightButtonText: qsTr("Cancel")
             dialogTitle: labelCreateNewAlbum
 
-            property string albumTitle: ""
-
             contentLoader.sourceComponent: Item {
-                anchors.fill: parent
+                property alias text: albumEntry.text
 
-                BorderImage {
-                    id: entryBorder
-                    anchors.verticalCenter: parent.verticalCenter
-                    source: "image://theme/email/frm_textfield_l"
-                    border.left: 10; border.top: 10
-                    border.right: 10; border.bottom: 10
+                TextEntry {
+                    id: albumEntry
+                    defaultText: qsTr("Album name")
+                    anchors.centerIn: parent
                     width: parent.width
-
-                    TextInput {
-                        anchors.centerIn: parent
-                        width: parent.width - 20
-                        onTextChanged: {
-                            albumTitle = text
-                        }
-                    }
                 }
             }
+
             onDialogClicked: {
                 if (button == 1) {
-                    albumEditorModel.album = albumTitle
+                    albumEditorModel.album = contentLoader.item.text
                     albumEditorModel.saveAlbum()
                 }
                 contextLoader.sourceComponent = undefined
@@ -775,7 +764,7 @@ Labs.Window {
                 width: 300 + 2 * textMargin
                 height: childrenRect.height + 2 * textMargin
 
-                Labs.TextEntry {
+                TextEntry {
                     id: entry
                     anchors.left: parent.left
                     anchors.right: parent.right
