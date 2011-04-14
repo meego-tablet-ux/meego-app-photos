@@ -197,10 +197,6 @@ Labs.Window {
         id: contextLoader
     }
 
-    Loader {
-        id: dialogLoader
-    }
-
     Component {
         id: allPhotosComponent
         Labs.ApplicationPage {
@@ -416,34 +412,6 @@ Labs.Window {
     }
 
     Component {
-        id: createAlbumDialog
-        Labs.ModalDialog {
-            leftButtonText: qsTr("Create")
-            rightButtonText: qsTr("Cancel")
-            dialogTitle: labelCreateNewAlbum
-
-            contentLoader.sourceComponent: Item {
-                property alias text: albumEntry.text
-
-                TextEntry {
-                    id: albumEntry
-                    defaultText: qsTr("Album name")
-                    anchors.centerIn: parent
-                    width: parent.width
-                }
-            }
-
-            onDialogClicked: {
-                if (button == 1) {
-                    albumEditorModel.album = contentLoader.item.text
-                    albumEditorModel.saveAlbum()
-                }
-                contextLoader.sourceComponent = undefined
-            }
-        }
-    }
-
-    Component {
         id: allAlbumsComponent
         Labs.ApplicationPage {
             id: allAlbumsPage
@@ -462,8 +430,7 @@ Labs.Window {
                     id: actionsMenu
                     model: [ labelNewAlbum ]
                     onTriggered: {
-                        contextLoader.sourceComponent = createAlbumDialog
-                        contextLoader.item.parent = allAlbumsPage.content;
+                        createAlbumDialog.show()
                         allAlbumsPage.closeMenu();
                     }
                 }
@@ -503,6 +470,33 @@ Labs.Window {
                         setFilter(model[index])
                         allAlbumsPage.closeMenu();
                     }
+                }
+            }
+
+            ModalDialog {
+                id: createAlbumDialog
+                title: labelCreateNewAlbum
+                acceptButtonText: qsTr("Create")
+
+                content: Item {
+                    property alias text: albumEntry.text
+                    anchors.fill: parent
+                    anchors.leftMargin: 20
+                    anchors.topMargin: 20
+                    anchors.rightMargin: 20
+                    anchors.bottomMargin: 20
+
+                    TextEntry {
+                        id: albumEntry
+                        defaultText: qsTr("Album name")
+                        anchors.centerIn: parent
+                        width: parent.width
+                    }
+                }
+
+                onAccepted: {
+                    albumEditorModel.album = albumEntry.text
+                    albumEditorModel.saveAlbum()
                 }
             }
 
