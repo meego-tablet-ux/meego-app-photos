@@ -10,6 +10,8 @@ import Qt 4.7
 import MeeGo.Labs.Components 0.1 as Labs
 import MeeGo.Components 0.1
 import MeeGo.Sharing 0.1
+import Qt.labs.gestures 2.0
+
 
 Item {
     id: container
@@ -33,6 +35,17 @@ Item {
     signal cancel()
     signal deleteSelected()
     signal addToAlbum()
+
+    // block all gestures from falling through
+    GestureArea {
+        anchors.fill: parent
+
+        Tap {}
+        TapAndHold {}
+        Pan {}
+        Swipe {}
+        Pinch {}
+    }
 
     BorderImage {
         anchors.fill: parent
