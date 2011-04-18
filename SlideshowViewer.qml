@@ -62,6 +62,10 @@ Rectangle {
         }
     }
 
+    Component.onDestruction: {
+        scene.inhibitScreenSaver = false
+    }
+
     Connections {
         target: scene
         onForegroundChanged: {
@@ -85,6 +89,10 @@ Rectangle {
         interval: 3000
         repeat: true
         property bool paused: false
+
+        onRunningChanged: {
+            scene.inhibitScreenSaver = running
+        }
 
         onTriggered: {
             var count = model.count
