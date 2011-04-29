@@ -125,7 +125,8 @@ Item {
             property int photoRotate: 0
 
             function updateImage() {
-                fullImage.source = uri
+                stricturl.setUrlUnencoded(uri)
+                fullImage.source = stricturl.url
             }
 
             onPhotoRotateChanged: {
@@ -137,6 +138,10 @@ Item {
                     saveTimer.stop()
                     extension.saveInfo()
                 }
+            }
+
+            Labs.StrictUrl {
+                id: stricturl
             }
 
             Timer {
@@ -220,7 +225,8 @@ Item {
                             load = true
                         }
                         else {
-                            source = uri
+                            stricturl.setUrlUnencoded(uri)
+                            source = stricturl.url
                         }
                     }
                 }
@@ -229,14 +235,16 @@ Item {
                     target: photoListView
                     onMovementEnded: {
                         if (fullImage.load) {
-                            fullImage.source = uri
+                            stricturl.setUrlUnencoded(uri)
+                            fullImage.source = stricturl.url
                             fullImage.load = false
                         }
                     }
 
                     onStartingSlideshow: {
-                        fullImage.source = uri
-                    }
+                        stricturl.setUrlUnencoded(uri)
+                        fullImage.source = stricturl.url
+                   }
 
                     onCurrentIndexChanged: {
                         if (index == currentIndex) {
@@ -244,7 +252,8 @@ Item {
                                 fullImage.load = true
                             }
                             else {
-                                fullImage.source = uri
+                                stricturl.setUrlUnencoded(uri)
+                                fullImage.source = stricturl.url
                             }
                         }
                     }
@@ -408,7 +417,6 @@ Item {
                     }
                 }
             }
-
         }
         Component.onCompleted: {
             // start the timer the first time.

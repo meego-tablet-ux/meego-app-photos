@@ -7,6 +7,7 @@
  */
 
 import Qt 4.7
+import MeeGo.Labs.Components 0.1 as Labs
 import MeeGo.Media 0.1
 
 Rectangle {
@@ -50,12 +51,14 @@ Rectangle {
             }
         }
 
-        imageElement.source = model.getURIfromIndex(newIndex)
+        stricturl.setUrlUnencoded(model.getURIfromIndex(newIndex))
+        imageElement.source = stricturl.url
     }
 
     Component.onCompleted: {
         timer.start()
-        firstImage.source = model.getURIfromIndex(currentIndex)
+        stricturl.setUrlUnencoded(model.getURIfromIndex(currentIndex))
+        firstImage.source = stricturl.url
         if (currentIndex + 1 >= model.count) {
             // if we start on the last image, loop to first once
             loopOnce = true
@@ -64,6 +67,10 @@ Rectangle {
 
     Component.onDestruction: {
         scene.inhibitScreenSaver = false
+    }
+
+    Labs.StrictUrl {
+        id: stricturl
     }
 
     Connections {
