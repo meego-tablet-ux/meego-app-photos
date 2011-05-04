@@ -497,6 +497,11 @@ Labs.Window {
                 onAccepted: {
                     albumEditorModel.album = albumEntry.text
                     albumEditorModel.saveAlbum()
+                    albumEntry.text = ""
+                }
+
+                onRejected: {
+                    albumEntry.text = ""
                 }
             }
 
