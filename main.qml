@@ -233,15 +233,23 @@ Labs.Window {
                 function setFilter(label) {
                     if (label == labelAll) {
                         allPhotosModel.filter = 0
+                        allPhotosView.noContentText = "You have no photos"
+                        allPhotosView.noContentButtonText = "Take a photo"
                     }
                     else if (label == labelRecentlyAdded) {
                         allPhotosModel.filter = 3
+                        allPhotosView.noContentText = "You haven't added any photos recently"
+                        allPhotosView.noContentButtonText = "View all photos"
                     }
                     else if (label == labelFavorites) {
                         allPhotosModel.filter = 1
+                        allPhotosView.noContentText = "You don't have any favourite photos"
+                        allPhotosView.noContentButtonText = "View all photos"
                     }
                     else if (label == labelRecentlyViewed) {
                         allPhotosModel.filter = 2
+                        allPhotosView.noContentText = "You haven't viewed any photos recently"
+                        allPhotosView.noContentButtonText = "View all photos"
                     }
                     else {
                         console.log("Unexpected label in action menu: " + label)
@@ -311,7 +319,11 @@ Labs.Window {
                     allPhotosContextMenu.visible = true;
                 }
                 onNoContentAction: {
-                    appsModel.launchDesktopByName("/usr/share/meego-ux-appgrid/applications/meego-app-camera.desktop")
+                    if ( allPhotosModel.filter == 0) {
+                        appsModel.launchDesktopByName("/usr/share/meego-ux-appgrid/applications/meego-app-camera.desktop")
+                    } else {
+                        scene.applicationPage = allPhotosComponent;
+                    }
                 }
             }
 
@@ -468,9 +480,13 @@ Labs.Window {
                     function setFilter(label) {
                         if (label == labelAll) {
                             allAlbumsModel.filter = 0
+                            albumsView.noContentText = "You have no albums"
+                            albumsView.noContentButtonText = "Create an album"
                         }
                         else if (label == labelRecentlyAdded) {
                             allAlbumsModel.filter = 3
+                            albumsView.noContentText = "You haven't added any albums recently"
+                            albumsView.noContentButtonText = "Create an album"
                         }
                         else {
                             console.log("Unexpected label in action menu: " + label)
@@ -649,8 +665,8 @@ Labs.Window {
                 footerHeight: albumDetailsToolbar.height
                 model: albumModel
                 cellBackgroundColor: "black"
-                noContentText: "You have no photos in this album"
-                noContentButtonText: "Go to all photos"
+                noContentText: "You don't have any photos in this album"
+                noContentButtonText: "View all photos"
                 onOpenPhoto: {
                     // opening a photo from album detail view
                     photoDetailModel = albumModel;
@@ -674,7 +690,6 @@ Labs.Window {
                     albumDetailContextMenu.visible = true;
                 }
                 onNoContentAction: {
-                    scene.applicationPage = allPhotosComponent;
                     scene.applicationPage = allPhotosComponent;
                 }
             }
