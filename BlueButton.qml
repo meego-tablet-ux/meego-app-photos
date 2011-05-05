@@ -20,7 +20,6 @@ BorderImage {
 
     border { left: 4; right: 4 }
     horizontalTileMode: BorderImage.Stretch
-    anchors.horizontalCenter: parent.horizontalCenter
     width: label.paintedWidth + 40
     height: 40
 
@@ -57,6 +56,9 @@ BorderImage {
     MouseArea {
         anchors.fill: parent
         onPressed: parent.pressed = true
-        onReleased: parent.pressed = false
+        onReleased: {
+            parent.pressed = false;
+            button.clicked();
+        }
     }
 }

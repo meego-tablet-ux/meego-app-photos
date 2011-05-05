@@ -76,6 +76,11 @@ Labs.Window {
         id: backgroundModel
     }
 
+    Labs.ApplicationsModel {
+        id: appsModel
+        directories: [ "/usr/share/meego-ux-appgrid/applications", "/usr/share/applications", "~/.local/share/applications" ]
+    }
+
     PhotoListModel {
         id: allPhotosModel
         type: PhotoListModel.ListofPhotos
@@ -275,6 +280,8 @@ Labs.Window {
                 anchors.bottom: parent.bottom
                 model: allPhotosModel
                 footerHeight: allPhotosToolbar.height
+                noContentText: "You have no photos"
+                noContentButtonText: "Launch camera"
                 onOpenPhoto: {
                     photoDetailModel = allPhotosModel;
                     detailViewIndex = currentIndex;
@@ -302,6 +309,9 @@ Labs.Window {
                     allPhotosContextMenu.menuX = map.x;
                     allPhotosContextMenu.menuY = map.y;
                     allPhotosContextMenu.visible = true;
+                }
+                onNoContentAction: {
+                    appsModel.launchDesktopByName("/usr/share/meego-ux-appgrid/applications/meego-app-camera.desktop")
                 }
             }
 
@@ -361,6 +371,7 @@ Labs.Window {
 
             PhotoToolbar {
                 id: allPhotosToolbar
+                visible: allPhotosView.noContentVisible
                 parent: allPhotosPage.content
                 anchors.bottom: parent.bottom
                 width: parent.width
@@ -509,6 +520,8 @@ Labs.Window {
                 id: albumsView
                 parent:allAlbumsPage.content
                 anchors.fill: parent
+                noContentText: "You have no albums"
+                noContentButtonText: "Create an album"
 
                 clip: true
                 model:  allAlbumsModel
@@ -533,6 +546,9 @@ Labs.Window {
                     }
                     shareObj.shareType = MeeGoUXSharingClientQmlObj.ShareTypeImage
                     shareObj.showContextTypes(mouseX, mouseY)
+                }
+                onNoContentAction: {
+                    createAlbumDialog.show()
                 }
             }
             Component.onCompleted: {
@@ -633,6 +649,8 @@ Labs.Window {
                 footerHeight: albumDetailsToolbar.height
                 model: albumModel
                 cellBackgroundColor: "black"
+                noContentText: "You have no photos in this album"
+                noContentButtonText: "Go to all photos"
                 onOpenPhoto: {
                     // opening a photo from album detail view
                     photoDetailModel = albumModel;
@@ -654,6 +672,10 @@ Labs.Window {
                     albumDetailContextMenu.menuX = map.x;
                     albumDetailContextMenu.menuY = map.y;
                     albumDetailContextMenu.visible = true;
+                }
+                onNoContentAction: {
+                    scene.applicationPage = allPhotosComponent;
+                    scene.applicationPage = allPhotosComponent;
                 }
             }
 
@@ -716,6 +738,7 @@ Labs.Window {
 
             PhotoToolbar {
                 id: albumDetailsToolbar
+                visible: albumDetailsView.noContentVisible
                 parent: albumDetailPage.content
                 anchors.bottom: parent.bottom
                 width: parent.width
@@ -776,7 +799,8 @@ Labs.Window {
                 BlueButton {
                     id: renameButton
                     anchors.top: entry.bottom
-                    anchors.margins: textMargin
+                    anchors.right: entry.right
+                    anchors.topMargin: textMargin
 
                     text: labelRenamePhoto
                     onClicked: {
@@ -790,12 +814,12 @@ Labs.Window {
 
                 Text {
                     id: creation
-                    anchors.left: parent.left
-                    anchors.right: parent.right
+                    anchors.horizontalCenter: parent.horizontalCenter
                     anchors.top: renameButton.bottom
-                    anchors.margins: textMargin
+                    anchors.topMargin: textMargin
 
                     text: fuzzy.getFuzzy(currentPhotoCreationTime)
+                    visible: (text == "")? 0 : 1
                     font.pixelSize: theme_contextMenuFontPixelSize
                     verticalAlignment: Text.AlignVCenter
                     color: theme_contextMenuFontColor
@@ -803,12 +827,13 @@ Labs.Window {
 
                 Text {
                     id: camera
-                    anchors.left: parent.left
-                    anchors.right: parent.right
+                    anchors.horizontalCenter: parent.horizontalCenter
                     anchors.top: creation.bottom
-                    anchors.margins: textMargin
+                    anchors.topMargin: textMargin
 
                     text: currentPhotoCamera
+                    visible: (text == "")? 0 : 1
+                    height: (text == "")? 0 : creation.height
                     font.bold: true
                     font.pixelSize: theme_fontPixelSizeLarge
                     verticalAlignment: Text.Top
@@ -817,7 +842,10 @@ Labs.Window {
 
                 BlueButton {
                     id: button
-                    anchors.top: camera.bottom
+                    anchors.top: (camera.height > 0)? camera.bottom : creation.bottom
+                    anchors.topMargin: textMargin
+                    anchors.left: entry.left
+                    anchors.horizontalCenter: parent.horizontalCenter
 
                     text: labelDeletePhoto
                     onClicked: {

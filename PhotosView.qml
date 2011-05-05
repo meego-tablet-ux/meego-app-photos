@@ -27,6 +27,9 @@ Item {
     property alias model: view.model
     property alias currentItem: view.currentItem
     property alias currentIndex: view.currentIndex
+    property alias noContentText: noContentLabel.text
+    property alias noContentButtonText: actionButton.text
+    property alias noContentVisible: view.visible
 
     property alias footerHeight: view.footerHeight
 
@@ -41,6 +44,7 @@ Item {
 
     signal enteredSingleSelectMode()
     signal toggleSelectedPhoto(string uri, bool selected)
+    signal noContentAction()
     onSelectionModeChanged: {
         selected = [];
         thumburis = [];
@@ -66,6 +70,59 @@ Item {
                     return view.currentItem;
     }
 
+    Item {
+        id: noContentElement
+
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.right: parent.right
+        width: parent.width
+        visible: !view.visible
+
+        Rectangle{
+            id: separator1
+            anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.margins: 4
+            height: 1
+            color: "lightgrey"
+        }
+
+        Text {
+            anchors.top: separator1.bottom
+            anchors.left: parent.left
+            anchors.topMargin: 8
+            anchors.leftMargin: 4
+
+            id: noContentLabel
+            text: "You have no content"
+        }
+
+        BlueButton {
+            id: actionButton
+            anchors.verticalCenter: noContentLabel.verticalCenter
+            anchors.right: parent.right
+            anchors.margins: 4
+
+            text: "ACTION"
+            onClicked: {
+                container.noContentAction();
+            }
+        }
+
+        Rectangle {
+            id: separator2
+            anchors.top: actionButton.bottom
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.margins: 4
+            height: 1
+            color: "lightgrey"
+        }
+    }
+
+
     MediaGridView {
         id: view
         type: phototype
@@ -80,6 +137,8 @@ Item {
         anchors.right: parent.right
         anchors.leftMargin: 0
         anchors.rightMargin: 0
+
+        visible: (count != 0)? true : false
 
         spacing: 3
         cellWidth: {

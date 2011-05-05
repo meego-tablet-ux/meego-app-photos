@@ -21,6 +21,9 @@ Item {
     property alias currentItem: view.currentItem
     property alias view: view
     property alias currentIndex: view.currentIndex
+    property alias noContentText: noContentLabel.text
+    property alias noContentButtonText: actionButton.text
+    property alias noContentVisible: view.visible
 
     property string labelOpen: qsTr("Open")
     property string labelPlay: qsTr("Play slideshow")
@@ -30,6 +33,7 @@ Item {
     signal openAlbum(variant elementid, string title, bool isvirtual, bool fullscreen)
     signal playSlideshow(variant elementid, string title)
     signal shareAlbum(variant albumid, string title, int mouseX, int mouseY)
+    signal noContentAction()
 
     function indexAt(x,y) {
         return view.indexAt(x,y);
@@ -71,6 +75,58 @@ Item {
         }
     }
 
+    Item {
+        id: noContentElement
+
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.right: parent.right
+        width: parent.width
+        visible: !view.visible
+
+        Rectangle{
+            id: separator1
+            anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.margins: 4
+            height: 1
+            color: "lightgrey"
+        }
+
+        Text {
+            anchors.top: separator1.bottom
+            anchors.left: parent.left
+            anchors.topMargin: 8
+            anchors.leftMargin: 4
+
+            id: noContentLabel
+            text: "You have no albums"
+        }
+
+        BlueButton {
+            id: actionButton
+            anchors.verticalCenter: noContentLabel.verticalCenter
+            anchors.right: parent.right
+            anchors.margins: 4
+
+            text: "ACTION"
+            onClicked: {
+                container.noContentAction();
+            }
+        }
+
+        Rectangle {
+            id: separator2
+            anchors.top: actionButton.bottom
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.margins: 4
+            height: 1
+            color: "lightgrey"
+        }
+    }
+
     MediaGridView {
         id: view
         type: photoalbumtype
@@ -84,6 +140,7 @@ Item {
         anchors.right: parent.right
         anchors.leftMargin: 0
         anchors.rightMargin: 0
+        visible: (count != 0)? true : false
 
         spacing: 2
         cellWidth: {
