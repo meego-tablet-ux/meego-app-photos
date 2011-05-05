@@ -166,34 +166,18 @@ Item {
             }
 
             // full res image
-            Image {
+            LimitedImage {
                 id: fullImage
                 anchors.centerIn: parent
-                fillMode: Image.PreserveAspectFit
                 width: dinstance.width
                 height: dinstance.height
                 transformOrigin: Item.Center
                 opacity: 0
                 property bool show: false
                 property bool load: false
-                asynchronous: true
 
                 onStatusChanged: {
                     if (status == Image.Ready) {
-                        if (sourceSize.width > sourceSize.height) {
-                            if (sourceSize.width > scene.width) {
-                                sourceSize.width = scene.width
-                                sourceSize.height = 0
-                                return
-                            }
-                        }
-                        else {
-                            if (sourceSize.height > scene.height) {
-                                sourceSize.height = scene.height
-                                sourceSize.width = 0
-                                return
-                            }
-                        }
                         show = true
                     }
                 }

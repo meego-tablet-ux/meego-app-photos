@@ -30,15 +30,15 @@ Rectangle {
 
     // "private" properties
     property bool init: true
-    property bool first: true
+    property bool first: false
     property bool halt: false
     property bool loopOnce: false
 
     signal slideshowStopped(int aFinalIndex)
 
-    function loadImage(imageElement) {
+    function loadImage(imageLoader) {
+        imageLoader.sourceComponent = undefined
         var newIndex = currentIndex + 1
-
         if (newIndex >= model.count) {
             if (loop || loopOnce) {
                 newIndex = 0
@@ -52,17 +52,19 @@ Rectangle {
         }
 
         stricturl.setUrlUnencoded(model.getURIfromIndex(newIndex))
-        imageElement.source = stricturl.url
+        imageLoader.sourceComponent = imageComponent
+        imageLoader.item.source = stricturl.url
     }
 
     Component.onCompleted: {
-        timer.start()
         stricturl.setUrlUnencoded(model.getURIfromIndex(currentIndex))
-        firstImage.source = stricturl.url
+        firstImageLoader.sourceComponent = imageComponent
+        firstImageLoader.item.source = stricturl.url
         if (currentIndex + 1 >= model.count) {
             // if we start on the last image, loop to first once
             loopOnce = true
         }
+        first = true
     }
 
     Component.onDestruction: {
@@ -77,16 +79,10 @@ Rectangle {
         target: scene
         onForegroundChanged: {
             if (!scene.foreground) {
-                if (timer.running) {
-                    timer.stop()
-                    timer.paused = true
-                }
+                timer.pause()
             }
             else {
-                if (timer.paused) {
-                    timer.start()
-                    timer.paused = false
-                }
+                timer.unpause()
             }
         }
     }
@@ -95,7 +91,23 @@ Rectangle {
         id: timer
         interval: 3000
         repeat: true
+        property int pauseCount: 0
+
         property bool paused: false
+
+        function pause() {
+            pauseCount++
+            if (pauseCount == 1) {
+                stop()
+            }
+        }
+
+        function unpause() {
+            pauseCount--
+            if (pauseCount == 0) {
+                start()
+            }
+        }
 
         onRunningChanged: {
             scene.inhibitScreenSaver = running
@@ -104,7 +116,7 @@ Rectangle {
         onTriggered: {
             var count = model.count
             if (halt) {
-                stop();
+                stop()
                 slideshowStopped(currentIndex)
                 return
             }
@@ -114,28 +126,59 @@ Rectangle {
                 init = false
             }
 
+            var nextLoader
+            if (first) {
+                nextLoader = secondImageLoader
+            }
+            else {
+                nextLoader = firstImageLoader
+            }
+
+            if (nextLoader.item.status == Image.Loading) {
+                nextLoader.item.waiting = true
+                pause()
+                return
+            }
+
             currentIndex++
             first = !first
-            // ignoring for now possibility of image still not being ready
         }
     }
 
-    Image {
-        id: firstImage
+    Loader {
+        id: firstImageLoader
         anchors.centerIn: parent
-        fillMode: Image.PreserveAspectFit
         width: parent.width
         height: parent.height
-        asynchronous: true
     }
 
-    Image {
-        id: secondImage
+    Loader {
+        id: secondImageLoader
         anchors.centerIn: parent
-        fillMode: Image.PreserveAspectFit
         width: parent.width
         height: parent.height
-        asynchronous: true
+    }
+
+    Component {
+        id: imageComponent
+        LimitedImage {
+            opacity: 0
+            property bool waiting: false
+
+            onStatusChanged: {
+                if (init && status == Image.Ready) {
+                    slideshowViewer.opacity = 1
+                    init = false
+                    timer.start()
+                }
+                else if (waiting && status == Image.Ready) {
+                    currentIndex++
+                    first = !first
+                    waiting = false
+                    timer.unpause()
+                }
+            }
+        }
     }
 
     MouseArea {
@@ -147,14 +190,14 @@ Rectangle {
         State {
             name: "showFirst"
             when: first
-            PropertyChanges { target: firstImage; opacity: 1 }
-            PropertyChanges { target: secondImage; opacity: 0 }
+            PropertyChanges { target: firstImageLoader.item; opacity: 1 }
+            PropertyChanges { target: secondImageLoader.item; opacity: 0 }
         },
         State {
             name: "showSecond"
             when: !first
-            PropertyChanges { target: firstImage; opacity: 0 }
-            PropertyChanges { target: secondImage; opacity: 1 }
+            PropertyChanges { target: firstImageLoader.item; opacity: 0 }
+            PropertyChanges { target: secondImageLoader.item; opacity: 1 }
         }
     ]
 
@@ -163,14 +206,14 @@ Rectangle {
             to: "showFirst"
             SequentialAnimation {
                 PropertyAnimation { property: "opacity"; duration: 500 }
-                ScriptAction { script: { loadImage(secondImage) } }
+                ScriptAction { script: { loadImage(secondImageLoader) } }
             }
         },
         Transition {
             to: "showSecond"
             SequentialAnimation {
                 PropertyAnimation { property: "opacity"; duration: 500 }
-                ScriptAction { script: { loadImage(firstImage) } }
+                ScriptAction { script: { loadImage(firstImageLoader) } }
             }
         }
     ]
