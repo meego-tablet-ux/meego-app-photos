@@ -48,6 +48,18 @@ Labs.Window {
     property string labelDeletePhotosText: qsTr("Are you sure you want to delete the %1 selected photos?")
     property string labelDeleteAlbumText: qsTr("Are you sure you want to delete this album?")
 
+    property string labelNoPhotosText: qsTr("You have no photos")
+    property string labelNoRecentlyAddedPhotosText: qsTr("You haven't added any photos recently")
+    property string labelNoFavouritePhotosText: qsTr("You don't have any favourite photos")
+    property string labelNoRecentlyViewedPhotosText: qsTr("You haven't viewed any photos recently")
+    property string labelNoAlbumsText: qsTr("You have no albums")
+    property string labelNoRecentlyAddedAlbumsText: qsTr("You haven't added any albums recently")
+    property string labelNoPhotosInAlbumText: qsTr("You don't have any photos in this album")
+
+    property string labelNoContentTakePhotoButtonText: qsTr("Take a photo")
+    property string labelNoContentViewPhotosButtonText: qsTr("View all photos")
+    property string labelNoContentCreateAlbumButtonText: qsTr("Create an album")
+
     property string labelSingleAlbum: qsTr("Album title")
     onLabelSingleAlbumChanged: {
         albumModel.search = "";
@@ -233,23 +245,23 @@ Labs.Window {
                 function setFilter(label) {
                     if (label == labelAll) {
                         allPhotosModel.filter = 0
-                        allPhotosView.noContentText = "You have no photos"
-                        allPhotosView.noContentButtonText = "Take a photo"
+                        allPhotosView.noContentText = labelNoPhotosText
+                        allPhotosView.noContentButtonText = labelNoContentTakePhotoButtonText
                     }
                     else if (label == labelRecentlyAdded) {
                         allPhotosModel.filter = 3
-                        allPhotosView.noContentText = "You haven't added any photos recently"
-                        allPhotosView.noContentButtonText = "View all photos"
+                        allPhotosView.noContentText = labelNoRecentlyAddedPhotosText
+                        allPhotosView.noContentButtonText = labelNoContentViewPhotosButtonText
                     }
                     else if (label == labelFavorites) {
                         allPhotosModel.filter = 1
-                        allPhotosView.noContentText = "You don't have any favourite photos"
-                        allPhotosView.noContentButtonText = "View all photos"
+                        allPhotosView.noContentText = labelNoFavouritePhotosText
+                        allPhotosView.noContentButtonText = labelNoContentViewPhotosButtonText
                     }
                     else if (label == labelRecentlyViewed) {
                         allPhotosModel.filter = 2
-                        allPhotosView.noContentText = "You haven't viewed any photos recently"
-                        allPhotosView.noContentButtonText = "View all photos"
+                        allPhotosView.noContentText = labelNoRecentlyViewedPhotosText
+                        allPhotosView.noContentButtonText = labelNoContentViewPhotosButtonText
                     }
                     else {
                         console.log("Unexpected label in action menu: " + label)
@@ -288,8 +300,8 @@ Labs.Window {
                 anchors.bottom: parent.bottom
                 model: allPhotosModel
                 footerHeight: allPhotosToolbar.height
-                noContentText: "You have no photos"
-                noContentButtonText: "Launch camera"
+                noContentText: labelNoPhotosText
+                noContentButtonText: labelNoContentTakePhotoButtonText
                 onOpenPhoto: {
                     photoDetailModel = allPhotosModel;
                     detailViewIndex = currentIndex;
@@ -480,13 +492,13 @@ Labs.Window {
                     function setFilter(label) {
                         if (label == labelAll) {
                             allAlbumsModel.filter = 0
-                            albumsView.noContentText = "You have no albums"
-                            albumsView.noContentButtonText = "Create an album"
+                            albumsView.noContentText = labelNoAlbumsText
+                            albumsView.noContentButtonText = labelNoContentCreateAlbumButtonText
                         }
                         else if (label == labelRecentlyAdded) {
                             allAlbumsModel.filter = 3
-                            albumsView.noContentText = "You haven't added any albums recently"
-                            albumsView.noContentButtonText = "Create an album"
+                            albumsView.noContentText = labelNoRecentlyAddedAlbumsText
+                            albumsView.noContentButtonText = labelNoContentCreateAlbumButtonText
                         }
                         else {
                             console.log("Unexpected label in action menu: " + label)
@@ -536,8 +548,8 @@ Labs.Window {
                 id: albumsView
                 parent:allAlbumsPage.content
                 anchors.fill: parent
-                noContentText: "You have no albums"
-                noContentButtonText: "Create an album"
+                noContentText: labelNoAlbumsText
+                noContentButtonText: labelNoContentCreateAlbumButtonText
 
                 clip: true
                 model:  allAlbumsModel
@@ -665,8 +677,8 @@ Labs.Window {
                 footerHeight: albumDetailsToolbar.height
                 model: albumModel
                 cellBackgroundColor: "black"
-                noContentText: "You don't have any photos in this album"
-                noContentButtonText: "View all photos"
+                noContentText: labelNoPhotosInAlbumText
+                noContentButtonText: labelNoContentViewPhotosButtonText
                 onOpenPhoto: {
                     // opening a photo from album detail view
                     photoDetailModel = albumModel;

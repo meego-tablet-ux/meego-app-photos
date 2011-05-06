@@ -101,7 +101,7 @@ Item {
             anchors.leftMargin: 4
 
             id: noContentLabel
-            text: "You have no albums"
+            text: ""
         }
 
         BlueButton {
@@ -110,7 +110,7 @@ Item {
             anchors.right: parent.right
             anchors.margins: 4
 
-            text: "ACTION"
+            text: ""
             onClicked: {
                 container.noContentAction();
             }
