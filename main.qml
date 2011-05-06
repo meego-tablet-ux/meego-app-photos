@@ -810,7 +810,7 @@ Labs.Window {
 
             menuContent: Item {
                 property int textMargin: 16
-                width: 300 + 2 * textMargin
+                width: (renameButton.width > 300 || creation.width > 300) ? ((renameButton.width > creation.width) ? renameButton.width + 2 * textMargin : creation.width + 2 * textMargin) : 300 + 2 * textMargin
                 height: childrenRect.height + 2 * textMargin
 
                 TextEntry {
