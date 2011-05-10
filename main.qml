@@ -11,6 +11,7 @@ import MeeGo.Labs.Components 0.1 as Labs
 import MeeGo.Components 0.1
 import MeeGo.Media 0.1
 import MeeGo.Sharing 0.1
+import MeeGo.Sharing.UI 0.1
 
 Labs.Window {
     id: scene
@@ -80,8 +81,9 @@ Labs.Window {
     property bool showFullscreen: false
     property bool showSlideshow: false
 
-    Labs.ShareObj {
+    ShareObj {
         id: shareObj
+        shareType: MeeGoUXSharingClientQmlObj.ShareTypeImage
     }
 
     Labs.BackgroundModel {
@@ -366,7 +368,6 @@ Labs.Window {
                         // Share
                         shareObj.clearItems();
                         shareObj.addItem(payload.muri) // URI
-                        shareObj.shareType = MeeGoUXSharingClientQmlObj.ShareTypeImage
                         shareObj.showContextTypes(mouseX, mouseY)
                     }
                     else if (model[index] == labelAddToAlbum)
@@ -572,7 +573,6 @@ Labs.Window {
                     for (var i in uris) {
                         shareObj.addItem(uris[i])
                     }
-                    shareObj.shareType = MeeGoUXSharingClientQmlObj.ShareTypeImage
                     shareObj.showContextTypes(mouseX, mouseY)
                 }
                 onNoContentAction: {
@@ -733,7 +733,6 @@ Labs.Window {
                         // Share
                         shareObj.clearItems();
                         shareObj.addItem(payload.muri) // URI
-                        shareObj.shareType = MeeGoUXSharingClientQmlObj.ShareTypeImage
                         shareObj.showContextTypes(mouseX, mouseY)
                     }
                     else if (model[index] == labelAddToAlbum)
@@ -946,7 +945,6 @@ Labs.Window {
                 id: contextInstance
                 // onClose: contextLoader.sourceComponent = undefined
 
-
                 onTriggered: {
                     // context menu handler for photo details page
                     if (model[index] == labelLeaveFullScreen || model[index] == labelFullScreen) {
@@ -961,7 +959,6 @@ Labs.Window {
                         // Share
                         shareObj.clearItems();
                         shareObj.addItem(payload.puri) // URI
-                        shareObj.shareType = MeeGoUXSharingClientQmlObj.ShareTypeImage
                         shareObj.showContextTypes(mouseX, mouseY)
                     }
 
