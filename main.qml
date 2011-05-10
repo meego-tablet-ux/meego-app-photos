@@ -810,7 +810,7 @@ Labs.Window {
 
             menuContent: Item {
                 property int textMargin: 16
-                width: (renameButton.width > 300 || creation.width > 300) ? ((renameButton.width > creation.width) ? renameButton.width + 2 * textMargin : creation.width + 2 * textMargin) : 300 + 2 * textMargin
+                width: Math.max(renameButton.width, creation.width, 300) + 2 * textMargin
                 height: childrenRect.height + 2 * textMargin
 
                 TextEntry {
@@ -826,7 +826,7 @@ Labs.Window {
                 BlueButton {
                     id: renameButton
                     anchors.top: entry.bottom
-                    anchors.right: entry.right
+                    anchors.horizontalCenter: parent.horizontalCenter
                     anchors.topMargin: textMargin
 
                     text: labelRenamePhoto
@@ -871,7 +871,6 @@ Labs.Window {
                     id: button
                     anchors.top: (camera.height > 0)? camera.bottom : creation.bottom
                     anchors.topMargin: textMargin
-                    anchors.left: entry.left
                     anchors.horizontalCenter: parent.horizontalCenter
 
                     text: labelDeletePhoto
