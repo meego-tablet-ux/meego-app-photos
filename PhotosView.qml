@@ -138,7 +138,7 @@ Item {
         anchors.leftMargin: 0
         anchors.rightMargin: 0
 
-        visible: (count != 0)? true : false
+        visible: model.count != 0
 
         spacing: 3
         cellWidth: {
