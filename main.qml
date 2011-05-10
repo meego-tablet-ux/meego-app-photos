@@ -631,7 +631,7 @@ Labs.Window {
 
                     visible: !albumIsVirtual;
 
-                    BlueButton {
+                    Button {
                         id: button
                         anchors.centerIn: parent
                         text: labelDeleteAlbum
@@ -822,7 +822,7 @@ Labs.Window {
                     text: labelSinglePhoto
                 }
 
-                BlueButton {
+                Button {
                     id: renameButton
                     anchors.top: entry.bottom
                     anchors.horizontalCenter: parent.horizontalCenter
@@ -866,7 +866,7 @@ Labs.Window {
                     color: theme_contextMenuFontColor
                 }
 
-                BlueButton {
+                Button {
                     id: button
                     anchors.top: (camera.height > 0)? camera.bottom : creation.bottom
                     anchors.topMargin: textMargin
