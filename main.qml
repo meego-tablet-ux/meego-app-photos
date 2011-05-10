@@ -51,7 +51,7 @@ Labs.Window {
 
     property string labelNoPhotosText: qsTr("You have no photos")
     property string labelNoRecentlyAddedPhotosText: qsTr("You haven't added any photos recently")
-    property string labelNoFavouritePhotosText: qsTr("You don't have any favourite photos")
+    property string labelNoFavoritePhotosText: qsTr("You don't have any favorite photos")
     property string labelNoRecentlyViewedPhotosText: qsTr("You haven't viewed any photos recently")
     property string labelNoAlbumsText: qsTr("You have no albums")
     property string labelNoRecentlyAddedAlbumsText: qsTr("You haven't added any albums recently")
@@ -257,7 +257,7 @@ Labs.Window {
                     }
                     else if (label == labelFavorites) {
                         allPhotosModel.filter = 1
-                        allPhotosView.noContentText = labelNoFavouritePhotosText
+                        allPhotosView.noContentText = labelNoFavoritePhotosText
                         allPhotosView.noContentButtonText = labelNoContentViewPhotosButtonText
                     }
                     else if (label == labelRecentlyViewed) {
