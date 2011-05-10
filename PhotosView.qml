@@ -27,8 +27,8 @@ Item {
     property alias model: view.model
     property alias currentItem: view.currentItem
     property alias currentIndex: view.currentIndex
-    property alias noContentText: noContentLabel.text
-    property alias noContentButtonText: actionButton.text
+    property alias noContentText: noContent.text
+    property alias noContentButtonText: noContent.buttonText
     property alias noContentVisible: view.visible
 
     property alias footerHeight: view.footerHeight
@@ -45,6 +45,7 @@ Item {
     signal enteredSingleSelectMode()
     signal toggleSelectedPhoto(string uri, bool selected)
     signal noContentAction()
+
     onSelectionModeChanged: {
         selected = [];
         thumburis = [];
@@ -52,76 +53,19 @@ Item {
     }
 
     signal openPhoto(variant item, bool fullscreen, bool startSlideshow)
-
     signal pressAndHold(int x, int y, variant payload)
-    function nextPhoto() {
-        if (view.currentIndex > view.count - 1 || view.currentIndex == -1)
-            view.currentIndex = 0;
-        else
-            view.currentIndex++
-                    return view.currentItem;
-    }
 
-    function prevPhoto() {
-        if (view.currentIndex == 0 || view.currentIndex == -1)
-            view.currentIndex = view.count - 1;
-        else
-            view.currentIndex--
-                    return view.currentItem;
-    }
+    NoContent {
+        id: noContent
 
-    Item {
-        id: noContentElement
-
-        anchors.top: parent.top
-        anchors.left: parent.left
-        anchors.right: parent.right
+        anchors.verticalCenter: parent.verticalCenter
         width: parent.width
         visible: !view.visible
 
-        Rectangle{
-            id: separator1
-            anchors.top: parent.top
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.margins: 4
-            height: 1
-            color: "lightgrey"
-        }
-
-        Text {
-            anchors.top: separator1.bottom
-            anchors.left: parent.left
-            anchors.topMargin: 8
-            anchors.leftMargin: 4
-
-            id: noContentLabel
-            text: ""
-        }
-
-        BlueButton {
-            id: actionButton
-            anchors.verticalCenter: noContentLabel.verticalCenter
-            anchors.right: parent.right
-            anchors.margins: 4
-
-            text: ""
-            onClicked: {
-                container.noContentAction();
-            }
-        }
-
-        Rectangle {
-            id: separator2
-            anchors.top: actionButton.bottom
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.margins: 4
-            height: 1
-            color: "lightgrey"
+        onClicked: {
+            container.noContentAction();
         }
     }
-
 
     MediaGridView {
         id: view

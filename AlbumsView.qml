@@ -21,8 +21,8 @@ Item {
     property alias currentItem: view.currentItem
     property alias view: view
     property alias currentIndex: view.currentIndex
-    property alias noContentText: noContentLabel.text
-    property alias noContentButtonText: actionButton.text
+    property alias noContentText: noContent.text
+    property alias noContentButtonText: noContent.buttonText
     property alias noContentVisible: view.visible
 
     property string labelOpen: qsTr("Open")
@@ -75,56 +75,12 @@ Item {
         }
     }
 
-    Item {
-        id: noContentElement
+    NoContent {
+        id: noContent
 
-        anchors.top: parent.top
-        anchors.left: parent.left
-        anchors.right: parent.right
+        anchors.verticalCenter: parent.verticalCenter
         width: parent.width
         visible: !view.visible
-
-        Rectangle{
-            id: separator1
-            anchors.top: parent.top
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.margins: 4
-            height: 1
-            color: "lightgrey"
-        }
-
-        Text {
-            anchors.top: separator1.bottom
-            anchors.left: parent.left
-            anchors.topMargin: 8
-            anchors.leftMargin: 4
-
-            id: noContentLabel
-            text: ""
-        }
-
-        BlueButton {
-            id: actionButton
-            anchors.verticalCenter: noContentLabel.verticalCenter
-            anchors.right: parent.right
-            anchors.margins: 4
-
-            text: ""
-            onClicked: {
-                container.noContentAction();
-            }
-        }
-
-        Rectangle {
-            id: separator2
-            anchors.top: actionButton.bottom
-            anchors.left: parent.left
-            anchors.right: parent.right
-            anchors.margins: 4
-            height: 1
-            color: "lightgrey"
-        }
     }
 
     MediaGridView {
