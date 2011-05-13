@@ -327,10 +327,9 @@ Labs.Window {
                                                   payload.mfavorite ? labelUnfavorite : labelFavorite,
                                                   labelShare, labelAddToAlbum,
                                                   labelMultiSelMode, labelSetAsBackground, labelDelete];
-                    allPhotosContextMenu.payload = payload;
-                    allPhotosContextMenu.menuX = map.x;
-                    allPhotosContextMenu.menuY = map.y;
-                    allPhotosContextMenu.visible = true;
+                    allPhotosContextMenu.payload = payload
+                    allPhotosContextMenu.setPosition(map.x, map.y)
+                    allPhotosContextMenu.show()
                 }
                 onNoContentAction: {
                     if ( allPhotosModel.filter == 0) {
@@ -341,55 +340,62 @@ Labs.Window {
                 }
             }
 
-            Labs.ContextMenu {
+            ContextMenu {
                 id: allPhotosContextMenu
-                onClose: contextLoader.sourceComponent = undefined
-                onTriggered: {
-                    // context menu handler for all photos page
-                    if (model[index] == labelOpen)
-                    {
-                        // Open the photo
-                        allPhotosView.currentIndex = payload.mindex;
-                        allPhotosView.openPhoto(payload, false, false);
-                    }
-                    else if (model[index] == labelPlay)
-                    {
-                        // Kick off slide show starting with this photo
-                        allPhotosView.currentIndex = payload.mindex;
-                        allPhotosView.openPhoto(payload, true, true)
-                    }
-                    else if (model[index] == labelFavorite || model[index] == labelUnfavorite)
-                    {
-                        // Mark as a favorite
-                        allPhotosView.model.setFavorite(payload.mitemid, !payload.mfavorite)
-                    }
-                    else if (model[index] == labelShare)
-                    {
-                        // Share
-                        shareObj.clearItems();
-                        shareObj.addItem(payload.muri) // URI
-                        shareObj.showContextTypes(mouseX, mouseY)
-                    }
-                    else if (model[index] == labelAddToAlbum)
-                    {
-                        allPhotosView.selected =  [payload.mitemid]
-                        allPhotosView.thumburis =  [payload.mthumburi]
-                        allPhotosView.currentIndex = payload.mindex
-                        photopicker.payload = [payload.mitemid]
-                        photopicker.show()
-                    }
-                    else if (model[index] == allPhotosView.labelMultiSelMode)
-                    {
-                        allPhotosView.selectionMode = !container.selectionMode;
-                    }
-                    else if (model[index] == labelSetAsBackground) {
-                        backgroundModel.activeWallpaper = payload.muri;
-                    }
-                    else if (model[index] == labelDelete)
-                    {
-                        confirmer.text = labelDeletePhotoText
-                        confirmer.items = [ payload.mitemid ]
-                        confirmer.show()
+                property alias payload: allPhotosActionMenu.payload
+                property alias model: allPhotosActionMenu.model
+                content: ActionMenu {
+                    id: allPhotosActionMenu
+                    property variant payload: undefined
+
+                    onTriggered: {
+                        // context menu handler for all photos page
+                        if (model[index] == labelOpen)
+                        {
+                            // Open the photo
+                            allPhotosView.currentIndex = payload.mindex;
+                            allPhotosView.openPhoto(payload, false, false);
+                        }
+                        else if (model[index] == labelPlay)
+                        {
+                            // Kick off slide show starting with this photo
+                            allPhotosView.currentIndex = payload.mindex;
+                            allPhotosView.openPhoto(payload, true, true)
+                        }
+                        else if (model[index] == labelFavorite || model[index] == labelUnfavorite)
+                        {
+                            // Mark as a favorite
+                            allPhotosView.model.setFavorite(payload.mitemid, !payload.mfavorite)
+                        }
+                        else if (model[index] == labelShare)
+                        {
+                            // Share
+                            shareObj.clearItems();
+                            shareObj.addItem(payload.muri) // URI
+                            shareObj.showContextTypes(mouseX, mouseY)
+                        }
+                        else if (model[index] == labelAddToAlbum)
+                        {
+                            allPhotosView.selected =  [payload.mitemid]
+                            allPhotosView.thumburis =  [payload.mthumburi]
+                            allPhotosView.currentIndex = payload.mindex
+                            photopicker.payload = [payload.mitemid]
+                            photopicker.show()
+                        }
+                        else if (model[index] == allPhotosView.labelMultiSelMode)
+                        {
+                            allPhotosView.selectionMode = !container.selectionMode;
+                        }
+                        else if (model[index] == labelSetAsBackground) {
+                            backgroundModel.activeWallpaper = payload.muri;
+                        }
+                        else if (model[index] == labelDelete)
+                        {
+                            confirmer.text = labelDeletePhotoText
+                            confirmer.items = [ payload.mitemid ]
+                            confirmer.show()
+                        }
+                        allPhotosContextMenu.hide()
                     }
                 }
             }
@@ -696,69 +702,74 @@ Labs.Window {
                                                     labelShare, labelAddToAlbum,
                                                     // labelMultiSelMode,
                                                     labelRemoveFromAlbum, labelSetAsBackground, labelDelete]
-                    albumDetailContextMenu.payload = payload;
-                    albumDetailContextMenu.menuX = map.x;
-                    albumDetailContextMenu.menuY = map.y;
-                    albumDetailContextMenu.visible = true;
+                    albumDetailContextMenu.payload = payload
+                    albumDetailContextMenu.setPosition(map.x, map.y)
+                    albumDetailContextMenu.show()
                 }
                 onNoContentAction: {
                     scene.applicationPage = allPhotosComponent;
                 }
             }
 
-            Labs.ContextMenu {
+            ContextMenu {
                 id: albumDetailContextMenu
-                onClose: contextLoader.sourceComponent = undefined
-                onTriggered: {
-                    // context menu handler for all photos page
-                    if (model[index] == labelOpen)
-                    {
-                        // Open the photo
-                        albumDetailsView.currentIndex = payload.mindex;
-                        albumDetailsView.openPhoto(payload, false, false);
-                    }
-                    else if (model[index] == labelPlay)
-                    {
-                        // Kick off slide show starting with this photo
-                        albumDetailsView.currentIndex = payload.mindex;
-                        albumDetailsView.openPhoto(payload, true, true)
-                    }
-                    else if (model[index] == labelFavorite || model[index] == labelUnfavorite)
-                    {
-                        // Mark as a favorite
-                        albumDetailsView.model.setFavorite(payload.mitemid, !payload.mfavorite)
-                    }
-                    else if (model[index] == labelShare)
-                    {
-                        // Share
-                        shareObj.clearItems();
-                        shareObj.addItem(payload.muri) // URI
-                        shareObj.showContextTypes(mouseX, mouseY)
-                    }
-                    else if (model[index] == labelAddToAlbum)
-                    {
-                        albumDetailsView.selected = [payload.mitemid]
-                        albumDetailsView.thumburis = [payload.mthumburi]
-                        albumDetailsView.currentIndex = payload.mindex;
-                        photopicker.payload = [payload.mitemid];
-                        photopicker.show();
-                    }
-                    else if (model[index] == labelRemoveFromAlbum)
-                    {
-                        albumModel.removeItems([payload.mitemid])
-                    }
-                    else if (model[index] == labelDelete)
-                    {
-                        confirmer.model = albumModel
-                        confirmer.previousPage = false
-                        confirmer.text = labelDeletePhotoText
-                        confirmer.items = [ payload.mitemid ]
-                        confirmer.show()
-                    }
-                    else if(model[index] == labelSetAsBackground) {
-                        backgroundModel.activeWallpaper = payload.muri
-                    }
+                property alias payload: albumDetailActionMenu.payload
+                property alias model: albumDetailActionMenu.model
+                content: ActionMenu {
+                    id: albumDetailActionMenu
+                    property variant payload: undefined
 
+                    onTriggered: {
+                        // context menu handler for all photos page
+                        if (model[index] == labelOpen)
+                        {
+                            // Open the photo
+                            albumDetailsView.currentIndex = payload.mindex;
+                            albumDetailsView.openPhoto(payload, false, false);
+                        }
+                        else if (model[index] == labelPlay)
+                        {
+                            // Kick off slide show starting with this photo
+                            albumDetailsView.currentIndex = payload.mindex;
+                            albumDetailsView.openPhoto(payload, true, true)
+                        }
+                        else if (model[index] == labelFavorite || model[index] == labelUnfavorite)
+                        {
+                            // Mark as a favorite
+                            albumDetailsView.model.setFavorite(payload.mitemid, !payload.mfavorite)
+                        }
+                        else if (model[index] == labelShare)
+                        {
+                            // Share
+                            shareObj.clearItems();
+                            shareObj.addItem(payload.muri) // URI
+                            shareObj.showContextTypes(mouseX, mouseY)
+                        }
+                        else if (model[index] == labelAddToAlbum)
+                        {
+                            albumDetailsView.selected = [payload.mitemid]
+                            albumDetailsView.thumburis = [payload.mthumburi]
+                            albumDetailsView.currentIndex = payload.mindex;
+                            photopicker.payload = [payload.mitemid];
+                            photopicker.show();
+                        }
+                        else if (model[index] == labelRemoveFromAlbum)
+                        {
+                            albumModel.removeItems([payload.mitemid])
+                        }
+                        else if (model[index] == labelDelete)
+                        {
+                            confirmer.model = albumModel
+                            confirmer.previousPage = false
+                            confirmer.text = labelDeletePhotoText
+                            confirmer.items = [ payload.mitemid ]
+                            confirmer.show()
+                        }
+                        else if(model[index] == labelSetAsBackground) {
+                            backgroundModel.activeWallpaper = payload.muri
+                        }
+                        albumDetailContextMenu.hide()
+                    }
                 }
             }
 
@@ -915,15 +926,13 @@ Labs.Window {
 
                 onPressAndHoldOnPhoto: {
                     var map = mapToItem(scene, mouse.x , mouse.y)
-                    contextInstance.model = [photodtview.viewMode ? labelLeaveFullScreen : labelFullScreen,
+                    photoDetailContextMenu.model = [photodtview.viewMode ? labelLeaveFullScreen : labelFullScreen,
                                              labelPlay, labelShare,
                                              instance.pfavorite ? labelUnfavorite : labelFavorite,
                                              labelAddToAlbum, labelSetAsBackground, labelDelete];
-                    contextInstance.payload = instance;
-                    contextInstance.menuX = map.x;
-                    contextInstance.menuY = map.y;
-                    contextInstance.visible = true;
-
+                    photoDetailContextMenu.payload = instance
+                    photoDetailContextMenu.setPosition(map.x, map.y)
+                    photoDetailContextMenu.show()
                 }
                 onCurrentIndexChanged: {
                     labelSinglePhoto = currentItem.ptitle
@@ -941,47 +950,52 @@ Labs.Window {
                 }
             }
 
-            Labs.ContextMenu {
-                id: contextInstance
-                // onClose: contextLoader.sourceComponent = undefined
+            ContextMenu {
+                id: photoDetailContextMenu
+                property alias payload: photoDetailActionMenu.payload
+                property alias model: photoDetailActionMenu.model
+                content: ActionMenu {
+                    id: photoDetailActionMenu
+                    property variant payload: undefined
 
-                onTriggered: {
-                    // context menu handler for photo details page
-                    if (model[index] == labelLeaveFullScreen || model[index] == labelFullScreen) {
-                        // toggle full screen
-                        photodtview.viewMode = photodtview.viewMode ? 0 : 1;
+                    onTriggered: {
+                        // context menu handler for photo details page
+                        if (model[index] == labelLeaveFullScreen || model[index] == labelFullScreen) {
+                            // toggle full screen
+                            photodtview.viewMode = photodtview.viewMode ? 0 : 1;
+                        }
+                        else if (model[index] == labelPlay) {
+                            // Kick off slide show starting with this photo
+                            photodtview.startSlideshow();
+                        }
+                        else if (model[index] == labelShare) {
+                            // Share
+                            shareObj.clearItems();
+                            shareObj.addItem(payload.puri) // URI
+                            shareObj.showContextTypes(mouseX, mouseY)
+                        }
+                        else if (model[index] == labelFavorite || model[index] == labelUnfavorite) {
+                            // Mark as a favorite
+                            photodtview.toolbar.isFavorite = !payload.pfavorite;
+                            photodtview.model.setFavorite(payload.pitemid, !payload.pfavorite);
+                        }
+                        else if (model[index] == labelAddToAlbum) {
+                            // Add to album
+                            //photodtview.singleSelectionMode = true;
+                            photopicker.payload = [payload.pitemid]
+                            photopicker.show()
+                        }
+                        else if (model[index] == labelSetAsBackground) {
+                            backgroundModel.activeWallpaper = payload.puri;
+                        }
+                        else if (model[index] == labelDelete) {
+                            // Delete
+                            confirmer.text = labelDeletePhotoText
+                            confirmer.items = [ payload.pitemid ]
+                            confirmer.show()
+                        }
+                        photoDetailContextMenu.hide()
                     }
-                    else if (model[index] == labelPlay) {
-                        // Kick off slide show starting with this photo
-                        photodtview.startSlideshow();
-                    }
-                    else if (model[index] == labelShare) {
-                        // Share
-                        shareObj.clearItems();
-                        shareObj.addItem(payload.puri) // URI
-                        shareObj.showContextTypes(mouseX, mouseY)
-                    }
-
-                    else if (model[index] == labelFavorite || model[index] == labelUnfavorite) {
-                        // Mark as a favorite
-                        photodtview.toolbar.isFavorite = !payload.pfavorite;
-                        photodtview.model.setFavorite(payload.pitemid, !payload.pfavorite);
-                    }
-                    else if (model[index] == labelAddToAlbum) {
-                        // Add to album
-                        //photodtview.singleSelectionMode = true;
-                        photopicker.payload = [payload.pitemid]
-                        photopicker.show()
-                    }
-                    else if (model[index] == labelSetAsBackground) {
-                        backgroundModel.activeWallpaper = payload.puri;
-                    }
-                    else if (model[index] == labelDelete) {
-                        // Delete
-                        confirmer.text = labelDeletePhotoText
-                        confirmer.items = [ payload.pitemid ]
-                        confirmer.show()
-                   }
                 }
             }
         }

@@ -8,6 +8,7 @@
 
 import Qt 4.7
 import MeeGo.Labs.Components 0.1 as Labs
+import MeeGo.Components 0.1
 import MeeGo.Media 0.1
 
 Item {
@@ -48,29 +49,36 @@ Item {
         }
     }
 
-    Labs.ContextMenu {
-        id: contextInstance
-        onTriggered: {
-            var target = container.anchors
-            if (model[index] == labelOpen) {
-                // Open the photo
-                openAlbum(payload.mitemid, payload.mtitle, payload.misvirtual, false)
-            }
-            else if (model[index] == labelPlay) {
-                // TODO: this is currently disabled below
-                // Play slideshow
-                playSlideshow(payload.mitemid, payload.mtitle)
-            }
-            else if (model[index] == labelShare) {
-                // Share
-                shareAlbum(payload.mitemid, payload.mtitle,
-                           contextInstance.menuX, contextInstance.menuY)
-            }
-            else if (model[index] == labelDelete) {
-                // Delete
-                confirmer.text = labelDeleteAlbumText
-                confirmer.items = [ payload.mitemid ]
-                confirmer.show()
+    ContextMenu {
+        id: albumsContextMenu
+        property alias payload: albumsActionMenu.payload
+        property alias model: albumsActionMenu.model
+        content: ActionMenu {
+            id: albumsActionMenu
+            property variant payload: undefined
+            onTriggered: {
+                var target = container.anchors
+                if (model[index] == labelOpen) {
+                    // Open the photo
+                    openAlbum(payload.mitemid, payload.mtitle, payload.misvirtual, false)
+                }
+                else if (model[index] == labelPlay) {
+                    // TODO: this is currently disabled below
+                    // Play slideshow
+                    playSlideshow(payload.mitemid, payload.mtitle)
+                }
+                else if (model[index] == labelShare) {
+                    // Share
+                    shareAlbum(payload.mitemid, payload.mtitle,
+                               contextInstance.menuX, contextInstance.menuY)
+                }
+                else if (model[index] == labelDelete) {
+                    // Delete
+                    confirmer.text = labelDeleteAlbumText
+                    confirmer.items = [ payload.mitemid ]
+                    confirmer.show()
+                }
+                albumsContextMenu.hide()
             }
         }
     }
@@ -165,12 +173,10 @@ Item {
                 options.push(labelDelete)
             }
 
-            contextInstance.model = options
-            contextInstance.payload = payload;
-
-            contextInstance.menuX = map.x;
-            contextInstance.menuY = map.y;
-            contextInstance.visible = true;
+            albumsContextMenu.model = options
+            albumsContextMenu.payload = payload;
+            albumsContextMenu.setPosition(map.x, map.y)
+            albumsContextMenu.show()
         }
     }
 }
