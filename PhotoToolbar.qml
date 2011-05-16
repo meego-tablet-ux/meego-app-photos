@@ -64,8 +64,8 @@ Item {
         IconButton {
             opacity: mode == 0 ? 1.0 : 0.0
             anchors.verticalCenter: parent.verticalCenter
-            icon: "image://themedimage/icons/toolbar/go-back-active"
-            iconDown: "image://themedimage/icons/toolbar/go-back"
+            icon: "image://themedimage/images/media/icn_back_up"
+            iconDown: "image://themedimage/images/media/icn_back_dn"
             hasBackground: false
             onClicked: container.prev()
         }
@@ -80,8 +80,8 @@ Item {
         IconButton {
             opacity: mode == 0 ? 1.0 : 0.0
             anchors.verticalCenter: parent.verticalCenter
-            icon: "image://themedimage/icons/toolbar/go-forward-active"
-            iconDown: "image://themedimage/icons/toolbar/go-forward"
+            icon: "image://themedimage/images/media/icn_forward_up"
+            iconDown: "image://themedimage/images/media/icn_forward_dn"
             hasBackground: false
             onClicked: container.next()
         }
