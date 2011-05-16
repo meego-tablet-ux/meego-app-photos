@@ -138,8 +138,7 @@ Item {
                 selected = view.model.getSelectedIDs();
                 thumburis = view.model.getSelectedURIs();
             }
-            else
-            {
+            else {
                 view.currentIndex = payload.mindex;
                 container.openPhoto(payload, false, false);
             }

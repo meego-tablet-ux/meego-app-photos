@@ -100,7 +100,8 @@ Item {
             contentWidth: {
                 if (photoRotate == 0 || photoRotate == 2) {
                     image.width * image.scale > width ? image.width * image.scale : width
-                } else {
+                }
+                else {
                     image.height * image.scale > width ? image.height * image.scale : width
                 }
             }
@@ -108,7 +109,8 @@ Item {
             contentHeight:{
                 if (photoRotate == 0 || photoRotate == 2) {
                     image.height * image.scale > height ? image.height * image.scale : height
-                } else {
+                }
+                else {
                     image.width * image.scale > height ? image.width * image.scale : height
                 }
             }
@@ -362,7 +364,8 @@ Item {
                 if (photoRotate == 0 || photoRotate == 2) {
                     image.width = dinstance.width;
                     image.height = dinstance.height;
-                } else {
+                }
+                else {
                     image.width = dinstance.height;
                     image.height = dinstance.width;
                 }
@@ -429,7 +432,8 @@ Item {
         onMovementEnded: {
             if (!movementCausedByFlick) {
                 currentIndex = indexAt(contentX + width/2, contentY + height/2);
-            } else {
+            }
+            else {
                 var i = indexAt(contentX + width/2, contentY + height/2);
                 if (currentIndex != i)
                 {
@@ -493,7 +497,8 @@ Item {
             // start the timer
             if (show == true) {
                 hideThumbnailTimer.start();
-            } else {
+            }
+            else {
                 hideThumbnailTimer.stop();
             }
         }

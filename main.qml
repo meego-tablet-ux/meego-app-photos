@@ -105,14 +105,12 @@ Labs.Window {
             var title;
             var index;
 
-            if(allPhotosModel.isURN(identifier))
-            {
+            if(allPhotosModel.isURN(identifier)) {
                 itemtype = allPhotosModel.getTypefromURN(identifier);
                 title = allPhotosModel.getTitlefromURN(identifier);
                 index = allPhotosModel.getIndexfromURN(identifier);
             }
-            else
-            {
+            else {
                 itemtype = allPhotosModel.getTypefromID(identifier);
                 title = allPhotosModel.getTitlefromID(identifier);
                 index = allPhotosModel.itemIndex(identifier);
@@ -199,10 +197,12 @@ Labs.Window {
              if (cmd == "showPhoto") {
                  scene.applicationPage = allPhotosComponent
                  allPhotosModel.requestItem(0, cdata);
-             } else if(cmd == "showAlbum") {
+             }
+             else if (cmd == "showAlbum") {
                  scene.applicationPage = allAlbumsComponent
                  allAlbumsModel.requestItem(1, cdata);
-             } else {
+             }
+             else {
                  console.log("Got unknown cmd "+ cmd)
              }
          }
@@ -319,7 +319,7 @@ Labs.Window {
                     if (selected)
                         allPhotosToolbar.sharing.addItem(uri);
                     else
-                        allPhotosToolbar.sharing.delItem(uri);
+                        allPhotosToolbar.sharing.delItem(uri)
                 }
                 onPressAndHold : {
                     var map = payload.mapToItem(scene, x, y);
@@ -334,7 +334,8 @@ Labs.Window {
                 onNoContentAction: {
                     if ( allPhotosModel.filter == 0) {
                         appsModel.launchDesktopByName("/usr/share/meego-ux-appgrid/applications/meego-app-camera.desktop")
-                    } else {
+                    }
+                    else {
                         scene.applicationPage = allPhotosComponent;
                     }
                 }
