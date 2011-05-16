@@ -81,6 +81,8 @@ Labs.Window {
     property bool showFullscreen: false
     property bool showSlideshow: false
 
+    property bool modelConnectionReady: false
+
     ShareObj {
         id: shareObj
         shareType: MeeGoUXSharingClientQmlObj.ShareTypeImage
@@ -179,6 +181,16 @@ Labs.Window {
     Component.onCompleted: {
         // workaround because setting it initially doesn't work atm
         applicationPage = allPhotosComponent
+        loadingTimer.start()
+    }
+
+    Timer {
+        id: loadingTimer
+        interval: 2000
+        repeat: false
+        onTriggered: {
+            modelConnectionReady = true
+        }
     }
 
     // when a selection is made in the filter menu, you will get a signal here:
@@ -304,6 +316,7 @@ Labs.Window {
                 footerHeight: allPhotosToolbar.height
                 noContentText: labelNoPhotosText
                 noContentButtonText: labelNoContentTakePhotoButtonText
+                modelConnectionReady: scene.modelConnectionReady
                 onOpenPhoto: {
                     photoDetailModel = allPhotosModel;
                     detailViewIndex = currentIndex;

@@ -19,6 +19,8 @@ Item {
 
     property bool selectionMode: false
 
+    property bool modelConnectionReady: false
+
     property bool selectAll: false
     property variant selected: []
     property variant thumburis: []
@@ -77,7 +79,7 @@ Item {
         anchors.leftMargin: 0
         anchors.rightMargin: 0
 
-        visible: count != 0
+        visible: count != 0 || !modelConnectionReady
 
         spacing: 3
         cellWidth: {
