@@ -123,7 +123,6 @@ Item {
             else return Math.min(sizeP, sizeL)
         }
         cellHeight: cellWidth
-        clip:true
 
         function setMargins() {
             var columns = Math.floor(parent.width / cellWidth)
