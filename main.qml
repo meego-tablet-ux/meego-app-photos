@@ -493,7 +493,7 @@ Labs.Window {
                     id: separator
                     anchors.top: actionsMenu.bottom
                     width: parent.width
-                    source: "image://theme/menu_item_separator"
+                    source: "image://themedimage/images/menu_item_separator"
                 }
 
                 Labs.ActionMenu {

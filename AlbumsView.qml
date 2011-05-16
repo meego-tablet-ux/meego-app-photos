@@ -94,7 +94,7 @@ Item {
     MediaGridView {
         id: view
         type: photoalbumtype
-        defaultThumbnail: "image://theme/media/photo_thumb_default"
+        defaultThumbnail: "image://themedimage/images/media/photo_thumb_default"
         showHeader: true
 
         anchors.fill: parent

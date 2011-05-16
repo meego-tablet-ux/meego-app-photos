@@ -49,7 +49,7 @@ Item {
 
     BorderImage {
         anchors.fill: parent
-        source: "image://theme/media/nextbox_landscape"
+        source: "image://themedimage/images/media/nextbox_landscape"
         border.top: 10
         border.bottom:10
         border.left: 10
@@ -64,24 +64,24 @@ Item {
         IconButton {
             opacity: mode == 0 ? 1.0 : 0.0
             anchors.verticalCenter: parent.verticalCenter
-            icon: "image://meegotheme/icons/toolbar/go-back-active"
-            iconDown: "image://meegotheme/icons/toolbar/go-back"
+            icon: "image://themedimage/icons/toolbar/go-back-active"
+            iconDown: "image://themedimage/icons/toolbar/go-back"
             hasBackground: false
             onClicked: container.prev()
         }
         IconButton {
             opacity: mode == 0 || mode == 1 ? 1.0 : 0.0
             anchors.verticalCenter: parent.verticalCenter
-            icon: "image://theme/icn_play_up"
-            iconDown: "image://theme/icn_play_dn"
+            icon: "image://themedimage/images/icn_play_up"
+            iconDown: "image://themedimage/images/icn_play_dn"
             hasBackground: false
             onClicked: container.play()
         }
         IconButton {
             opacity: mode == 0 ? 1.0 : 0.0
             anchors.verticalCenter: parent.verticalCenter
-            icon: "image://meegotheme/icons/toolbar/go-forward-active"
-            iconDown: "image://meegotheme/icons/toolbar/go-forward"
+            icon: "image://themedimage/icons/toolbar/go-forward-active"
+            iconDown: "image://themedimage/icons/toolbar/go-forward"
             hasBackground: false
             onClicked: container.next()
         }
@@ -96,15 +96,15 @@ Item {
         visible: mode == 2
         IconButton {
             anchors.verticalCenter: parent.verticalCenter
-            icon: "image://theme/media/icn_trash_up"
-            iconDown: "image://theme/media/icn_trash_dn"
+            icon: "image://themedimage/images/media/icn_trash_up"
+            iconDown: "image://themedimage/images/media/icn_trash_dn"
             hasBackground: false
             onClicked: container.deleteSelected()
         }
         IconButton {
             anchors.verticalCenter: parent.verticalCenter
-            icon: "image://theme/media/icn_addtoalbum_up"
-            iconDown: "image://theme/media/icn_addtoalbum_dn"
+            icon: "image://themedimage/images/media/icn_addtoalbum_up"
+            iconDown: "image://themedimage/images/media/icn_addtoalbum_dn"
             hasBackground: false
             onClicked: container.addToAlbum()
         }
@@ -112,8 +112,8 @@ Item {
             id: shareIcon
         }
         IconButton {
-            icon: "image://theme/media/icn_cancel_ms_up"
-            iconDown: "image://theme/media/icn_cancel_ms_dn"
+            icon: "image://themedimage/images/media/icn_cancel_ms_up"
+            iconDown: "image://themedimage/images/media/icn_cancel_ms_dn"
             hasBackground: false
             onClicked: container.cancel()
         }
@@ -124,8 +124,8 @@ Item {
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: parent.left
         anchors.leftMargin: 10
-        icon: "image://theme/media/icn_rotate_cw_up"
-        iconDown: "image://theme/media/icn_rotate_cw_dn"
+        icon: "image://themedimage/images/media/icn_rotate_cw_up"
+        iconDown: "image://themedimage/images/media/icn_rotate_cw_dn"
         hasBackground: false
         onClicked: container.rotateRight()
     }
@@ -134,8 +134,8 @@ Item {
         anchors.verticalCenter: parent.verticalCenter
         anchors.right: parent.right
         anchors.rightMargin: 10
-        icon: container.isFavorite ? "image://theme/media/icn_favourite_active" : "image://theme/media/icn_favourite_up"
-        iconDown: "image://theme/media/icn_favourite_dn"
+        icon: container.isFavorite ? "image://themedimage/images/media/icn_favourite_active" : "image://themedimage/images/media/icn_favourite_up"
+        iconDown: "image://themedimage/images/media/icn_favourite_dn"
         hasBackground: false
         onClicked: {
             container.isFavorite = !container.isFavorite;

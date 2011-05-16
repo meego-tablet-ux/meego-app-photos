@@ -18,8 +18,8 @@ ModalDialog {
 
     title: labelConfirmDelete
     acceptButtonText: labelDelete
-    acceptButtonImage: "image://meegotheme/widgets/common/button/button-negative"
-    acceptButtonImagePressed: "image://meegotheme/widgets/common/button/button-negative-pressed"
+    acceptButtonImage: "image://themedimage/widgets/common/button/button-negative"
+    acceptButtonImagePressed: "image://themedimage/widgets/common/button/button-negative-pressed"
 
     content: Text {
         id: confirmText

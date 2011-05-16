@@ -71,7 +71,7 @@ Item {
         id: view
         type: phototype
         selectionMode: container.selectionMode
-        defaultThumbnail: "image://theme/media/photo_thumb_default"
+        defaultThumbnail: "image://themedimage/images/media/photo_thumb_default"
         showHeader: true
 
         anchors.fill: parent
