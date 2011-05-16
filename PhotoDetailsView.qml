@@ -30,7 +30,6 @@ Item {
 
     signal currentIndexChanged(int index)
     signal pressAndHoldOnPhoto(variant mouse, variant instance)
-    signal enterSingleSelectionMode()
 
     function showPhotoAtIndex(index) {
         photoViewer.showPhotoAtIndex(index);
@@ -83,7 +82,6 @@ Item {
         onCurrentIndexChanged:{
             elementid = currentItem.pitemid;
             toolbar.isFavorite = currentItem.pfavorite;
-         //   container.singleSelectionMode = false;
             container.currentIndexChanged(photoViewer.currentIndex);
         }
 
@@ -96,7 +94,6 @@ Item {
         id: toolbar
         anchors.bottom: parent.bottom
         width: parent.width
-     //   mode: container.singleSelectionMode ? 2:0
         isFavorite: false
         opacity:   1
         mode: 0

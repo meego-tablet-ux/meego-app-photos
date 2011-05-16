@@ -18,7 +18,6 @@ Item {
     property color cellTextColor: "white"
 
     property bool selectionMode: false
-    //  property bool singleSelectionMode: false
 
     property bool selectAll: false
     property variant selected: []
@@ -42,7 +41,6 @@ Item {
     property string labelDelete: qsTr("Delete")
     property string labelMultiSelMode: qsTr("Select multiple photos")
 
-    signal enteredSingleSelectMode()
     signal toggleSelectedPhoto(string uri, bool selected)
     signal noContentAction()
 

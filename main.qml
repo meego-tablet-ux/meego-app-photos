@@ -313,8 +313,6 @@ Labs.Window {
                     showSlideshow = startSlideshow
                     allPhotosPage.addApplicationPage(photoDetailComponent)
                 }
-                onEnteredSingleSelectMode: {
-                }
                 onToggleSelectedPhoto: {
                     if (selected)
                         allPhotosToolbar.sharing.addItem(uri);
@@ -943,8 +941,6 @@ Labs.Window {
                     currentPhotoURI = currentItem.puri
                 }
 
-                onEnterSingleSelectionMode: {
-                }
                 Component.onCompleted: {
                     showPhotoAtIndex(detailViewIndex);
                     scene.showsearch = false;
@@ -982,7 +978,6 @@ Labs.Window {
                         }
                         else if (model[index] == labelAddToAlbum) {
                             // Add to album
-                            //photodtview.singleSelectionMode = true;
                             photopicker.payload = [payload.pitemid]
                             photopicker.show()
                         }
