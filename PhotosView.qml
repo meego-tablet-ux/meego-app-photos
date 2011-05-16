@@ -74,11 +74,8 @@ Item {
         defaultThumbnail: "image://theme/media/photo_thumb_default"
         showHeader: true
 
-        anchors.top: parent.top
+        anchors.fill: parent
         anchors.topMargin: 5
-        anchors.bottom: parent.bottom
-        anchors.left: parent.left
-        anchors.right: parent.right
         anchors.leftMargin: 0
         anchors.rightMargin: 0
 
@@ -124,12 +121,11 @@ Item {
                 // adjust margin during orientation change
                 if (width < 0) {
                     view.parentWidth = -1
-                    return
                 }
-                if (width == view.parentWidth)
-                    return
-                view.parentWidth = width
-                view.setMargins()
+                else if (width != view.parentWidth) {
+                    view.parentWidth = width
+                    view.setMargins()
+                }
             }
         }
 
