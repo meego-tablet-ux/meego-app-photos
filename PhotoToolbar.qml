@@ -24,7 +24,7 @@ Item {
     property int mode: 2
 
     property bool isFavorite: true
-    property alias sharing: shareIcon
+    property alias sharing: shareObj
 
     signal play()
     signal prev()
@@ -35,6 +35,12 @@ Item {
     signal cancel()
     signal deleteSelected()
     signal addToAlbum()
+
+    resources: [
+        ShareObj {
+            id: shareObj
+        }
+    ]
 
     // block all gestures from falling through
     GestureArea {
@@ -108,8 +114,16 @@ Item {
             hasBackground: false
             onClicked: container.addToAlbum()
         }
-        ShareIcon {
-            id: shareIcon
+        IconButton {
+            id: shareButton
+            anchors.verticalCenter: parent.verticalCenter
+            icon: "image://themedimage/images/media/icn_share_up"
+            iconDown: "image://themedimage/images/media/icn_share_dn"
+            hasBackground: false
+            onClicked: {
+                var map = mapToItem(scene, width / 2, 0);
+                shareObj.showContextTypes(map.x, map.y)
+            }
         }
         IconButton {
             icon: "image://themedimage/images/media/icn_cancel_ms_up"

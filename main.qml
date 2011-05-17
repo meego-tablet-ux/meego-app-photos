@@ -13,7 +13,7 @@ import MeeGo.Media 0.1
 import MeeGo.Sharing 0.1
 import MeeGo.Sharing.UI 0.1
 
-Labs.Window {
+Labs.Window2 {
     id: scene
 
     property string labelAll: qsTr("All")
@@ -339,6 +339,8 @@ Labs.Window {
                                                   labelShare, labelAddToAlbum,
                                                   labelMultiSelMode, labelSetAsBackground, labelDelete];
                     allPhotosContextMenu.payload = payload
+                    allPhotosContextMenu.mouseX = map.x
+                    allPhotosContextMenu.mouseY = map.y
                     allPhotosContextMenu.setPosition(map.x, map.y)
                     allPhotosContextMenu.show()
                 }
@@ -356,6 +358,9 @@ Labs.Window {
                 id: allPhotosContextMenu
                 property alias payload: allPhotosActionMenu.payload
                 property alias model: allPhotosActionMenu.model
+                property int mouseX
+                property int mouseY
+
                 content: ActionMenu {
                     id: allPhotosActionMenu
                     property variant payload: undefined
@@ -384,7 +389,7 @@ Labs.Window {
                             // Share
                             shareObj.clearItems();
                             shareObj.addItem(payload.muri) // URI
-                            shareObj.showContextTypes(mouseX, mouseY)
+                            shareObj.showContextTypes(allPhotosContextMenu.mouseX, allPhotosContextMenu.mouseY)
                         }
                         else if (model[index] == labelAddToAlbum)
                         {
@@ -715,6 +720,8 @@ Labs.Window {
                                                     // labelMultiSelMode,
                                                     labelRemoveFromAlbum, labelSetAsBackground, labelDelete]
                     albumDetailContextMenu.payload = payload
+                    albumDetailContextMenu.mouseX = map.x
+                    albumDetailContextMenu.mouseY = map.y
                     albumDetailContextMenu.setPosition(map.x, map.y)
                     albumDetailContextMenu.show()
                 }
@@ -727,6 +734,9 @@ Labs.Window {
                 id: albumDetailContextMenu
                 property alias payload: albumDetailActionMenu.payload
                 property alias model: albumDetailActionMenu.model
+                property int mouseX
+                property int mouseY
+
                 content: ActionMenu {
                     id: albumDetailActionMenu
                     property variant payload: undefined
@@ -755,7 +765,7 @@ Labs.Window {
                             // Share
                             shareObj.clearItems();
                             shareObj.addItem(payload.muri) // URI
-                            shareObj.showContextTypes(mouseX, mouseY)
+                            shareObj.showContextTypes(albumDetailContextMenu.mouseX, albumDetailContextMenu.mouseY)
                         }
                         else if (model[index] == labelAddToAlbum)
                         {
@@ -943,6 +953,8 @@ Labs.Window {
                                              instance.pfavorite ? labelUnfavorite : labelFavorite,
                                              labelAddToAlbum, labelSetAsBackground, labelDelete];
                     photoDetailContextMenu.payload = instance
+                    photoDetailContextMenu.mouseX = map.x
+                    photoDetailContextMenu.mouseY = map.y
                     photoDetailContextMenu.setPosition(map.x, map.y)
                     photoDetailContextMenu.show()
                 }
@@ -964,6 +976,9 @@ Labs.Window {
                 id: photoDetailContextMenu
                 property alias payload: photoDetailActionMenu.payload
                 property alias model: photoDetailActionMenu.model
+                property int mouseX
+                property int mouseY
+
                 content: ActionMenu {
                     id: photoDetailActionMenu
                     property variant payload: undefined
@@ -982,7 +997,7 @@ Labs.Window {
                             // Share
                             shareObj.clearItems();
                             shareObj.addItem(payload.puri) // URI
-                            shareObj.showContextTypes(mouseX, mouseY)
+                            shareObj.showContextTypes(photoDetailContextMenu.mouseX, photoDetailContextMenu.mouseY)
                         }
                         else if (model[index] == labelFavorite || model[index] == labelUnfavorite) {
                             // Mark as a favorite

@@ -53,6 +53,9 @@ Item {
         id: albumsContextMenu
         property alias payload: albumsActionMenu.payload
         property alias model: albumsActionMenu.model
+        property int mouseX
+        property int mouseY
+
         content: ActionMenu {
             id: albumsActionMenu
             property variant payload: undefined
@@ -70,7 +73,7 @@ Item {
                 else if (model[index] == labelShare) {
                     // Share
                     shareAlbum(payload.mitemid, payload.mtitle,
-                               contextInstance.menuX, contextInstance.menuY)
+                               albumsContextMenu.mouseX, albumsContextMenu.mouseY)
                 }
                 else if (model[index] == labelDelete) {
                     // Delete
@@ -170,6 +173,8 @@ Item {
 
             albumsContextMenu.model = options
             albumsContextMenu.payload = payload;
+            albumsContextMenu.mouseX = map.x
+            albumsContextMenu.mouseY = map.y
             albumsContextMenu.setPosition(map.x, map.y)
             albumsContextMenu.show()
         }
