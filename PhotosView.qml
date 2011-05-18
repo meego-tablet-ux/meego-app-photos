@@ -88,8 +88,8 @@ Item {
             var preferPortrait = true
 
             // find cell size for at least six wide in landscape, three in portrait
-            var sizeL = Math.floor(Math.max(scene.width, scene.height) / 6)
-            var sizeP = Math.floor(Math.min(scene.width, scene.height) / 4)
+            var sizeL = Math.floor(Math.max(window.width, window.height) / 6)
+            var sizeP = Math.floor(Math.min(window.width, window.height) / 4)
 
             // work around bug in MediaGridView
             sizeP -= 1

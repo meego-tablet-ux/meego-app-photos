@@ -13,8 +13,17 @@ import MeeGo.Media 0.1
 import MeeGo.Sharing 0.1
 import MeeGo.Sharing.UI 0.1
 
-Labs.Window2 {
-    id: scene
+Window {
+    id: window
+
+    toolBarTitle: labelPhotoApp
+    bookMenuModel: [labelAllPhotos, labelAlbums]
+    bookMenuPayload: [allPhotosComponent, allAlbumsComponent]
+
+    Component.onCompleted: {
+        switchBook(allPhotosComponent)
+        loadingTimer.start()
+    }
 
     property string labelAll: qsTr("All")
     property string labelRecentlyAdded: qsTr("Recently added")
@@ -83,9 +92,15 @@ Labs.Window2 {
 
     property bool modelConnectionReady: false
 
-    ShareObj {
-        id: shareObj
-        shareType: MeeGoUXSharingClientQmlObj.ShareTypeImage
+    overlayItem: Item {
+        ShareObj {
+            id: shareObj
+            shareType: MeeGoUXSharingClientQmlObj.ShareTypeImage
+        }
+
+        TopItem {
+            id: topItem
+        }
     }
 
     Labs.BackgroundModel {
@@ -118,18 +133,17 @@ Labs.Window2 {
                 index = allPhotosModel.itemIndex(identifier);
             }
 
-            console.log("Photo Name: " + title);
             if (index == -1)
                 return;
             if (itemtype == 0) {
                 // load a photo passed on cmdline
-                previousApplicationPage();
+                popPage()
                 photoDetailModel = allPhotosModel;
                 detailViewIndex = index;
                 labelSinglePhoto = title;
                 showFullscreen = false;
                 showSlideshow = false;
-                addApplicationPage(photoDetailComponent);
+                addPage(photoDetailComponent);
             }
         }
     }
@@ -165,23 +179,12 @@ Labs.Window2 {
             var itemid = allAlbumsModel.getIDfromURN(identifier)
             var title = allAlbumsModel.getTitlefromURN(identifier);
             var index = allAlbumsModel.getIndexfromURN(identifier);
-            console.log("Album Name: " + title);
             if (itemtype == 1) {
                 labelSingleAlbum = title;
                 albumId = itemid;
-                addApplicationPage(albumDetailComponent)
+                addPage(albumDetailComponent)
             }
         }
-    }
-    title: labelPhotoApp
-
-    showsearch: true
-    filterModel: [labelAllPhotos,labelAlbums]
-
-    Component.onCompleted: {
-        // workaround because setting it initially doesn't work atm
-        applicationPage = allPhotosComponent
-        loadingTimer.start()
     }
 
     Timer {
@@ -193,25 +196,17 @@ Labs.Window2 {
         }
     }
 
-    // when a selection is made in the filter menu, you will get a signal here:
-    onFilterTriggered: {
-        if (index == 0)
-            scene.applicationPage = allPhotosComponent;
-        else if (index == 1)
-            scene.applicationPage = allAlbumsComponent;
-    }
-
     Connections {
          target: mainWindow
          onCall: {
              var cmd = parameters[0];
              var cdata = parameters[1];
              if (cmd == "showPhoto") {
-                 scene.applicationPage = allPhotosComponent
+                 switchBook(allPhotosComponent)
                  allPhotosModel.requestItem(0, cdata);
              }
              else if (cmd == "showAlbum") {
-                 scene.applicationPage = allAlbumsComponent
+                 switchBook(allAlbumsComponent)
                  allAlbumsModel.requestItem(1, cdata);
              }
              else {
@@ -220,71 +215,80 @@ Labs.Window2 {
          }
      }
 
-    onStatusBarTriggered: {
-        orientation = (orientation +1)%4;
-    }
-
     Loader {
         id: contextLoader
     }
 
     Component {
         id: allPhotosComponent
-        Labs.ApplicationPage {
+        AppPage {
             id: allPhotosPage
             anchors.fill: parent
-            title: labelAllPhotos
+            pageTitle: labelAllPhotos
+            fullScreen: false
+
             onSearch: {
                 allPhotosModel.search = needle;
             }
 
-            menuContent: Labs.ActionMenu {
-                id: filterMenu
-                title: labelViewBy
-                highlightIndex: getIndexFromFilter(allPhotosModel.filter)
-                model: [ labelAll, labelRecentlyAdded, labelFavorites, labelRecentlyViewed ]
+            enableCustomActionMenu: true
+            actionMenuOpen: allPhotosActions.visible
+            onActionMenuIconClicked: {
+                allPhotosActions.setPosition(mouseX, mouseY)
+                allPhotosActions.show()
+            }
 
-                function getIndexFromFilter(filter) {
-                    switch (filter) {
-                            case 0: return 0
-                            case 1: return 2
-                            case 2: return 3
-                            case 3: return 1
-                            default:
-                                    console.log("Unexpected filter in action menu: " + allPhotosModel.filter)
-                                return 0
-                            }
-                }
+            ContextMenu {
+                id: allPhotosActions
 
-                function setFilter(label) {
-                    if (label == labelAll) {
-                        allPhotosModel.filter = 0
-                        allPhotosView.noContentText = labelNoPhotosText
-                        allPhotosView.noContentButtonText = labelNoContentTakePhotoButtonText
-                    }
-                    else if (label == labelRecentlyAdded) {
-                        allPhotosModel.filter = 3
-                        allPhotosView.noContentText = labelNoRecentlyAddedPhotosText
-                        allPhotosView.noContentButtonText = labelNoContentViewPhotosButtonText
-                    }
-                    else if (label == labelFavorites) {
-                        allPhotosModel.filter = 1
-                        allPhotosView.noContentText = labelNoFavoritePhotosText
-                        allPhotosView.noContentButtonText = labelNoContentViewPhotosButtonText
-                    }
-                    else if (label == labelRecentlyViewed) {
-                        allPhotosModel.filter = 2
-                        allPhotosView.noContentText = labelNoRecentlyViewedPhotosText
-                        allPhotosView.noContentButtonText = labelNoContentViewPhotosButtonText
-                    }
-                    else {
-                        console.log("Unexpected label in action menu: " + label)
-                    }
-                }
+                content: Labs.ActionMenu {
+                    id: filterMenu
+                    title: labelViewBy
+                    highlightIndex: getIndexFromFilter(allPhotosModel.filter)
+                    model: [ labelAll, labelRecentlyAdded, labelFavorites, labelRecentlyViewed ]
 
-                onTriggered: {
-                    setFilter(model[index])
-                    allPhotosPage.closeMenu();
+                    function getIndexFromFilter(filter) {
+                        switch (filter) {
+                        case 0: return 0
+                        case 1: return 2
+                        case 2: return 3
+                        case 3: return 1
+                        default:
+                                console.log("Unexpected filter in action menu: " + allPhotosModel.filter)
+                            return 0
+                        }
+                    }
+
+                    function setFilter(label) {
+                        if (label == labelAll) {
+                            allPhotosModel.filter = 0
+                            allPhotosView.noContentText = labelNoPhotosText
+                            allPhotosView.noContentButtonText = labelNoContentTakePhotoButtonText
+                        }
+                        else if (label == labelRecentlyAdded) {
+                            allPhotosModel.filter = 3
+                            allPhotosView.noContentText = labelNoRecentlyAddedPhotosText
+                            allPhotosView.noContentButtonText = labelNoContentViewPhotosButtonText
+                        }
+                        else if (label == labelFavorites) {
+                            allPhotosModel.filter = 1
+                            allPhotosView.noContentText = labelNoFavoritePhotosText
+                            allPhotosView.noContentButtonText = labelNoContentViewPhotosButtonText
+                        }
+                        else if (label == labelRecentlyViewed) {
+                            allPhotosModel.filter = 2
+                            allPhotosView.noContentText = labelNoRecentlyViewedPhotosText
+                            allPhotosView.noContentButtonText = labelNoContentViewPhotosButtonText
+                        }
+                        else {
+                            console.log("Unexpected label in action menu: " + label)
+                        }
+                    }
+
+                    onTriggered: {
+                        setFilter(model[index])
+                        allPhotosActions.hide()
+                    }
                 }
             }
 
@@ -309,14 +313,13 @@ Labs.Window2 {
 
             PhotosView {
                 id: allPhotosView
-                parent: allPhotosPage.content
                 anchors.fill: parent
                 anchors.bottom: parent.bottom
                 model: allPhotosModel
                 footerHeight: allPhotosToolbar.height
                 noContentText: labelNoPhotosText
                 noContentButtonText: labelNoContentTakePhotoButtonText
-                modelConnectionReady: scene.modelConnectionReady
+                modelConnectionReady: window.modelConnectionReady
                 onOpenPhoto: {
                     photoDetailModel = allPhotosModel;
                     detailViewIndex = currentIndex;
@@ -324,7 +327,7 @@ Labs.Window2 {
                     model.setViewed(item.elementid);
                     showFullscreen = fullscreen
                     showSlideshow = startSlideshow
-                    allPhotosPage.addApplicationPage(photoDetailComponent)
+                    addPage(photoDetailComponent)
                 }
                 onToggleSelectedPhoto: {
                     if (selected)
@@ -333,7 +336,7 @@ Labs.Window2 {
                         allPhotosToolbar.sharing.delItem(uri)
                 }
                 onPressAndHold : {
-                    var map = payload.mapToItem(scene, x, y);
+                    var map = payload.mapToItem(topItem.topItem, x, y);
                     allPhotosContextMenu.model = [labelOpen, labelPlay,
                                                   payload.mfavorite ? labelUnfavorite : labelFavorite,
                                                   labelShare, labelAddToAlbum,
@@ -349,7 +352,7 @@ Labs.Window2 {
                         appsModel.launchDesktopByName("/usr/share/meego-ux-appgrid/applications/meego-app-camera.desktop")
                     }
                     else {
-                        scene.applicationPage = allPhotosComponent;
+                        window.switchBook(allPhotosComponent)
                     }
                 }
             }
@@ -401,7 +404,7 @@ Labs.Window2 {
                         }
                         else if (model[index] == allPhotosView.labelMultiSelMode)
                         {
-                            allPhotosView.selectionMode = !container.selectionMode;
+                            allPhotosView.selectionMode = !allPhotosView.selectionMode;
                         }
                         else if (model[index] == labelSetAsBackground) {
                             backgroundModel.activeWallpaper = payload.muri;
@@ -420,7 +423,6 @@ Labs.Window2 {
             PhotoToolbar {
                 id: allPhotosToolbar
                 visible: allPhotosView.noContentVisible
-                parent: allPhotosPage.content
                 anchors.bottom: parent.bottom
                 width: parent.width
                 mode:  allPhotosView.selectionMode ? 2 : 1
@@ -435,7 +437,7 @@ Labs.Window2 {
                     photoDetailModel = allPhotosModel;
                     showFullscreen = true
                     showSlideshow = true
-                    allPhotosPage.addApplicationPage(photoDetailComponent)
+                    addPage(photoDetailComponent)
                 }
                 onAddToAlbum : {
                     // TODO: don't display the item if there are no albums?
@@ -462,76 +464,83 @@ Labs.Window2 {
                     allPhotosView.selectionMode = false;
                 }
             }
-
-            Component.onCompleted: {
-                scene.fullscreen = false;
-                scene.showsearch = true;
-            }
         }
     }
 
     Component {
         id: allAlbumsComponent
-        Labs.ApplicationPage {
+        AppPage {
             id: allAlbumsPage
             anchors.fill: parent
-            title: labelAlbums
+            pageTitle: labelAlbums
+            fullScreen: false
 
             onSearch: {
                 allAlbumsModel.search = needle;
             }
 
-            menuContent: Item {
-                width: filterMenu.width
-                height: filterMenu.height + actionsMenu.height
+            enableCustomActionMenu: true
+            actionMenuOpen: allAlbumsActions.visible
+            onActionMenuIconClicked: {
+                allAlbumsActions.setPosition(mouseX, mouseY)
+                allAlbumsActions.show()
+            }
 
-                Labs.ActionMenu {
-                    id: actionsMenu
-                    model: [ labelNewAlbum ]
-                    onTriggered: {
-                        createAlbumDialog.show()
-                        allAlbumsPage.closeMenu();
-                    }
-                }
+            ContextMenu {
+                id: allAlbumsActions
 
-                Image {
-                    id: separator
-                    anchors.top: actionsMenu.bottom
-                    width: parent.width
-                    source: "image://themedimage/images/menu_item_separator"
-                }
+                content: Item {
+                    width: filterMenu.width
+                    height: filterMenu.height + actionsMenu.height
 
-                Labs.ActionMenu {
-                    id: filterMenu
-                    anchors.top: separator.bottom
-                    anchors.topMargin: 5
-                    title: labelViewBy
-                    highlightIndex: allAlbumsModel.filter ? 1:0
-
-                    // FIXME: removed favorites from this list since there is no UI for favorite albums
-                    // FIXME: removed recently viewed from this list since it's not clear when
-                    //        to tag an album as "viewed" - consult UX team
-                    model: [ labelAll, labelRecentlyAdded ]
-
-                    function setFilter(label) {
-                        if (label == labelAll) {
-                            allAlbumsModel.filter = 0
-                            albumsView.noContentText = labelNoAlbumsText
-                            albumsView.noContentButtonText = labelNoContentCreateAlbumButtonText
-                        }
-                        else if (label == labelRecentlyAdded) {
-                            allAlbumsModel.filter = 3
-                            albumsView.noContentText = labelNoRecentlyAddedAlbumsText
-                            albumsView.noContentButtonText = labelNoContentCreateAlbumButtonText
-                        }
-                        else {
-                            console.log("Unexpected label in action menu: " + label)
+                    Labs.ActionMenu {
+                        id: actionsMenu
+                        model: [ labelNewAlbum ]
+                        onTriggered: {
+                            createAlbumDialog.show()
+                            allAlbumsActions.hide()
                         }
                     }
 
-                    onTriggered: {
-                        setFilter(model[index])
-                        allAlbumsPage.closeMenu();
+                    Image {
+                        id: separator
+                        anchors.top: actionsMenu.bottom
+                        width: parent.width
+                        source: "image://themedimage/images/menu_item_separator"
+                    }
+
+                    Labs.ActionMenu {
+                        id: filterMenu
+                        anchors.top: separator.bottom
+                        anchors.topMargin: 5
+                        title: labelViewBy
+                        highlightIndex: allAlbumsModel.filter ? 1:0
+
+                        // FIXME: removed favorites from this list since there is no UI for favorite albums
+                        // FIXME: removed recently viewed from this list since it's not clear when
+                        //        to tag an album as "viewed" - consult UX team
+                        model: [ labelAll, labelRecentlyAdded ]
+
+                        function setFilter(label) {
+                            if (label == labelAll) {
+                                allAlbumsModel.filter = 0
+                                albumsView.noContentText = labelNoAlbumsText
+                                albumsView.noContentButtonText = labelNoContentCreateAlbumButtonText
+                            }
+                            else if (label == labelRecentlyAdded) {
+                                allAlbumsModel.filter = 3
+                                albumsView.noContentText = labelNoRecentlyAddedAlbumsText
+                                albumsView.noContentButtonText = labelNoContentCreateAlbumButtonText
+                            }
+                            else {
+                                console.log("Unexpected label in action menu: " + label)
+                            }
+                        }
+
+                        onTriggered: {
+                            setFilter(model[index])
+                            allAlbumsActions.show()
+                        }
                     }
                 }
             }
@@ -570,7 +579,6 @@ Labs.Window2 {
 
             AlbumsView {
                 id: albumsView
-                parent:allAlbumsPage.content
                 anchors.fill: parent
                 noContentText: labelNoAlbumsText
                 noContentButtonText: labelNoContentCreateAlbumButtonText
@@ -581,12 +589,12 @@ Labs.Window2 {
                     labelSingleAlbum = title;
                     albumId = elementid;
                     albumIsVirtual = isvirtual;
-                    allAlbumsPage.addApplicationPage(albumDetailComponent);
+                    addPage(albumDetailComponent);
                 }
                 onPlaySlideshow: {
                     labelSingleAlbum = title;
                     albumId = elementid;
-                    allAlbumsPage.addApplicationPage(albumDetailComponent);
+                    addPage(albumDetailComponent);
                     // TODO: this will require more thinking
                 }
                 onShareAlbum: {
@@ -602,69 +610,76 @@ Labs.Window2 {
                     createAlbumDialog.show()
                 }
             }
-            Component.onCompleted: {
-                scene.fullscreen = false;
-                scene.showsearch = true;
-            }
         }
     }
 
     Component {
         id: albumDetailComponent
-        Labs.ApplicationPage {
+        AppPage {
             id: albumDetailPage
             anchors.fill: parent
-            title: labelSingleAlbum
+            pageTitle: labelAlbums
+            fullScreen: false
+
             onSearch:  {
                 albumModel.search = needle;
             }
 
-            menuContent: Column {
-                id: menucolumn
-                width: childrenRect.width
+            enableCustomActionMenu: true
+            actionMenuOpen: albumDetailActions.visible
+            onActionMenuIconClicked: {
+                albumDetailActions.setPosition(mouseX, mouseY)
+                albumDetailActions.show()
+            }
 
-                property int textMargin: 16
+            ContextMenu {
+                id: albumDetailActions
 
-                Text {
-                    id: albumName
-                    text: labelSingleAlbum
-                    font.bold: true
-                    font.pixelSize: theme_fontPixelSizeLarge
-                    width: paintedWidth + 2 * textMargin
-                    height: paintedHeight + 2 * textMargin
-                    horizontalAlignment: Text.AlignHCenter
-                    verticalAlignment: Text.AlignVCenter
-                    color: theme_contextMenuFontColor
-                }
+                content: Column {
+                    property int textMargin: 16
+                    width: childrenRect.width
 
-                Text {
-                    id: albumCount
-                    text: albumModel.count == 1 ? label1Photo : labelNPhotos.arg(albumModel.count)
-                    font.pixelSize: theme_fontPixelSizeLarge
-                    width: paintedWidth + 2 * textMargin
-                    height: paintedHeight + 2 * textMargin
-                    horizontalAlignment: Text.AlignHCenter
-                    verticalAlignment: Text.AlignVCenter
-                    color: theme_contextMenuFontColor
-                }
+                    Text {
+                        id: albumName
+                        text: labelSingleAlbum
+                        font.bold: true
+                        font.pixelSize: theme_fontPixelSizeLarge
+                        width: paintedWidth + 2 * parent.textMargin
+                        height: paintedHeight + 2 * parent.textMargin
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                        color: theme_contextMenuFontColor
+                    }
 
-                Item {
-                    width: button.width + 2 * textMargin
-                    height: button.height + 2 * textMargin - 8
+                    Text {
+                        id: albumCount
+                        text: albumModel.count == 1 ? label1Photo : labelNPhotos.arg(albumModel.count)
+                        font.pixelSize: theme_fontPixelSizeLarge
+                        width: paintedWidth + 2 * parent.textMargin
+                        height: paintedHeight + 2 * parent.textMargin
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                        color: theme_contextMenuFontColor
+                    }
 
-                    visible: !albumIsVirtual;
+                    Item {
+                        width: button.width + 2 * parent.textMargin
+                        height: button.height + 2 * parent.textMargin - 8
 
-                    Button {
-                        id: button
-                        anchors.centerIn: parent
-                        text: labelDeleteAlbum
-                        onClicked: {
-                            albumDetailPage.closeMenu()
-                            confirmer.model = allAlbumsModel
-                            confirmer.previousPage = true
-                            confirmer.text = labelDeleteAlbumText
-                            confirmer.items = [ albumId ]
-                            confirmer.show()
+                        visible: !albumIsVirtual;
+
+                        Button {
+                            id: button
+                            anchors.centerIn: parent
+                            text: labelDeleteAlbum
+                            onClicked: {
+                                albumDetailActions.hide()
+                                confirmer.model = allAlbumsModel
+                                confirmer.previousPage = true
+                                confirmer.text = labelDeleteAlbumText
+                                confirmer.items = [ albumId ]
+                                confirmer.show()
+                            }
                         }
                     }
                 }
@@ -687,14 +702,13 @@ Labs.Window2 {
 
                 onConfirmed: {
                     if (previousPage) {
-                        scene.previousApplicationPage()
+                        window.popPage()
                     }
                 }
             }
 
             PhotosView {
                 id: albumDetailsView
-                parent: albumDetailPage.content
                 anchors.fill: parent
                 anchors.bottom: parent.bottom
                 footerHeight: albumDetailsToolbar.height
@@ -710,10 +724,10 @@ Labs.Window2 {
                     model.setViewed(item.elementid);
                     showFullscreen = fullscreen
                     showSlideshow = startSlideshow
-                    albumDetailPage.addApplicationPage(photoDetailComponent)
+                    addPage(photoDetailComponent)
                 }
                 onPressAndHold : {
-                    var map = payload.mapToItem(scene, x, y);
+                    var map = payload.mapToItem(topItem.topItem, x, y);
                     albumDetailContextMenu.model = [labelOpen, labelPlay,
                                                     payload.mfavorite ? labelUnfavorite : labelFavorite,
                                                     labelShare, labelAddToAlbum,
@@ -726,7 +740,7 @@ Labs.Window2 {
                     albumDetailContextMenu.show()
                 }
                 onNoContentAction: {
-                    scene.applicationPage = allPhotosComponent;
+                    window.switchBook(allPhotosComponent)
                 }
             }
 
@@ -798,7 +812,6 @@ Labs.Window2 {
             PhotoToolbar {
                 id: albumDetailsToolbar
                 visible: albumDetailsView.noContentVisible
-                parent: albumDetailPage.content
                 anchors.bottom: parent.bottom
                 width: parent.width
                 mode: 1
@@ -813,14 +826,12 @@ Labs.Window2 {
                     photoDetailModel = albumModel;
                     showFullscreen = true
                     showSlideshow = true
-                    albumDetailPage.addApplicationPage(photoDetailComponent)
+                    addPage(photoDetailComponent)
                 }
             }
 
             Component.onCompleted: {
                 albumModel.album = labelSingleAlbum;
-                scene.fullscreen = false;
-                scene.showsearch =true;
             }
         }
     }
@@ -828,11 +839,18 @@ Labs.Window2 {
     Component {
         id: photoDetailComponent
 
-        Labs.ApplicationPage {
+        AppPage {
             id: photoDetailPage
             anchors.fill: parent
-            title: labelSinglePhoto
-            fullContent: true
+            pageTitle: window.toolBarTitle
+            disableSearch: true
+
+            enableCustomActionMenu: true
+            actionMenuOpen: photoDetailActions.visible
+            onActionMenuIconClicked: {
+                photoDetailActions.setPosition(mouseX, mouseY)
+                photoDetailActions.show()
+            }
 
             resources: [
                 Labs.FuzzyDateTime {
@@ -840,77 +858,81 @@ Labs.Window2 {
                 }
             ]
 
-            menuContent: Item {
-                property int textMargin: 16
-                width: Math.max(renameButton.width, creation.width, 300) + 2 * textMargin
-                height: childrenRect.height + 2 * textMargin
+            ContextMenu {
+                id: photoDetailActions
 
-                TextEntry {
-                    id: entry
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    anchors.top: parent.top
-                    anchors.margins: textMargin
+                content: Item {
+                    property int textMargin: 16
+                    width: Math.max(renameButton.width, creation.width, 300) + 2 * textMargin
+                    height: childrenRect.height + 2 * textMargin
 
-                    text: labelSinglePhoto
-                }
+                    TextEntry {
+                        id: entry
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        anchors.top: parent.top
+                        anchors.margins: parent.textMargin
 
-                Button {
-                    id: renameButton
-                    anchors.top: entry.bottom
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.topMargin: textMargin
+                        text: labelSinglePhoto
+                    }
 
-                    text: labelRenamePhoto
-                    onClicked: {
-                        photoDetailPage.closeMenu()
-                        if (entry.text != "") {
-                            photoDetailModel.changeTitle(currentPhotoURI, entry.text)
-                            labelSinglePhoto = entry.text
+                    Button {
+                        id: renameButton
+                        anchors.top: entry.bottom
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.topMargin: parent.textMargin
+
+                        text: labelRenamePhoto
+                        onClicked: {
+                            photoDetailActions.hide()
+                            if (entry.text != "") {
+                                photoDetailModel.changeTitle(currentPhotoURI, entry.text)
+                                labelSinglePhoto = entry.text
+                            }
                         }
                     }
-                }
 
-                Text {
-                    id: creation
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.top: renameButton.bottom
-                    anchors.topMargin: textMargin
+                    Text {
+                        id: creation
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.top: renameButton.bottom
+                        anchors.topMargin: parent.textMargin
 
-                    text: fuzzy.getFuzzy(currentPhotoCreationTime)
-                    visible: (text == "")? 0 : 1
-                    font.pixelSize: theme_contextMenuFontPixelSize
-                    verticalAlignment: Text.AlignVCenter
-                    color: theme_contextMenuFontColor
-                }
+                        text: fuzzy.getFuzzy(currentPhotoCreationTime)
+                        visible: (text == "")? 0 : 1
+                        font.pixelSize: theme_contextMenuFontPixelSize
+                        verticalAlignment: Text.AlignVCenter
+                        color: theme_contextMenuFontColor
+                    }
 
-                Text {
-                    id: camera
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.top: creation.bottom
-                    anchors.topMargin: textMargin
+                    Text {
+                        id: camera
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.top: creation.bottom
+                        anchors.topMargin: parent.textMargin
 
-                    text: currentPhotoCamera
-                    visible: (text == "")? 0 : 1
-                    height: (text == "")? 0 : creation.height
-                    font.bold: true
-                    font.pixelSize: theme_fontPixelSizeLarge
-                    verticalAlignment: Text.Top
-                    color: theme_contextMenuFontColor
-                }
+                        text: currentPhotoCamera
+                        visible: (text == "")? 0 : 1
+                        height: (text == "")? 0 : creation.height
+                        font.bold: true
+                        font.pixelSize: theme_fontPixelSizeLarge
+                        verticalAlignment: Text.Top
+                        color: theme_contextMenuFontColor
+                    }
 
-                Button {
-                    id: button
-                    anchors.top: (camera.height > 0)? camera.bottom : creation.bottom
-                    anchors.topMargin: textMargin
-                    anchors.horizontalCenter: parent.horizontalCenter
+                    Button {
+                        id: button
+                        anchors.top: (camera.height > 0)? camera.bottom : creation.bottom
+                        anchors.topMargin: parent.textMargin
+                        anchors.horizontalCenter: parent.horizontalCenter
 
-                    text: labelDeletePhoto
-                    onClicked: {
-                        photoDetailPage.closeMenu()
-                        confirmer.text = labelDeletePhotoText
-                        confirmer.items = [ currentPhotoItemId ]
-                        confirmer.show()
+                        text: labelDeletePhoto
+                        onClicked: {
+                            photoDetailActions.hide()
+                            confirmer.text = labelDeletePhotoText
+                            confirmer.items = [ currentPhotoItemId ]
+                            confirmer.show()
+                        }
                     }
                 }
             }
@@ -930,16 +952,14 @@ Labs.Window2 {
                 model: photoDetailModel
 
                 onConfirmed: {
-                    scene.previousApplicationPage()
+                    window.popPage()
                 }
             }
 
             PhotoDetailsView {
                 id: photodtview
-                parent: photoDetailPage.content
                 anchors.fill: parent
                 model: photoDetailModel
-                window: scene
                 appPage: photoDetailPage
                 currentIndex: detailViewIndex
 
@@ -947,7 +967,7 @@ Labs.Window2 {
                 startInSlideshow: showSlideshow
 
                 onPressAndHoldOnPhoto: {
-                    var map = mapToItem(scene, mouse.x , mouse.y)
+                    var map = mapToItem(topItem.topItem, mouse.x, mouse.y)
                     photoDetailContextMenu.model = [photodtview.viewMode ? labelLeaveFullScreen : labelFullScreen,
                                              labelPlay, labelShare,
                                              instance.pfavorite ? labelUnfavorite : labelFavorite,
@@ -958,7 +978,7 @@ Labs.Window2 {
                     photoDetailContextMenu.setPosition(map.x, map.y)
                     photoDetailContextMenu.show()
                 }
-                onCurrentIndexChanged: {
+                onCurrentItemChanged: {
                     labelSinglePhoto = currentItem.ptitle
                     currentPhotoCreationTime = currentItem.pcreation
                     currentPhotoCamera = currentItem.pcamera
@@ -968,7 +988,6 @@ Labs.Window2 {
 
                 Component.onCompleted: {
                     showPhotoAtIndex(detailViewIndex);
-                    scene.showsearch = false;
                 }
             }
 

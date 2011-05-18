@@ -68,7 +68,7 @@ Rectangle {
     }
 
     Component.onDestruction: {
-        scene.inhibitScreenSaver = false
+        window.inhibitScreenSaver = false
     }
 
     Labs.StrictUrl {
@@ -76,9 +76,9 @@ Rectangle {
     }
 
     Connections {
-        target: scene
+        target: window
         onForegroundChanged: {
-            if (!scene.foreground) {
+            if (!window.foreground) {
                 timer.pause()
             }
             else {
@@ -110,7 +110,7 @@ Rectangle {
         }
 
         onRunningChanged: {
-            scene.inhibitScreenSaver = running
+            window.inhibitScreenSaver = running
         }
 
         onTriggered: {

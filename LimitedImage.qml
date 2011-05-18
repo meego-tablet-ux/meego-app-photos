@@ -9,13 +9,12 @@
 import Qt 4.7
 
 Image {
-    id: theImage
     fillMode: Image.PreserveAspectFit
     asynchronous: true
 
     function limitSize() {
-        var screenLong = Math.max(scene.width, scene.height)
-        var screenShort = Math.min(scene.width, scene.height)
+        var screenLong = Math.max(window.width, window.height)
+        var screenShort = Math.min(window.width, window.height)
         var imageLong = Math.max(sourceSize.width, sourceSize.height)
         var imageShort = Math.min(sourceSize.width, sourceSize.height)
 

@@ -11,7 +11,6 @@ import Qt 4.7
 Item {
     id: container
 
-    property variant window
     property variant appPage
     property variant model
     property variant elementid
@@ -28,7 +27,7 @@ Item {
     property alias currentItem: photoViewer.currentItem
     property alias toolbar: toolbar
 
-    signal currentIndexChanged(int index)
+    signal currentItemChanged()
     signal pressAndHoldOnPhoto(variant mouse, variant instance)
 
     function showPhotoAtIndex(index) {
@@ -68,7 +67,6 @@ Item {
         id: photoViewer
         anchors.fill: parent
         model: container.model
-        window: container.window
         appPage: container.appPage
 
         onClickedOnPhoto: {
@@ -79,10 +77,12 @@ Item {
             container.pressAndHoldOnPhoto(mouse,instance);
         }
 
-        onCurrentIndexChanged:{
-            elementid = currentItem.pitemid;
-            toolbar.isFavorite = currentItem.pfavorite;
-            container.currentIndexChanged(photoViewer.currentIndex);
+        onCurrentItemChanged: {
+            if (currentItem) {
+                elementid = currentItem.pitemid;
+                toolbar.isFavorite = currentItem.pfavorite;
+                container.currentItemChanged()
+            }
         }
 
         onSlideshowStopped: {
@@ -111,11 +111,10 @@ Item {
             name: "origin"
             when: viewMode == 0
             PropertyChanges {
-                target: window
-                //topicsOffset: 0
-                showtoolbar: true
-                fullscreen: false
+                target: appPage
+                fullScreen: false
             }
+
             PropertyChanges {
                 target: photoViewer
                 fullscreen: false
@@ -130,10 +129,8 @@ Item {
             name: "fullscreenMode"
             when: viewMode == 1
             PropertyChanges {
-                target: window
-                // topicsOffset: -topicsWidth
-                showtoolbar: false
-                fullscreen: true
+                target: appPage
+                fullScreen: true
             }
             PropertyChanges {
                 target: photoViewer

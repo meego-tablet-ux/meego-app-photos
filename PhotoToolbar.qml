@@ -7,7 +7,6 @@
  */
 
 import Qt 4.7
-import MeeGo.Labs.Components 0.1 as Labs
 import MeeGo.Components 0.1
 import MeeGo.Sharing 0.1
 import MeeGo.Sharing.UI 0.1
@@ -15,7 +14,7 @@ import Qt.labs.gestures 2.0
 
 Item {
     id: container
-    height: childrenRect.height
+    height: playButton.height
 
     // View Modes:
     // 0 - single photo view toolbar
@@ -36,11 +35,9 @@ Item {
     signal deleteSelected()
     signal addToAlbum()
 
-    resources: [
-        ShareObj {
-            id: shareObj
-        }
-    ]
+    ShareObj {
+        id: shareObj
+    }
 
     // block all gestures from falling through
     GestureArea {
@@ -76,6 +73,7 @@ Item {
             onClicked: container.prev()
         }
         IconButton {
+            id: playButton
             opacity: mode == 0 || mode == 1 ? 1.0 : 0.0
             anchors.verticalCenter: parent.verticalCenter
             icon: "image://themedimage/images/icn_play_up"
@@ -96,7 +94,6 @@ Item {
         id: mode2Buttons
         anchors.left: parent.left
         width: parent.width
-        height: container.height -10
         anchors.verticalCenter: parent.verticalCenter
         spacing: (width - 400)/3
         visible: mode == 2
@@ -121,7 +118,7 @@ Item {
             iconDown: "image://themedimage/images/media/icn_share_dn"
             hasBackground: false
             onClicked: {
-                var map = mapToItem(scene, width / 2, 0);
+                var map = mapToItem(topItem.topItem, width / 2, 0);
                 shareObj.showContextTypes(map.x, map.y)
             }
         }

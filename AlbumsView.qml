@@ -7,12 +7,12 @@
  */
 
 import Qt 4.7
-import MeeGo.Labs.Components 0.1 as Labs
 import MeeGo.Components 0.1
 import MeeGo.Media 0.1
 
 Item {
     id: container
+
     property int labelHeight: 20
     property color cellBackgroundColor: "black"
     property color cellTextColor: theme_fontColorHighlight
@@ -113,8 +113,8 @@ Item {
             var preferPortrait = true
 
             // find cell size for at least six wide in landscape, three in portrait
-            var sizeL = Math.floor(Math.max(scene.width, scene.height) / 6)
-            var sizeP = Math.floor(Math.min(scene.width, scene.height) / 4)
+            var sizeL = Math.floor(Math.max(window.width, window.height) / 6)
+            var sizeP = Math.floor(Math.min(window.width, window.height) / 4)
 
             // work around bug in MediaGridView
             sizeP -= 1
@@ -159,7 +159,7 @@ Item {
         }
 
         onLongPressAndHold: {
-            var map = payload.mapToItem(scene, mouseX, mouseY);
+            var map = payload.mapToItem(topItem.topItem, mouseX, mouseY);
 
             // TODO: implement this play slideshow feature here, a little tricky
             //   Nick wants it to slide just the one page in, but later you

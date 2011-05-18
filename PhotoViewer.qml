@@ -14,7 +14,6 @@ import Qt.labs.gestures 2.0
 Item {
     id: photoViewer
     anchors.centerIn: parent
-    property variant window
     property variant appPage
     property alias model: photoListView.model
     property alias currentIndex: photoListView.currentIndex
@@ -32,7 +31,7 @@ Item {
     }
 
     signal clickedOnPhoto()
-    signal currentIndexChanged()
+    signal currentItemChanged()
     signal pressAndHoldOnPhoto(variant mouse, variant instance)
 
     function showPhotoAtIndex(index) {
@@ -379,14 +378,18 @@ Item {
                 }
 
                 TapAndHold {
-                    onFinished: photoViewer.pressAndHoldOnPhoto(gesture.position, dinstance);
+                    onFinished: {
+                        // map from window to item coordinates
+                        var map = window.mapToItem(dinstance, gesture.position.x, gesture.position.y)
+                        photoViewer.pressAndHoldOnPhoto(map, dinstance);
+                    }
                 }
 
                 Pinch {
                     onStarted: {
                         dinstance.interactive = false;
                         photoListView.interactive = false;
-                        dinstance.centerPoint = scene.mapToItem(dinstance, gesture.centerPoint.x, gesture.centerPoint.y);
+                        dinstance.centerPoint = topItem.topItem.mapToItem(dinstance, gesture.centerPoint.x, gesture.centerPoint.y);
                     }
 
                     onUpdated: {
@@ -445,8 +448,8 @@ Item {
             photoListView.currentItem.updateImage();
         }
 
-        onCurrentIndexChanged: {
-            photoViewer.currentIndexChanged();
+        onCurrentItemChanged: {
+            photoViewer.currentItemChanged()
         }
     }
 
