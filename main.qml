@@ -716,6 +716,7 @@ Window {
                 cellBackgroundColor: "black"
                 noContentText: labelNoPhotosInAlbumText
                 noContentButtonText: labelNoContentViewPhotosButtonText
+                modelConnectionReady: window.modelConnectionReady
                 onOpenPhoto: {
                     // opening a photo from album detail view
                     photoDetailModel = albumModel;
