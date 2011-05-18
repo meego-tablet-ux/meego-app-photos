@@ -241,53 +241,70 @@ Window {
             ContextMenu {
                 id: allPhotosActions
 
-                content: Labs.ActionMenu {
-                    id: filterMenu
-                    title: labelViewBy
-                    highlightIndex: getIndexFromFilter(allPhotosModel.filter)
-                    model: [ labelAll, labelRecentlyAdded, labelFavorites, labelRecentlyViewed ]
-
-                    function getIndexFromFilter(filter) {
-                        switch (filter) {
-                        case 0: return 0
-                        case 1: return 2
-                        case 2: return 3
-                        case 3: return 1
-                        default:
-                                console.log("Unexpected filter in action menu: " + allPhotosModel.filter)
-                            return 0
-                        }
+                content: Column {
+                    Text {
+                        anchors.left: parent.left
+                        anchors.leftMargin: 10
+                        text: qsTr("Show only:")
+                        font.pixelSize: theme_fontPixelSizeNormal
+                        color: theme_fontColorHighlight
                     }
 
-                    function setFilter(label) {
-                        if (label == labelAll) {
-                            allPhotosModel.filter = 0
-                            allPhotosView.noContentText = labelNoPhotosText
-                            allPhotosView.noContentButtonText = labelNoContentTakePhotoButtonText
-                        }
-                        else if (label == labelRecentlyAdded) {
-                            allPhotosModel.filter = 3
-                            allPhotosView.noContentText = labelNoRecentlyAddedPhotosText
-                            allPhotosView.noContentButtonText = labelNoContentViewPhotosButtonText
-                        }
-                        else if (label == labelFavorites) {
-                            allPhotosModel.filter = 1
-                            allPhotosView.noContentText = labelNoFavoritePhotosText
-                            allPhotosView.noContentButtonText = labelNoContentViewPhotosButtonText
-                        }
-                        else if (label == labelRecentlyViewed) {
-                            allPhotosModel.filter = 2
-                            allPhotosView.noContentText = labelNoRecentlyViewedPhotosText
-                            allPhotosView.noContentButtonText = labelNoContentViewPhotosButtonText
-                        }
-                        else {
-                            console.log("Unexpected label in action menu: " + label)
-                        }
+                    Item { width: 1; height: 10 } // spacer
+
+                    Image {
+                        width: parent.width
+                        source: "image://themedimage/images/menu_item_separator"
                     }
 
-                    onTriggered: {
-                        setFilter(model[index])
-                        allPhotosActions.hide()
+                    ActionMenu {
+                        id: filterMenu
+                        model: [ labelAll, labelRecentlyAdded, labelFavorites, labelRecentlyViewed ]
+                        selectedIndex: getIndexFromFilter(allPhotosModel.filter)
+                        highlightSelectedItem: true
+
+                        function getIndexFromFilter(filter) {
+                            switch (filter) {
+                            case 0: return 0
+                            case 1: return 2
+                            case 2: return 3
+                            case 3: return 1
+                            default:
+                                    console.log("Unexpected filter in action menu: " + allPhotosModel.filter)
+                                return 0
+                            }
+                        }
+
+                        function setFilter(label) {
+                            if (label == labelAll) {
+                                allPhotosModel.filter = 0
+                                allPhotosView.noContentText = labelNoPhotosText
+                                allPhotosView.noContentButtonText = labelNoContentTakePhotoButtonText
+                            }
+                            else if (label == labelRecentlyAdded) {
+                                allPhotosModel.filter = 3
+                                allPhotosView.noContentText = labelNoRecentlyAddedPhotosText
+                                allPhotosView.noContentButtonText = labelNoContentViewPhotosButtonText
+                            }
+                            else if (label == labelFavorites) {
+                                allPhotosModel.filter = 1
+                                allPhotosView.noContentText = labelNoFavoritePhotosText
+                                allPhotosView.noContentButtonText = labelNoContentViewPhotosButtonText
+                            }
+                            else if (label == labelRecentlyViewed) {
+                                allPhotosModel.filter = 2
+                                allPhotosView.noContentText = labelNoRecentlyViewedPhotosText
+                                allPhotosView.noContentButtonText = labelNoContentViewPhotosButtonText
+                            }
+                            else {
+                                console.log("Unexpected label in action menu: " + label)
+                            }
+                        }
+
+                        onTriggered: {
+                            setFilter(model[index])
+                            allPhotosActions.hide()
+                        }
                     }
                 }
             }
@@ -489,37 +506,51 @@ Window {
             ContextMenu {
                 id: allAlbumsActions
 
-                content: Item {
-                    width: filterMenu.width
-                    height: filterMenu.height + actionsMenu.height
+                content: Column {
+                    width: Math.max(filterMenu.width, newAlbumButton.width)
 
-                    Labs.ActionMenu {
-                        id: actionsMenu
-                        model: [ labelNewAlbum ]
-                        onTriggered: {
+                    Button {
+                        id: newAlbumButton
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        text: labelNewAlbum
+                        onClicked: {
                             createAlbumDialog.show()
                             allAlbumsActions.hide()
                         }
                     }
 
+                    Item { width: 1; height: 10 } // spacer
+
                     Image {
-                        id: separator
-                        anchors.top: actionsMenu.bottom
                         width: parent.width
                         source: "image://themedimage/images/menu_item_separator"
                     }
 
-                    Labs.ActionMenu {
+                    Item { width: 1; height: 10 } // spacer
+
+                    Text {
+                        anchors.left: parent.left
+                        anchors.leftMargin: 10
+                        text: qsTr("Show only:")
+                        font.pixelSize: theme_fontPixelSizeNormal
+                        color: theme_fontColorHighlight
+                    }
+
+                    Item { width: 1; height: 10 } // spacer
+
+                    Image {
+                        width: parent.width
+                        source: "image://themedimage/images/menu_item_separator"
+                    }
+
+                    ActionMenu {
                         id: filterMenu
-                        anchors.top: separator.bottom
-                        anchors.topMargin: 5
-                        title: labelViewBy
-                        highlightIndex: allAlbumsModel.filter ? 1:0
 
                         // FIXME: removed favorites from this list since there is no UI for favorite albums
                         // FIXME: removed recently viewed from this list since it's not clear when
                         //        to tag an album as "viewed" - consult UX team
                         model: [ labelAll, labelRecentlyAdded ]
+                        selectedIndex: allAlbumsModel.filter ? 1:0
 
                         function setFilter(label) {
                             if (label == labelAll) {
@@ -539,7 +570,7 @@ Window {
 
                         onTriggered: {
                             setFilter(model[index])
-                            allAlbumsActions.show()
+                            allAlbumsActions.hide()
                         }
                     }
                 }
