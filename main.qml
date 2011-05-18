@@ -240,6 +240,7 @@ Window {
 
             ContextMenu {
                 id: allPhotosActions
+                forceFingerMode: 2
 
                 content: Column {
                     Text {
@@ -505,6 +506,7 @@ Window {
 
             ContextMenu {
                 id: allAlbumsActions
+                forceFingerMode: 2
 
                 content: Column {
                     width: Math.max(filterMenu.width, newAlbumButton.width)
@@ -665,6 +667,7 @@ Window {
 
             ContextMenu {
                 id: albumDetailActions
+                forceFingerMode: 2
 
                 content: Column {
                     property int textMargin: 16
@@ -892,6 +895,7 @@ Window {
 
             ContextMenu {
                 id: photoDetailActions
+                forceFingerMode: 2
 
                 content: Item {
                     property int textMargin: 16
