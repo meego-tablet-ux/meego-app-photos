@@ -26,9 +26,9 @@ Window {
     }
 
     property string labelAll: qsTr("All")
-    property string labelRecentlyAdded: qsTr("Recently added")
-    property string labelRecentlyViewed: qsTr("Last viewed")
+    property string labelNewest: qsTr("Newest")
     property string labelFavorites: qsTr("Favorites")
+    property string labelRecentlyViewed: qsTr("Recently viewed")
     property string labelShare: qsTr("Share")
     property string labelPhotoApp: qsTr("Photos")
     property string labelAllPhotos: qsTr("All photos")
@@ -59,11 +59,11 @@ Window {
     property string labelDeleteAlbumText: qsTr("Are you sure you want to delete this album?")
 
     property string labelNoPhotosText: qsTr("You have no photos")
-    property string labelNoRecentlyAddedPhotosText: qsTr("You haven't added any photos recently")
+    property string labelNoNewestPhotosText: qsTr("You haven't added any photos recently")
     property string labelNoFavoritePhotosText: qsTr("You don't have any favorite photos")
     property string labelNoRecentlyViewedPhotosText: qsTr("You haven't viewed any photos recently")
     property string labelNoAlbumsText: qsTr("You have no albums")
-    property string labelNoRecentlyAddedAlbumsText: qsTr("You haven't added any albums recently")
+    property string labelNoNewestAlbumsText: qsTr("You haven't added any albums recently")
     property string labelNoPhotosInAlbumText: qsTr("You don't have any photos in this album")
 
     property string labelNoContentTakePhotoButtonText: qsTr("Take a photo")
@@ -260,7 +260,7 @@ Window {
 
                     ActionMenu {
                         id: filterMenu
-                        model: [ labelAll, labelRecentlyAdded, labelFavorites, labelRecentlyViewed ]
+                        model: [ labelAll, labelNewest, labelFavorites, labelRecentlyViewed ]
                         selectedIndex: getIndexFromFilter(allPhotosModel.filter)
                         highlightSelectedItem: true
 
@@ -282,9 +282,9 @@ Window {
                                 allPhotosView.noContentText = labelNoPhotosText
                                 allPhotosView.noContentButtonText = labelNoContentTakePhotoButtonText
                             }
-                            else if (label == labelRecentlyAdded) {
+                            else if (label == labelNewest) {
                                 allPhotosModel.filter = 3
-                                allPhotosView.noContentText = labelNoRecentlyAddedPhotosText
+                                allPhotosView.noContentText = labelNoNewestPhotosText
                                 allPhotosView.noContentButtonText = labelNoContentViewPhotosButtonText
                             }
                             else if (label == labelFavorites) {
@@ -551,7 +551,7 @@ Window {
                         // FIXME: removed favorites from this list since there is no UI for favorite albums
                         // FIXME: removed recently viewed from this list since it's not clear when
                         //        to tag an album as "viewed" - consult UX team
-                        model: [ labelAll, labelRecentlyAdded ]
+                        model: [ labelAll, labelNewest ]
                         selectedIndex: allAlbumsModel.filter ? 1:0
 
                         function setFilter(label) {
@@ -560,9 +560,9 @@ Window {
                                 albumsView.noContentText = labelNoAlbumsText
                                 albumsView.noContentButtonText = labelNoContentCreateAlbumButtonText
                             }
-                            else if (label == labelRecentlyAdded) {
+                            else if (label == labelNewest) {
                                 allAlbumsModel.filter = 3
-                                albumsView.noContentText = labelNoRecentlyAddedAlbumsText
+                                albumsView.noContentText = labelNoNewestAlbumsText
                                 albumsView.noContentButtonText = labelNoContentCreateAlbumButtonText
                             }
                             else {
