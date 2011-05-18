@@ -29,6 +29,7 @@ Item {
 
     signal currentItemChanged()
     signal pressAndHoldOnPhoto(variant mouse, variant instance)
+    signal setAsBg()
 
     function showPhotoAtIndex(index) {
         photoViewer.showPhotoAtIndex(index);
@@ -95,15 +96,18 @@ Item {
         anchors.bottom: parent.bottom
         width: parent.width
         isFavorite: false
-        opacity: 1
-        visible: opacity > 0.5
+        visible: true
         mode: 0
+        contentMode: 4
         onPrev: photoViewer.showPrevPhoto();
         onNext: photoViewer.showNextPhoto();
         onPlay: container.startSlideshow()
         onRotateRight: photoViewer.rotateRightward();
         onRotateLeft: photoViewer.rotateLeftward();
         onFavorite: container.toggleFavorite();
+        // TODO toolbar
+        onSetAsBg: { container.setAsBg() }
+        onShowInfo: {}
     }
 
     state: "origin"

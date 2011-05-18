@@ -490,6 +490,7 @@ Window {
                 anchors.bottom: parent.bottom
                 width: parent.width
                 mode:  allPhotosView.selectionMode ? 2 : 1
+                contentMode: 0
                 onPlay: {
                     // play button clicked in all photo view
                     allPhotosView.currentIndex = 0;
@@ -527,6 +528,15 @@ Window {
                 onCancel: {
                     allPhotosView.selectionMode = false;
                 }
+                onLaunchCamera: {
+                    appsModel.launchDesktopByName("/usr/share/meego-ux-appgrid/applications/meego-app-camera.desktop")
+                }
+                onSelectMultiple: {
+                    allPhotosView.selectionMode = !container.selectionMode;
+                }
+                // TODO toolbar
+                onSetAsBg: { backgroundModel.activeWallpaper = payload.muri; }
+                onShowFilter: {}
             }
         }
     }
@@ -706,9 +716,30 @@ Window {
                     createAlbumDialog.show()
                 }
             }
+
+            PhotoToolbar {
+                id: albumsToolbar
+                visible: albumsView.noContentVisible
+                parent: allAlbumsPage.content
+                anchors.bottom: parent.bottom
+                width: parent.width
+                mode: 1
+                contentMode: 3
+                onLaunchCamera: {
+                    appsModel.launchDesktopByName("/usr/share/meego-ux-appgrid/applications/meego-app-camera.desktop")
+                }
+                // TODO toolbar
+                onCreateAlbum: { createAlbumDialog.show() }
+                onShowInfo: {}
+                onShowFilter: {}
+            }
+
+            Component.onCompleted: {
+                scene.fullscreen = false;
+                scene.showsearch = true;
+            }
         }
     }
-
 
     Component {
         id: timelineComponent
@@ -1033,6 +1064,7 @@ Window {
                 anchors.bottom: parent.bottom
                 width: parent.width
                 mode: 1
+                contentMode: 1
                 onPlay: {
                     // starting slideshow from album detail toolbar
                     albumDetailsView.currentIndex = 0;
@@ -1046,6 +1078,12 @@ Window {
                     showSlideshow = true
                     addPage(photoDetailComponent)
                 }
+                onLaunchCamera: {
+                    appsModel.launchDesktopByName("/usr/share/meego-ux-appgrid/applications/meego-app-camera.desktop")
+                }
+                // TODO toolbar
+                onSetAsBg: {backgroundModel.activeWallpaper = payload.muri}
+                onShowInfo: {}
             }
 
             Component.onCompleted: {
@@ -1258,6 +1296,7 @@ Window {
                     currentPhotoURI = currentItem.puri
                 }
 
+                onSetAsBg: { backgroundModel.activeWallpaper = payload.muri }
                 Component.onCompleted: {
                     showPhotoAtIndex(detailViewIndex);
                 }

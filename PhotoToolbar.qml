@@ -22,6 +22,14 @@ Item {
     // 2 - grid view toolbar with cancel multiple select
     property int mode: 2
 
+    // Content Modes:
+    // 0 - all photos
+    // 1 - album details
+    // 2 - timeline
+    // 3 - all albums
+    // 4 - single photo
+    property int contentMode: 0
+
     property bool isFavorite: true
     property alias sharing: shareObj
 
@@ -33,7 +41,15 @@ Item {
     signal rotateRight()
     signal cancel()
     signal deleteSelected()
+    signal selectMultiple()
     signal addToAlbum()
+    signal createAlbum()
+    signal showInfo()
+    signal showFilter()
+    signal showSort()
+    //signal share()
+    signal setAsBg()
+    signal launchCamera()
 
     ShareObj {
         id: shareObj
@@ -50,22 +66,94 @@ Item {
         Pinch {}
     }
 
-    BorderImage {
+    Rectangle {
         anchors.fill: parent
-        source: "image://themedimage/images/media/nextbox_landscape"
-        border.top: 10
-        border.bottom:10
-        border.left: 10
-        border.right: 10
+        color: theme_mediaGridTitleBackgroundColor
+        opacity: theme_mediaGridTitleBackgroundAlpha
+    }
+
+
+    IconButton {
+        id: rotateButton
+        visible: mode == 0 && contentMode == 4 ? true : false
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.left: parent.left
+        anchors.leftMargin: 10
+        icon: "image://theme/media/icn_rotate_cw_up"
+        iconDown: "image://theme/media/icn_rotate_cw_dn"
+        hasBackground: false
+        onClicked: container.rotateRight()
+    }
+
+    IconButton {
+        id: cameraButton
+        visible: mode == 1 ? true : false
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.left: parent.left
+        anchors.leftMargin: 10
+        icon: "image://meegotheme/icons/toolbar/camera-photo"
+        iconDown: "image://meegotheme/icons/toolbar/camera-photo-active"
+        hasBackground: false
+        onClicked: container.launchCamera()
+    }
+
+    IconButton {
+        id: multiSelectButton
+        visible: mode == 1 && contentMode == 0 ? true : false
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.left: cameraButton.right
+        anchors.leftMargin: 10
+        icon: "image://meegotheme/icons/toolbar/document-attach"
+        iconDown: "image://meegotheme/icons/toolbar/document-attach-active"
+        hasBackground: false
+        onClicked: container.selectMultiple()
+    }
+
+    IconButton {
+        id: newAlbumButton
+        visible: mode == 1 && contentMode == 3 ? true : false
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.left: cameraButton.right
+        anchors.leftMargin: 10
+        icon: "image://meegotheme/icons/toolbar/view-change"
+        iconDown: "image://meegotheme/icons/toolbar/view-change-active"
+        hasBackground: false
+        onClicked: container.createAlbum()
+    }
+
+    IconButton {
+        id: shareSingleSelectButton
+        visible: mode != 2
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.left: {
+            switch(contentMode) {
+                case 0: return multiSelectButton.right
+                case 1: return cameraButton.right
+                case 2: return cameraButton.right
+                case 3: return newAlbumButton.right
+                case 4: return rotateButton.right
+                default: return cameraButton.right
+            }
+        }
+        anchors.leftMargin: 10
+        icon: "image://themedimage/images/media/icn_share_up"
+        iconDown: "image://themedimage/images/media/icn_share_dn"
+        hasBackground: false
+        onClicked: {
+            var map = mapToItem(scene, width / 2, 0);
+            shareObj.showContextTypes(map.x, map.y)
+        }
     }
 
     Row {
+        id: allPhotosRow
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
         spacing: 10
+        visible: contentMode == 0 || contentMode == 1 || contentMode == 4
 
         IconButton {
-            opacity: mode == 0 ? 1.0 : 0.0
+            visible: mode == 0 && contentMode == 4 ? true : false
             anchors.verticalCenter: parent.verticalCenter
             icon: "image://themedimage/images/media/icn_back_up"
             iconDown: "image://themedimage/images/media/icn_back_dn"
@@ -74,7 +162,7 @@ Item {
         }
         IconButton {
             id: playButton
-            opacity: mode == 0 || mode == 1 ? 1.0 : 0.0
+            visible: mode != 2 && (contentMode == 0 || contentMode == 1 || contentMode == 4) ? true : false
             anchors.verticalCenter: parent.verticalCenter
             icon: "image://themedimage/images/icn_play_up"
             iconDown: "image://themedimage/images/icn_play_dn"
@@ -82,7 +170,7 @@ Item {
             onClicked: container.play()
         }
         IconButton {
-            opacity: mode == 0 ? 1.0 : 0.0
+            visible: mode == 0 && contentMode == 4 ? true : false
             anchors.verticalCenter: parent.verticalCenter
             icon: "image://themedimage/images/media/icn_forward_up"
             iconDown: "image://themedimage/images/media/icn_forward_dn"
@@ -90,6 +178,70 @@ Item {
             onClicked: container.next()
         }
     }
+
+    IconButton {
+        id: filterButton
+        visible: mode == 1 && ( contentMode == 0 || contentMode == 3) ? true : false
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.right: parent.right
+        anchors.rightMargin: 10
+        icon: "image://meegotheme/icons/toolbar/view-actions"
+        iconDown: "image://meegotheme/icons/toolbar/view-actions-active"
+        hasBackground: false
+        onClicked: container.showFilter()
+    }
+
+    IconButton {
+        id: sortByButton
+        visible: mode == 1 && contentMode == 2 ? true : false
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.right: parent.right
+        anchors.rightMargin: 10
+        icon: "image://meegotheme/icons/toolbar/dev-exit"
+        iconDown: "image://meegotheme/icons/toolbar/dev-exit-active"
+        hasBackground: false
+        onClicked: container.showSort();
+    }
+
+    IconButton {
+        id: favouriteButton
+        visible: mode == 0 && contentMode == 4 ? true : false
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.right: parent.right
+        anchors.rightMargin: 10
+        icon: container.isFavorite ? "image://theme/media/icn_favourite_active" : "image://theme/media/icn_favourite_up"
+        iconDown: "image://theme/media/icn_favourite_dn"
+        hasBackground: false
+        onClicked: {
+            container.isFavorite = !container.isFavorite;
+            container.favorite();
+        }
+    }
+
+    IconButton {
+        id: infoButton
+        visible: contentMode != 0 && contentMode != 3 ? true : false
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.right: mode == 0? favouriteButton.left : (contentMode == 3? filterButton.left : (contentMode == 1? parent.right : sortByButton.left))
+        anchors.rightMargin: 10
+        icon: "image://meegotheme/icons/toolbar/page-favorite"
+        iconDown: "image://meegotheme/icons/toolbar/page-favorite-active"
+        hasBackground: false
+        onClicked: container.showInfo()
+    }
+
+    IconButton {
+        id: setAsBgButton
+        visible: mode != 2 && (contentMode == 0 || contentMode == 4)? true : false
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.right: contentMode == 4? infoButton.left : filterButton.left
+        anchors.rightMargin: 10
+        icon: "image://meegotheme/icons/toolbar/dev-home"
+        iconDown: "image://meegotheme/icons/toolbar/dev-home-active"
+        hasBackground: false
+        onClicked: container.setAsBg()
+    }
+
     Row {
         id: mode2Buttons
         anchors.left: parent.left
@@ -127,30 +279,6 @@ Item {
             iconDown: "image://themedimage/images/media/icn_cancel_ms_dn"
             hasBackground: false
             onClicked: container.cancel()
-        }
-    }
-
-    IconButton {
-        opacity: mode == 0 ? 1.0 : 0.0
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.left: parent.left
-        anchors.leftMargin: 10
-        icon: "image://themedimage/images/media/icn_rotate_cw_up"
-        iconDown: "image://themedimage/images/media/icn_rotate_cw_dn"
-        hasBackground: false
-        onClicked: container.rotateRight()
-    }
-    IconButton {
-        opacity: mode == 0 ? 1.0 : 0.0
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.right: parent.right
-        anchors.rightMargin: 10
-        icon: container.isFavorite ? "image://themedimage/images/media/icn_favourite_active" : "image://themedimage/images/media/icn_favourite_up"
-        iconDown: "image://themedimage/images/media/icn_favourite_dn"
-        hasBackground: false
-        onClicked: {
-            container.isFavorite = !container.isFavorite;
-            container.favorite();
         }
     }
 
