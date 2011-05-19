@@ -164,7 +164,7 @@ Item {
                 transformOrigin: Item.Center
                 visible: fullImage.opacity != 1
                 asynchronous: true
-                smooth: rotation == 0 || rotation == 90 || rotation == 180 || rotation == 270
+                smooth: rotation % 90 == 0
             }
 
             // full res image
@@ -178,7 +178,7 @@ Item {
                 visible: opacity != 0
                 property bool show: false
                 property bool load: false
-                smooth:  scale < 1.5 && (rotation == 0 || rotation == 90 || rotation == 180 || rotation == 270)
+                smooth: scale < 1.5 && (rotation % 90 == 0)
 
                 onStatusChanged: {
                     if (status == Image.Ready) {
