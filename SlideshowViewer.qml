@@ -121,11 +121,6 @@ Rectangle {
                 return
             }
 
-            if (init) {
-                slideshowViewer.visible = true
-                init = false
-            }
-
             var nextLoader
             if (first) {
                 nextLoader = secondImageLoader
