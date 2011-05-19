@@ -509,7 +509,8 @@ Window {
                 forceFingerMode: 2
 
                 content: Column {
-                    width: Math.max(filterMenu.width, newAlbumButton.width)
+                    property int margin: 10
+                    width: Math.max(filterMenu.width, newAlbumButton.width + 2 * margin)
 
                     Button {
                         id: newAlbumButton
@@ -521,24 +522,24 @@ Window {
                         }
                     }
 
-                    Item { width: 1; height: 10 } // spacer
+                    Item { width: 1; height: parent.margin } // spacer
 
                     Image {
                         width: parent.width
                         source: "image://themedimage/images/menu_item_separator"
                     }
 
-                    Item { width: 1; height: 10 } // spacer
+                    Item { width: 1; height: parent.margin } // spacer
 
                     Text {
                         anchors.left: parent.left
-                        anchors.leftMargin: 10
+                        anchors.leftMargin: parent.margin
                         text: qsTr("Show only:")
                         font.pixelSize: theme_fontPixelSizeNormal
                         color: theme_fontColorHighlight
                     }
 
-                    Item { width: 1; height: 10 } // spacer
+                    Item { width: 1; height: parent.margin } // spacer
 
                     Image {
                         width: parent.width
