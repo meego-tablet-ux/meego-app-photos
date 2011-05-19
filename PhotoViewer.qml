@@ -164,6 +164,7 @@ Item {
                 transformOrigin: Item.Center
                 visible: fullImage.opacity != 1
                 asynchronous: true
+                smooth: rotation == 0 || rotation == 90 || rotation == 180 || rotation == 270
             }
 
             // full res image
@@ -174,8 +175,10 @@ Item {
                 height: dinstance.height
                 transformOrigin: Item.Center
                 opacity: 0
+                visible: opacity != 0
                 property bool show: false
                 property bool load: false
+                smooth:  scale < 1.5 && (rotation == 0 || rotation == 90 || rotation == 180 || rotation == 270)
 
                 onStatusChanged: {
                     if (status == Image.Ready) {
@@ -495,6 +498,7 @@ Item {
         property bool show: false
         spacing: 2
         opacity: 0
+        visible: opacity != 0
         highlightMoveDuration: 200
         onShowChanged: {
             // start the timer

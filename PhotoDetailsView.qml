@@ -96,6 +96,7 @@ Item {
         width: parent.width
         isFavorite: false
         opacity:   1
+        visible: opacity > 0.5
         mode: 0
         onPrev: photoViewer.showPrevPhoto();
         onNext: photoViewer.showNextPhoto();

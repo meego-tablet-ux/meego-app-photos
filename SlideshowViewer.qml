@@ -26,7 +26,7 @@ Rectangle {
 
     anchors.fill: parent
     color: "black"
-    opacity: 0
+    visible: false
 
     // "private" properties
     property bool init: true
@@ -122,7 +122,7 @@ Rectangle {
             }
 
             if (init) {
-                slideshowViewer.opacity = 1
+                slideshowViewer.visible = true
                 init = false
             }
 
@@ -163,11 +163,12 @@ Rectangle {
         id: imageComponent
         LimitedImage {
             opacity: 0
+            visible: opacity != 0
             property bool waiting: false
 
             onStatusChanged: {
                 if (init && status == Image.Ready) {
-                    slideshowViewer.opacity = 1
+                    slideshowViewer.visible = true
                     init = false
                     timer.start()
                 }
