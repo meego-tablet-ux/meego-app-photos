@@ -95,7 +95,7 @@ Item {
         anchors.bottom: parent.bottom
         width: parent.width
         isFavorite: false
-        opacity:   1
+        opacity: 1
         visible: opacity > 0.5
         mode: 0
         onPrev: photoViewer.showPrevPhoto();
@@ -106,7 +106,7 @@ Item {
         onFavorite: container.toggleFavorite();
     }
 
-    state:"origin"
+    state: "origin"
     states: [
         State {
             name: "origin"
@@ -115,7 +115,6 @@ Item {
                 target: appPage
                 fullScreen: false
             }
-
             PropertyChanges {
                 target: photoViewer
                 fullscreen: false
@@ -148,14 +147,12 @@ Item {
     transitions: [
         Transition {
             reversible: true
-            ParallelAnimation{
+            ParallelAnimation {
                 PropertyAnimation {
-                    target:toolbar
+                    target: toolbar
                     property: "anchors.bottomMargin"
                     duration: 250
-
                 }
-
                 PropertyAnimation {
                     target: toolbar
                     property: "opacity"
