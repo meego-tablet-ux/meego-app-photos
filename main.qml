@@ -64,6 +64,7 @@ Window {
     property string labelNoRecentlyViewedPhotosText: qsTr("You haven't viewed any photos recently")
     property string labelNoAlbumsText: qsTr("You have no albums")
     property string labelNoNewestAlbumsText: qsTr("You haven't added any albums recently")
+    property string labelNoRecentlyViewedAlbumsText: qsTr("You haven't viewed any albums recently")
     property string labelNoPhotosInAlbumText: qsTr("You don't have any photos in this album")
 
     property string labelNoContentTakePhotoButtonText: qsTr("Take a photo")
@@ -552,7 +553,7 @@ Window {
                         // FIXME: removed favorites from this list since there is no UI for favorite albums
                         // FIXME: removed recently viewed from this list since it's not clear when
                         //        to tag an album as "viewed" - consult UX team
-                        model: [ labelAll, labelNewest ]
+                        model: [ labelAll, labelNewest, labelRecentlyViewed ]
                         selectedIndex: allAlbumsModel.filter ? 1:0
 
                         function setFilter(label) {
@@ -564,6 +565,11 @@ Window {
                             else if (label == labelNewest) {
                                 allAlbumsModel.filter = 3
                                 albumsView.noContentText = labelNoNewestAlbumsText
+                                albumsView.noContentButtonText = labelNoContentCreateAlbumButtonText
+                            }
+                            else if (label == labelRecentlyViewed) {
+                                allAlbumsModel.filter = 2
+                                albumsView.noContentText = labelNoRecentlyViewedAlbumsText
                                 albumsView.noContentButtonText = labelNoContentCreateAlbumButtonText
                             }
                             else {
@@ -624,6 +630,7 @@ Window {
                     albumId = elementid;
                     albumIsVirtual = isvirtual;
                     addPage(albumDetailComponent);
+                    model.setViewed(albumId)
                 }
                 onPlaySlideshow: {
                     labelSingleAlbum = title;

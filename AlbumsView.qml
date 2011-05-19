@@ -92,6 +92,10 @@ Item {
         anchors.verticalCenter: parent.verticalCenter
         width: parent.width
         visible: !view.visible
+
+        onClicked: {
+            container.noContentAction();
+        }
     }
 
     MediaGridView {
