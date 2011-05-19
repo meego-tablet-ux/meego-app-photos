@@ -116,7 +116,7 @@ Window {
         id: allPhotosModel
         type: PhotoListModel.ListofPhotos
         limit: 0
-        sort:PhotoListModel.SortByDefault
+        sort: PhotoListModel.SortByCreationTime
         onItemAvailable: {
             var itemtype;
             var title;
@@ -173,7 +173,7 @@ Window {
         id: allAlbumsModel
         type: PhotoListModel.ListofAlbums
         limit: 0
-        sort:PhotoListModel.SortByDefault
+        sort: PhotoListModel.SortByCreationTime
         onItemAvailable: {
             var itemtype = allAlbumsModel.getTypefromURN(identifier);
             var itemid = allAlbumsModel.getIDfromURN(identifier)
