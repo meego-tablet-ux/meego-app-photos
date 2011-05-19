@@ -398,8 +398,8 @@ Item {
                     onUpdated: {
                         var cw = dinstance.contentWidth;
                         var ch = dinstance.contentHeight;
-                        image.scale *= gesture.scaleFactor;
-                        fullImage.scale *= gesture.scaleFactor;
+                        image.scale = Math.max(0.25, Math.min(10.0, image.scale * gesture.scaleFactor))
+                        fullImage.scale = image.scale;
                         dinstance.contentX =  (dinstance.centerPoint.x + dinstance.contentX )/ cw * dinstance.contentWidth - dinstance.centerPoint.x;
                         dinstance.contentY = (dinstance.centerPoint.y + dinstance.contentY)/ ch * dinstance.contentHeight - dinstance.centerPoint.y;
                     }
