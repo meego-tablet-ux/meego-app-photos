@@ -77,8 +77,8 @@ Rectangle {
 
     Connections {
         target: window
-        onForegroundChanged: {
-            if (!window.foreground) {
+        onIsActiveWindowChanged: {
+            if (!window.isActiveWindow) {
                 timer.pause()
             }
             else {
