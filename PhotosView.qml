@@ -89,8 +89,8 @@ Item {
 
         cellWidth: {
             // for now, prefer portrait - later pull from platform setting
-            var preferLandscape = false
-            var preferPortrait = true
+            var preferLandscape = true
+            var preferPortrait = false
 
             // find cell size for at least ten wide in landscape, six in portrait
             var sizeL = Math.floor(Math.max(window.width, window.height) / 10)
