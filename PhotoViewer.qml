@@ -397,12 +397,18 @@ Rectangle {
                         var ch = dinstance.contentHeight;
                         image.scale = Math.max(0.25, Math.min(10.0, image.scale * gesture.scaleFactor))
                         fullImage.scale = image.scale;
-                        dinstance.contentX =  (dinstance.centerPoint.x + dinstance.contentX )/ cw * dinstance.contentWidth - dinstance.centerPoint.x;
-                        dinstance.contentY = (dinstance.centerPoint.y + dinstance.contentY)/ ch * dinstance.contentHeight - dinstance.centerPoint.y;
+                        if (fullImage.scale < 1.0) {
+                            dinstance.contentX =  0;
+                            dinstance.contentY =  0;
+                        }
+                        else {
+                            dinstance.contentX =  (dinstance.centerPoint.x + dinstance.contentX )/ cw * dinstance.contentWidth - dinstance.centerPoint.x;
+                            dinstance.contentY = (dinstance.centerPoint.y + dinstance.contentY)/ ch * dinstance.contentHeight - dinstance.centerPoint.y;
+                        }
                     }
 
                     onFinished: {
-                        dinstance.interactive = true;
+                        dinstance.interactive = fullImage.scale > 1;
                         photoListView.interactive = true;
                     }
                 }
