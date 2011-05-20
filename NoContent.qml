@@ -21,19 +21,8 @@ Item {
     width: childrenRect.width
     height: childrenRect.height
 
-    Rectangle {
-        id: separator1
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.margins: 4
-        height: 1
-        color: "lightgrey"
-    }
-
     Text {
         id: noContentLabel
-        anchors.top: separator1.bottom
-        anchors.margins: 4
         anchors.horizontalCenter: parent.horizontalCenter
     }
 
@@ -41,18 +30,8 @@ Item {
         id: actionButton
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: noContentLabel.bottom
-        anchors.margins: 4
+        anchors.margins: 10
 
         onClicked: noContentElement.clicked()
-    }
-
-    Rectangle {
-        id: separator2
-        anchors.top: actionButton.bottom
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.margins: 4
-        height: 1
-        color: "lightgrey"
     }
 }
