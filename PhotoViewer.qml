@@ -404,29 +404,37 @@ Item {
                         dinstance.contentY = (dinstance.centerPoint.y + dinstance.contentY)/ ch * dinstance.contentHeight - dinstance.centerPoint.y;
 
                         if (gesture.changeFlags & PinchGesture.RotationAngleChanged) {
-                            image.rotation += gesture.rotationAngle - gesture.lastRotationAngle
-                            if ( image.rotation >= 360 ) {
-                                image.rotation = image.rotation - 360
-                            } else if ( image.rotation <= 0 ) {
-                                image.rotation = 360 - image.rotation
+                            var rotation = image.rotation + gesture.rotationAngle - gesture.lastRotationAngle
+                            if (rotation >= 360) {
+                                rotation -= 360
                             }
-                            fullImage.rotation = image.rotation
+                            else if (rotation < 0) {
+                                rotation += 360
+                            }
+                            image.rotation = rotation
+                            fullImage.rotation = rotation
                         }
                     }
 
                     onFinished: {
                         dinstance.interactive = true;
                         photoListView.interactive = true;
-                        if ( (image.rotation >= -10 && image.rotation <= 10) || (image.rotation >= 350 && image.rotation <= 370) ) {
-                            image.rotation = 0
-                        } else if ( image.rotation >= 80 && image.rotation <= 100 ) {
-                            image.rotation = 90
-                        } else if ( image.rotation >= 170 && image.rotation <= 190 ) {
-                            image.rotation = 180
-                        } else if ( image.rotation >= 260 && image.rotation <= 280 ) {
-                            image.rotation = 270
+
+                        var rotation = (image.rotation + 360) % 360
+                        if (rotation <= 10 || rotation >= 350) {
+                            rotation = 0
                         }
-                        fullImage.rotation = image.rotation
+                        else if (rotation >= 80 && rotation <= 100) {
+                            rotation = 90
+                        }
+                        else if (rotation >= 170 && rotation <= 190) {
+                            rotation = 180
+                        }
+                        else if (rotation >= 260 && rotation <= 280) {
+                            rotation = 270
+                        }
+                        image.rotation = rotation
+                        fullImage.rotation = rotation
                     }
                 }
             }
