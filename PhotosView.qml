@@ -18,7 +18,6 @@ Item {
     property color cellTextColor: "white"
 
     property bool selectionMode: false
-
     property bool modelConnectionReady: false
 
     property bool selectAll: false
@@ -69,30 +68,33 @@ Item {
 
     MediaGridView {
         id: view
-        type: phototype
-        selectionMode: container.selectionMode
-        defaultThumbnail: "image://themedimage/images/media/photo_thumb_default"
-        showHeader: true
 
         anchors.fill: parent
         anchors.topMargin: 5
         anchors.leftMargin: 0
         anchors.rightMargin: 0
-
         visible: count != 0 || !modelConnectionReady
 
-        spacing: 3
+        type: phototype
+        selectionMode: container.selectionMode
+        defaultThumbnail: "image://themedimage/images/media/photo_thumb_default"
+        spacing: 10
+        showHeader: true
+
+        borderImageSource: "image://meegotheme/widgets/apps/media/photo-border"
+        borderImageTop: 3
+        borderImageBottom: borderImageTop
+        borderImageLeft: borderImageTop
+        borderImageRight: borderImageTop
+
         cellWidth: {
             // for now, prefer portrait - later pull from platform setting
             var preferLandscape = false
             var preferPortrait = true
 
-            // find cell size for at least six wide in landscape, three in portrait
-            var sizeL = Math.floor(Math.max(window.width, window.height) / 6)
-            var sizeP = Math.floor(Math.min(window.width, window.height) / 4)
-
-            // work around bug in MediaGridView
-            sizeP -= 1
+            // find cell size for at least ten wide in landscape, six in portrait
+            var sizeL = Math.floor(Math.max(window.width, window.height) / 10)
+            var sizeP = Math.floor(Math.min(window.width, window.height) / 6)
 
             if (preferPortrait)
                 return sizeP
@@ -106,8 +108,7 @@ Item {
             var columns = Math.floor(parent.width / cellWidth)
             var gridWidth = columns * cellWidth
             var remain = parent.width - gridWidth
-            // workaound MediaGridView miscalculation with +1 below
-            anchors.leftMargin = Math.floor(remain / 2) + 1
+            anchors.leftMargin = Math.floor(remain / 2)
         }
         Component.onCompleted: setMargins()
 
