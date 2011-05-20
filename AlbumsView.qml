@@ -130,9 +130,6 @@ Item {
             var sizeL = Math.floor(Math.max(window.width, window.height) / 6)
             var sizeP = Math.floor(Math.min(window.width, window.height) / 4)
 
-            // work around bug in MediaGridView
-            sizeP -= 1
-
             if (preferPortrait)
                 return sizeP
             else if (preferLandscape)
