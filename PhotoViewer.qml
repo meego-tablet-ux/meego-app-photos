@@ -402,11 +402,31 @@ Item {
                         fullImage.scale = image.scale;
                         dinstance.contentX =  (dinstance.centerPoint.x + dinstance.contentX )/ cw * dinstance.contentWidth - dinstance.centerPoint.x;
                         dinstance.contentY = (dinstance.centerPoint.y + dinstance.contentY)/ ch * dinstance.contentHeight - dinstance.centerPoint.y;
+
+                        if (gesture.changeFlags & PinchGesture.RotationAngleChanged) {
+                            image.rotation += gesture.rotationAngle - gesture.lastRotationAngle
+                            if ( image.rotation >= 360 ) {
+                                image.rotation = image.rotation - 360
+                            } else if ( image.rotation <= 0 ) {
+                                image.rotation = 360 - image.rotation
+                            }
+                            fullImage.rotation = image.rotation
+                        }
                     }
 
                     onFinished: {
                         dinstance.interactive = true;
                         photoListView.interactive = true;
+                        if ( (image.rotation >= -10 && image.rotation <= 10) || (image.rotation >= 350 && image.rotation <= 370) ) {
+                            image.rotation = 0
+                        } else if ( image.rotation >= 80 && image.rotation <= 100 ) {
+                            image.rotation = 90
+                        } else if ( image.rotation >= 170 && image.rotation <= 190 ) {
+                            image.rotation = 180
+                        } else if ( image.rotation >= 260 && image.rotation <= 280 ) {
+                            image.rotation = 270
+                        }
+                        fullImage.rotation = image.rotation
                     }
                 }
             }
