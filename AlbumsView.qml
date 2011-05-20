@@ -100,17 +100,27 @@ Item {
 
     MediaGridView {
         id: view
-        type: photoalbumtype
-        defaultThumbnail: "image://themedimage/images/media/photo_thumb_default"
-        showHeader: true
 
         anchors.fill: parent
-        anchors.topMargin: 5
         anchors.leftMargin: 0
         anchors.rightMargin: 0
         visible: count != 0
 
-        spacing: 2
+        type: photoalbumtype
+        defaultThumbnail: "image://themedimage/images/media/photo_thumb_default"
+        spacing: 10
+        showHeader: true
+
+        delegateFooterSource: "image://meegotheme/widgets/apps/media/photo-album-shadow"
+        delegateFooterVisible: true
+
+        borderImageSource: "image://meegotheme/widgets/apps/media/photo-album-border"
+        borderImageTop: 8
+        borderImageBottom: 6
+        borderImageLeft: 8
+        borderImageRight: 8
+        borderImageInnerMargin: 2
+
         cellWidth: {
             // for now, prefer portrait - later pull from platform setting
             var preferLandscape = false
@@ -135,8 +145,7 @@ Item {
             var columns = Math.floor(parent.width / cellWidth)
             var gridWidth = columns * cellWidth
             var remain = parent.width - gridWidth
-            // workaound MediaGridView miscalculation with +1 below
-            anchors.leftMargin = Math.floor(remain / 2) + 1
+            anchors.leftMargin = Math.floor(remain / 2)
         }
         Component.onCompleted: setMargins()
 
