@@ -71,6 +71,11 @@ Window {
     property string labelNoContentViewPhotosButtonText: qsTr("View all photos")
     property string labelNoContentCreateAlbumButtonText: qsTr("Create an album")
 
+    property string variableAllPhotosNoContentText: labelNoPhotosText
+    property string variableAllPhotosNoContentButtonText: labelNoContentTakePhotoButtonText
+    property string variableAllAlbumsNoContentText: labelNoAlbumsText
+    property string variableAllAlbumsNoContentButtonText: labelNoContentCreateAlbumButtonText
+
     property string labelSingleAlbum: qsTr("Album title")
     onLabelSingleAlbumChanged: {
         albumModel.search = "";
@@ -105,17 +110,20 @@ Window {
     }
 
     function openBook(component) {
-        switchBook(component)
         if (component == allPhotosComponent) {
             allPhotosModel.filter = 0
-            allPhotosView.noContentText = labelNoPhotosText
-            allPhotosView.noContentButtonText = labelNoContentTakePhotoButtonText
+            variableAllPhotosNoContentText = labelNoPhotosText
+            variableAllPhotosNoContentButtonText = labelNoContentTakePhotoButtonText
         }
         else if (component == allAlbumsComponent) {
             allAlbumsModel.filter = 0
-            albumsView.noContentText = labelNoAlbumsText
-            albumsView.noContentButtonText = labelNoContentCreateAlbumButtonText
+            variableAllAlbumsNoContentText = labelNoAlbumsText
+            variableAllAlbumsNoContentButtonText = labelNoContentCreateAlbumButtonText
         }
+        else {
+            console.log("Unexpected component in openBook")
+        }
+        switchBook(component)
     }
 
     Labs.BackgroundModel {
@@ -294,23 +302,23 @@ Window {
                         function setFilter(label) {
                             if (label == labelAll) {
                                 allPhotosModel.filter = 0
-                                allPhotosView.noContentText = labelNoPhotosText
-                                allPhotosView.noContentButtonText = labelNoContentTakePhotoButtonText
+                                variableAllPhotosNoContentText = labelNoPhotosText
+                                variableAllPhotosNoContentButtonText = labelNoContentTakePhotoButtonText
                             }
                             else if (label == labelNewest) {
                                 allPhotosModel.filter = 3
-                                allPhotosView.noContentText = labelNoNewestPhotosText
-                                allPhotosView.noContentButtonText = labelNoContentViewPhotosButtonText
+                                variableAllPhotosNoContentText = labelNoNewestPhotosText
+                                variableAllPhotosNoContentButtonText = labelNoContentViewPhotosButtonText
                             }
                             else if (label == labelFavorites) {
                                 allPhotosModel.filter = 1
-                                allPhotosView.noContentText = labelNoFavoritePhotosText
-                                allPhotosView.noContentButtonText = labelNoContentViewPhotosButtonText
+                                variableAllPhotosNoContentText = labelNoFavoritePhotosText
+                                variableAllPhotosNoContentButtonText = labelNoContentViewPhotosButtonText
                             }
                             else if (label == labelRecentlyViewed) {
                                 allPhotosModel.filter = 2
-                                allPhotosView.noContentText = labelNoRecentlyViewedPhotosText
-                                allPhotosView.noContentButtonText = labelNoContentViewPhotosButtonText
+                                variableAllPhotosNoContentText = labelNoRecentlyViewedPhotosText
+                                variableAllPhotosNoContentButtonText = labelNoContentViewPhotosButtonText
                             }
                             else {
                                 console.log("Unexpected label in action menu: " + label)
@@ -350,8 +358,8 @@ Window {
                 anchors.bottom: parent.bottom
                 model: allPhotosModel
                 footerHeight: allPhotosToolbar.height
-                noContentText: labelNoPhotosText
-                noContentButtonText: labelNoContentTakePhotoButtonText
+                noContentText: variableAllPhotosNoContentText
+                noContentButtonText: variableAllPhotosNoContentButtonText
                 modelConnectionReady: window.modelConnectionReady
                 onOpenPhoto: {
                     photoDetailModel = allPhotosModel;
@@ -573,18 +581,18 @@ Window {
                         function setFilter(label) {
                             if (label == labelAll) {
                                 allAlbumsModel.filter = 0
-                                albumsView.noContentText = labelNoAlbumsText
-                                albumsView.noContentButtonText = labelNoContentCreateAlbumButtonText
+                                variableAllAlbumsNoContentText = labelNoAlbumsText
+                                variableAllAlbumsNoContentButtonText = labelNoContentCreateAlbumButtonText
                             }
                             else if (label == labelNewest) {
                                 allAlbumsModel.filter = 3
-                                albumsView.noContentText = labelNoNewestAlbumsText
-                                albumsView.noContentButtonText = labelNoContentCreateAlbumButtonText
+                                variableAllAlbumsNoContentText = labelNoNewestAlbumsText
+                                variableAllAlbumsNoContentButtonText = labelNoContentCreateAlbumButtonText
                             }
                             else if (label == labelRecentlyViewed) {
                                 allAlbumsModel.filter = 2
-                                albumsView.noContentText = labelNoRecentlyViewedAlbumsText
-                                albumsView.noContentButtonText = labelNoContentCreateAlbumButtonText
+                                variableAllAlbumsNoContentText = labelNoRecentlyViewedAlbumsText
+                                variableAllAlbumsNoContentButtonText = labelNoContentCreateAlbumButtonText
                             }
                             else {
                                 console.log("Unexpected label in action menu: " + label)
@@ -634,8 +642,8 @@ Window {
             AlbumsView {
                 id: albumsView
                 anchors.fill: parent
-                noContentText: labelNoAlbumsText
-                noContentButtonText: labelNoContentCreateAlbumButtonText
+                noContentText: variableAllAlbumsNoContentText
+                noContentButtonText: variableAllAlbumsNoContentButtonText
 
                 clip: true
                 model:  allAlbumsModel
