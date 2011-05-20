@@ -21,7 +21,7 @@ Window {
     bookMenuPayload: [allPhotosComponent, allAlbumsComponent]
 
     Component.onCompleted: {
-        switchBook(allPhotosComponent)
+        openBook(allPhotosComponent)
         loadingTimer.start()
     }
 
@@ -101,6 +101,20 @@ Window {
 
         TopItem {
             id: topItem
+        }
+    }
+
+    function openBook(component) {
+        switchBook(component)
+        if (component == allPhotosComponent) {
+            allPhotosModel.filter = 0
+            allPhotosView.noContentText = labelNoPhotosText
+            allPhotosView.noContentButtonText = labelNoContentTakePhotoButtonText
+        }
+        else if (component == allAlbumsComponent) {
+            allAlbumsModel.filter = 0
+            albumsView.noContentText = labelNoAlbumsText
+            albumsView.noContentButtonText = labelNoContentCreateAlbumButtonText
         }
     }
 
@@ -203,11 +217,11 @@ Window {
              var cmd = parameters[0];
              var cdata = parameters[1];
              if (cmd == "showPhoto") {
-                 switchBook(allPhotosComponent)
+                 openBook(allPhotosComponent)
                  allPhotosModel.requestItem(0, cdata);
              }
              else if (cmd == "showAlbum") {
-                 switchBook(allAlbumsComponent)
+                 openBook(allAlbumsComponent)
                  allAlbumsModel.requestItem(1, cdata);
              }
              else {
@@ -371,7 +385,7 @@ Window {
                         appsModel.launchDesktopByName("/usr/share/meego-ux-appgrid/applications/meego-app-camera.desktop")
                     }
                     else {
-                        window.switchBook(allPhotosComponent)
+                        window.openBook(allPhotosComponent)
                     }
                 }
             }
@@ -783,7 +797,7 @@ Window {
                     albumDetailContextMenu.show()
                 }
                 onNoContentAction: {
-                    window.switchBook(allPhotosComponent)
+                    window.openBook(allPhotosComponent)
                 }
             }
 
