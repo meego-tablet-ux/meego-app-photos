@@ -12,6 +12,7 @@ import MeeGo.Components 0.1
 import MeeGo.Media 0.1
 import MeeGo.Sharing 0.1
 import MeeGo.Sharing.UI 0.1
+import Qt.labs.gestures 2.0
 
 Window {
     id: window
@@ -915,6 +916,7 @@ Window {
             onActionMenuIconClicked: {
                 photoDetailActions.setPosition(mouseX, mouseY)
                 photoDetailActions.show()
+                entry.visible = false
             }
 
             resources: [
@@ -928,44 +930,52 @@ Window {
                 forceFingerMode: 2
 
                 content: Item {
-                    property int textMargin: 16
-                    width: Math.max(renameButton.width, creation.width, 300) + 2 * textMargin
-                    height: childrenRect.height + 2 * textMargin
+                    GestureArea {
+                        anchors.fill: parent
 
-                    TextEntry {
-                        id: entry
-                        anchors.left: parent.left
-                        anchors.right: parent.right
-                        anchors.top: parent.top
-                        anchors.margins: parent.textMargin
-
-                        text: labelSinglePhoto
+                        Tap {}
+                        TapAndHold {}
+                        Pan {}
+                        Swipe {}
+                        Pinch {}
                     }
 
-                    Button {
-                        id: renameButton
-                        anchors.top: entry.bottom
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        anchors.topMargin: parent.textMargin
+                    property int margin: 10
+                    property int textMargin: 16
+                    width: Math.max(photoName.width, creation.width, camera.width, entry.width,
+                                    renameButton.width, deleteButton.width) + 2 * textMargin
+                    height: deleteButton.y + deleteButton.height - photoName.y + 2 * margin
 
-                        text: labelRenamePhoto
-                        onClicked: {
-                            photoDetailActions.hide()
-                            if (entry.text != "") {
-                                photoDetailModel.changeTitle(currentPhotoURI, entry.text)
-                                labelSinglePhoto = entry.text
-                            }
+                    onWidthChanged: {
+                        console.log("FULL WIDTH: ", width, "height", height)
+                    }
+
+                    Text {
+                        id: photoName
+                        anchors.left: parent.left
+                        anchors.leftMargin: parent.textMargin
+                        anchors.top: parent.top
+                        anchors.topMargin: parent.margin
+
+                        onWidthChanged: {
+                            console.log("photo name width", width)
                         }
+
+                        text: labelSinglePhoto
+                        visible: (text == "") ? 0 : 1
+                        font.pixelSize: theme_contextMenuFontPixelSize
+                        verticalAlignment: Text.AlignVCenter
+                        color: theme_contextMenuFontColor
                     }
 
                     Text {
                         id: creation
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        anchors.top: renameButton.bottom
-                        anchors.topMargin: parent.textMargin
+                        anchors.top: photoName.bottom
+                        anchors.topMargin: parent.margin
+                        anchors.left: photoName.left
 
                         text: fuzzy.getFuzzy(currentPhotoCreationTime)
-                        visible: (text == "")? 0 : 1
+                        visible: (text == "") ? 0 : 1
                         font.pixelSize: theme_contextMenuFontPixelSize
                         verticalAlignment: Text.AlignVCenter
                         color: theme_contextMenuFontColor
@@ -975,22 +985,66 @@ Window {
                         id: camera
                         anchors.horizontalCenter: parent.horizontalCenter
                         anchors.top: creation.bottom
-                        anchors.topMargin: parent.textMargin
+                        anchors.topMargin: parent.margin
 
                         text: currentPhotoCamera
-                        visible: (text == "")? 0 : 1
-                        height: (text == "")? 0 : creation.height
+                        visible: (text == "") ? 0 : 1
+                        height: (text == "") ? 0 : creation.height
                         font.bold: true
                         font.pixelSize: theme_fontPixelSizeLarge
                         verticalAlignment: Text.Top
                         color: theme_contextMenuFontColor
                     }
 
+                    TextEntry {
+                        id: entry
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        anchors.top: camera.visible ? camera.bottom : creation.bottom
+                        anchors.margins: parent.textMargin
+                        visible: false
+                        opacity: visible ? 1.0 : 0.0
+
+                        Behavior on opacity {
+                            NumberAnimation { duration: 600 }
+                        }
+
+                        defaultText: qsTr("Type in a new name")
+                    }
+
                     Button {
-                        id: button
-                        anchors.top: (camera.height > 0)? camera.bottom : creation.bottom
-                        anchors.topMargin: parent.textMargin
+                        id: renameButton
+                        anchors.top: entry.visible ? entry.bottom : (camera.visible ? camera.bottom : creation.bottom)
+                        anchors.topMargin: parent.margin
                         anchors.horizontalCenter: parent.horizontalCenter
+                        bgSourceUp: "image://theme/btn_blue_up"
+                        bgSourceDn: "image://theme/btn_blue_dn"
+
+                        Behavior on x {
+                            NumberAnimation { duration: 500 }
+                        }
+
+                        text: labelRenamePhoto
+                        onClicked: {
+                            if (entry.visible != true) {
+                                entry.visible = true
+                            }
+                            else if (entry.text != "") {
+                                photoDetailModel.changeTitle(currentPhotoURI, entry.text)
+                                labelSinglePhoto = entry.text
+                                photoDetailActions.hide()
+                            }
+                        }
+                    }
+
+                    Button {
+                        id: deleteButton
+                        anchors.top: renameButton.bottom
+                        anchors.topMargin: parent.margin
+                        anchors.horizontalCenter: parent.horizontalCenter
+
+                        bgSourceUp: "image://theme/btn_red_up"
+                        bgSourceDn: "image://theme/btn_red_dn"
 
                         text: labelDeletePhoto
                         onClicked: {
