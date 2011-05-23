@@ -81,7 +81,7 @@ Item {
         spacing: 10
         showHeader: true
 
-        borderImageSource: "image://meegotheme/widgets/apps/media/photo-border"
+        borderImageSource: "image://themedimage/widgets/apps/media/photo-border"
         borderImageTop: 3
         borderImageBottom: borderImageTop
         borderImageLeft: borderImageTop

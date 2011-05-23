@@ -111,10 +111,10 @@ Item {
         spacing: 10
         showHeader: true
 
-        delegateFooterSource: "image://meegotheme/widgets/apps/media/photo-album-shadow"
+        delegateFooterSource: "image://themedimage/widgets/apps/media/photo-album-shadow"
         delegateFooterVisible: true
 
-        borderImageSource: "image://meegotheme/widgets/apps/media/photo-album-border"
+        borderImageSource: "image://themedimage/widgets/apps/media/photo-album-border"
         borderImageTop: 8
         borderImageBottom: 6
         borderImageLeft: 8
