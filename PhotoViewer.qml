@@ -11,9 +11,11 @@ import MeeGo.Labs.Components 0.1 as Labs
 import MeeGo.Media 0.1
 import Qt.labs.gestures 2.0
 
-Item {
+Rectangle {
     id: photoViewer
     anchors.centerIn: parent
+    color: "black"
+
     property variant appPage
     property alias model: photoListView.model
     property alias currentIndex: photoListView.currentIndex
@@ -60,11 +62,6 @@ Item {
         photoListView.currentItem.photoRotate = (photoListView.currentItem.photoRotate + 3) % 4;
     }
 
-    Rectangle {
-        id: background
-        anchors.fill: parent
-        color: "black"
-    }
     ListView {
         id: photoListView
         cacheBuffer: photoViewer.width
