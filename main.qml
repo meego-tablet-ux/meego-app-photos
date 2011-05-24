@@ -930,7 +930,7 @@ Window {
             }
 
             resources: [
-                Labs.FuzzyDateTime {
+                FuzzyDateTime {
                     id: fuzzy
                 }
             ]
