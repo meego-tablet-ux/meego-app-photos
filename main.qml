@@ -239,10 +239,6 @@ Window {
          }
      }
 
-    Loader {
-        id: contextLoader
-    }
-
     Component {
         id: allPhotosComponent
         AppPage {
