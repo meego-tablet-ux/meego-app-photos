@@ -18,8 +18,8 @@ Window {
     id: window
 
     toolBarTitle: labelPhotoApp
-    bookMenuModel: [labelAllPhotos, labelAlbums]
-    bookMenuPayload: [allPhotosComponent, allAlbumsComponent]
+    bookMenuModel: [labelAllPhotos, labelAlbums, labelTimeline]
+    bookMenuPayload: [allPhotosComponent, allAlbumsComponent, timelineComponent]
 
     Component.onCompleted: {
         openBook(allPhotosComponent)
@@ -34,6 +34,7 @@ Window {
     property string labelPhotoApp: qsTr("Photos")
     property string labelAllPhotos: qsTr("All photos")
     property string labelAlbums: qsTr("Albums")
+    property string labelTimeline: qsTr("Timeline")
     property string labelNewAlbum : qsTr("New album")
     property string labelOpen: qsTr("Open")
     property string labelPlay: qsTr("Play slideshow")
@@ -76,6 +77,8 @@ Window {
     property string variableAllPhotosNoContentButtonText: labelNoContentTakePhotoButtonText
     property string variableAllAlbumsNoContentText: labelNoAlbumsText
     property string variableAllAlbumsNoContentButtonText: labelNoContentCreateAlbumButtonText
+    property string variableTimelineNoContentText: labelNoPhotosText
+    property string variableTimelineNoContentButtonText: labelNoContentTakePhotoButtonText
 
     property string labelSingleAlbum: qsTr("Album title")
     onLabelSingleAlbumChanged: {
@@ -120,6 +123,11 @@ Window {
             allAlbumsModel.filter = 0
             variableAllAlbumsNoContentText = labelNoAlbumsText
             variableAllAlbumsNoContentButtonText = labelNoContentCreateAlbumButtonText
+        }
+        else if (component == timelineComponent) {
+            allVirtualAlbumsModel.filter = 0
+            variableTimelineNoContentText = labelNoPhotosText
+            variableTimelineNoContentButtonText = labelNoContentTakePhotoButtonText
         }
         else {
             console.log("Unexpected component in openBook")
@@ -195,7 +203,7 @@ Window {
 
     PhotoListModel {
         id: allAlbumsModel
-        type: PhotoListModel.ListofAlbums
+        type: PhotoListModel.ListofUserAlbums
         limit: 0
         sort: PhotoListModel.SortByCreationTime
         onItemAvailable: {
@@ -203,6 +211,24 @@ Window {
             var itemid = allAlbumsModel.getIDfromURN(identifier)
             var title = allAlbumsModel.getTitlefromURN(identifier);
             var index = allAlbumsModel.getIndexfromURN(identifier);
+            if (itemtype == 1) {
+                labelSingleAlbum = title;
+                albumId = itemid;
+                addPage(albumDetailComponent)
+            }
+        }
+    }
+
+    PhotoListModel {
+        id: allVirtualAlbumsModel
+        type: PhotoListModel.ListofVirtualAlbums
+        limit: 0
+        sort: PhotoListModel.SortByCreationTime
+        onItemAvailable: {
+            var itemtype = allVirtualAlbumsModel.getTypefromURN(identifier);
+            var itemid = allVirtualAlbumsModel.getIDfromURN(identifier)
+            var title = allVirtualAlbumsModel.getTitlefromURN(identifier);
+            var index = allVirtualAlbumsModel.getIndexfromURN(identifier);
             if (itemtype == 1) {
                 labelSingleAlbum = title;
                 albumId = itemid;
@@ -678,6 +704,126 @@ Window {
                 }
                 onNoContentAction: {
                     createAlbumDialog.show()
+                }
+            }
+        }
+    }
+
+
+    Component {
+        id: timelineComponent
+        AppPage {
+            id: timelinePage
+            anchors.fill: parent
+            pageTitle: labelTimeline
+            fullScreen: false
+
+            onSearch: {
+                allVirtualAlbumsModel.search = needle;
+            }
+
+            enableCustomActionMenu: true
+            actionMenuOpen: timelineActions.visible
+            onActionMenuIconClicked: {
+                timelineActions.setPosition(mouseX, mouseY)
+                timelineActions.show()
+            }
+
+            ContextMenu {
+                id: timelineActions
+                forceFingerMode: 2
+
+                content: Column {
+                    property int margin: 10
+                    width: filterMenu.width
+
+                    Text {
+                        anchors.left: parent.left
+                        anchors.leftMargin: parent.margin
+                        text: qsTr("Show only:")
+                        font.pixelSize: theme_fontPixelSizeNormal
+                        color: theme_fontColorHighlight
+                    }
+
+                    Item { width: 1; height: parent.margin } // spacer
+
+                    Image {
+                        width: parent.width
+                        source: "image://themedimage/images/menu_item_separator"
+                    }
+
+                    ActionMenu {
+                        id: filterMenu
+
+                        model: [ labelAll, labelRecentlyViewed ]
+                        selectedIndex: getIndexFromFilter(allAlbumsModel.filter)
+                        highlightSelectedItem: true
+
+                        function getIndexFromFilter(filter) {
+                            switch (filter) {
+                            case PhotoListModel.FilterAll: return 0
+                            case PhotoListModel.FilterViewed: return 2
+                            default:
+                                console.log("Unexpected filter in action menu: " + allVirtualAlbumsModel.filter)
+                                return 0
+                            }
+                        }
+
+                        function setFilter(label) {
+                            if (label == labelAll) {
+                                allVirtualAlbumsModel.filter = PhotoListModel.FilterAll
+                                variableAllAlbumsNoContentText = labelNoAlbumsText
+                                variableAllAlbumsNoContentButtonText = labelNoContentCreateAlbumButtonText
+                            }
+                            else if (label == labelRecentlyViewed) {
+                                allVirtualAlbumsModel.filter = PhotoListModel.FilterViewed
+                                variableAllAlbumsNoContentText = labelNoRecentlyViewedAlbumsText
+                                variableAllAlbumsNoContentButtonText = labelNoContentCreateAlbumButtonText
+                            }
+                            else {
+                                console.log("Unexpected label in action menu: " + label)
+                            }
+                        }
+
+                        onTriggered: {
+                            setFilter(model[index])
+                            timelineActions.hide()
+                        }
+                    }
+                }
+            }
+
+            AlbumsView {
+                id: timelineView
+                anchors.fill: parent
+                noContentText: variableTimelineNoContentText
+                noContentButtonText: variableTimelineNoContentButtonText
+
+                clip: true
+                model:  allVirtualAlbumsModel
+                onOpenAlbum: {
+                    labelSingleAlbum = title;
+                    albumId = elementid;
+                    albumIsVirtual = isvirtual;
+                    addPage(albumDetailComponent);
+                    model.setViewed(albumId)
+                }
+                onPlaySlideshow: {
+                    labelSingleAlbum = title;
+                    albumId = elementid;
+                    addPage(albumDetailComponent);
+                }
+                onShareAlbum: {
+                    shareObj.clearItems()
+                    albumShareModel.album = title
+                    var uris = albumShareModel.getAllURIs()
+                    for (var i in uris) {
+                        shareObj.addItem(uris[i])
+                    }
+                    shareObj.showContextTypes(mouseX, mouseY)
+                }
+                onNoContentAction: {
+                    appsModel.launchDesktopByName("/usr/share/meego-ux-appgrid/applications/meego-app-camera.desktop")
                 }
             }
         }
