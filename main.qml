@@ -290,34 +290,34 @@ Window {
 
                         function getIndexFromFilter(filter) {
                             switch (filter) {
-                            case 0: return 0
-                            case 1: return 2
-                            case 2: return 3
-                            case 3: return 1
+                            case PhotoListModel.FilterAll: return 0
+                            case PhotoListModel.FilterAdded: return 1
+                            case PhotoListModel.FilterFavorite: return 2
+                            case PhotoListModel.FilterViewed: return 3
                             default:
-                                    console.log("Unexpected filter in action menu: " + allPhotosModel.filter)
+                                console.log("Unexpected filter in action menu: " + allPhotosModel.filter)
                                 return 0
                             }
                         }
 
                         function setFilter(label) {
                             if (label == labelAll) {
-                                allPhotosModel.filter = 0
+                                allPhotosModel.filter = PhotoListModel.FilterAll
                                 variableAllPhotosNoContentText = labelNoPhotosText
                                 variableAllPhotosNoContentButtonText = labelNoContentTakePhotoButtonText
                             }
                             else if (label == labelNewest) {
-                                allPhotosModel.filter = 3
+                                allPhotosModel.filter = PhotoListModel.FilterAdded
                                 variableAllPhotosNoContentText = labelNoNewestPhotosText
                                 variableAllPhotosNoContentButtonText = labelNoContentViewPhotosButtonText
                             }
                             else if (label == labelFavorites) {
-                                allPhotosModel.filter = 1
+                                allPhotosModel.filter = PhotoListModel.FilterFavorite
                                 variableAllPhotosNoContentText = labelNoFavoritePhotosText
                                 variableAllPhotosNoContentButtonText = labelNoContentViewPhotosButtonText
                             }
                             else if (label == labelRecentlyViewed) {
-                                allPhotosModel.filter = 2
+                                allPhotosModel.filter = PhotoListModel.FilterViewed
                                 variableAllPhotosNoContentText = labelNoRecentlyViewedPhotosText
                                 variableAllPhotosNoContentButtonText = labelNoContentViewPhotosButtonText
                             }
@@ -574,24 +574,34 @@ Window {
                         id: filterMenu
 
                         // FIXME: removed favorites from this list since there is no UI for favorite albums
-                        // FIXME: removed recently viewed from this list since it's not clear when
-                        //        to tag an album as "viewed" - consult UX team
                         model: [ labelAll, labelNewest, labelRecentlyViewed ]
-                        selectedIndex: allAlbumsModel.filter ? 1:0
+                        selectedIndex: getIndexFromFilter(allAlbumsModel.filter)
+                        highlightSelectedItem: true
+
+                        function getIndexFromFilter(filter) {
+                            switch (filter) {
+                            case PhotoListModel.FilterAll: return 0
+                            case PhotoListModel.FilterAdded: return 1
+                            case PhotoListModel.FilterViewed: return 2
+                            default:
+                                console.log("Unexpected filter in action menu: " + allAlbumsModel.filter)
+                                return 0
+                            }
+                        }
 
                         function setFilter(label) {
                             if (label == labelAll) {
-                                allAlbumsModel.filter = 0
+                                allAlbumsModel.filter = PhotoListModel.FilterAll
                                 variableAllAlbumsNoContentText = labelNoAlbumsText
                                 variableAllAlbumsNoContentButtonText = labelNoContentCreateAlbumButtonText
                             }
                             else if (label == labelNewest) {
-                                allAlbumsModel.filter = 3
+                                allAlbumsModel.filter = PhotoListModel.FilterAdded
                                 variableAllAlbumsNoContentText = labelNoNewestAlbumsText
                                 variableAllAlbumsNoContentButtonText = labelNoContentCreateAlbumButtonText
                             }
                             else if (label == labelRecentlyViewed) {
-                                allAlbumsModel.filter = 2
+                                allAlbumsModel.filter = PhotoListModel.FilterViewed
                                 variableAllAlbumsNoContentText = labelNoRecentlyViewedAlbumsText
                                 variableAllAlbumsNoContentButtonText = labelNoContentCreateAlbumButtonText
                             }
