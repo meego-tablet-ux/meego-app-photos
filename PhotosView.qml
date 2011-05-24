@@ -71,8 +71,6 @@ Item {
 
         anchors.fill: parent
         anchors.topMargin: 5
-        anchors.leftMargin: 0
-        anchors.rightMargin: 0
         visible: count != 0 || !modelConnectionReady
 
         type: phototype
@@ -103,31 +101,6 @@ Item {
             else return Math.min(sizeP, sizeL)
         }
         cellHeight: cellWidth
-
-        function setMargins() {
-            var columns = Math.floor(parent.width / cellWidth)
-            var gridWidth = columns * cellWidth
-            var remain = parent.width - gridWidth
-            anchors.leftMargin = Math.floor(remain / 2)
-        }
-        Component.onCompleted: setMargins()
-
-        property int parentWidth: -1
-
-        Connections {
-            target: parent
-
-            onWidthChanged: {
-                // adjust margin during orientation change
-                if (width < 0) {
-                    view.parentWidth = -1
-                }
-                else if (width != view.parentWidth) {
-                    view.parentWidth = width
-                    view.setMargins()
-                }
-            }
-        }
 
         onClicked: {
             if (container.selectionMode) {
