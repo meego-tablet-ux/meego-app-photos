@@ -1,4 +1,4 @@
-VERSION = 0.2.9
+VERSION = 0.2.10
 TEMPLATE = subdirs 
 
 qmlfiles.files += *.qml images/ 
