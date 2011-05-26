@@ -1,7 +1,7 @@
 VERSION = 0.2.10
 TEMPLATE = subdirs 
 
-qmlfiles.files += *.qml images/ 
+qmlfiles.files += *.qml *.js images/ 
 qmlfiles.path += $$INSTALL_ROOT/usr/share/$$TARGET
 
 desktop.files += *.desktop
