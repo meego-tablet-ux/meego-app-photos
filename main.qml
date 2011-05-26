@@ -113,7 +113,7 @@ Window {
     function setCurrentPhotoIndex(index) {
         if(!inDetailPage) {
             photoDetailModel = allPhotosModel;
-            apmVar.addApplicationPage(photoDetailComponent);
+            apmVar.addPage(photoDetailComponent);
         }
         photoDTV.showPhotoAtIndex(index);
     }
@@ -204,7 +204,7 @@ Window {
         //Luke 0413 ------------- begin ----------------
         onTotalChanged: {
             console.log("onTotalChanged ------------------------------------------")
-            console.log("inDetailPage -------------------------------"+scene.inDetailPage+"-----------")
+            console.log("inDetailPage -------------------------------"+window.inDetailPage+"-----------")
             if(!inDetailPage) {
                 photoDetailModel = allPhotosModel;
                 Awd.initRequestInfo();
@@ -1354,13 +1354,13 @@ Window {
                 }
                 //Luke 0504 ------------- begin -------------
                 Component.onCompleted: {
-                    scene.inDetailPage = true;
-                    console.log("inDetailPage in ---------------------------"+scene.inDetailPage+"-------------------")
+                    window.inDetailPage = true;
+                    console.log("inDetailPage in ---------------------------"+window.inDetailPage+"-------------------")
                 }
 
                 Component.onDestruction: {
-                    scene.inDetailPage = false;
-                    console.log("inDetailPage out -------------------------------"+scene.inDetailPage+"-----------")
+                    window.inDetailPage = false;
+                    console.log("inDetailPage out -------------------------------"+window.inDetailPage+"-----------")
                 }
                 //Luke 0504 -------------- end --------------
             }

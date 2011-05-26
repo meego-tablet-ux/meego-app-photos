@@ -170,10 +170,10 @@ function handleStartUpData(data)
     var dataString = String(data);
 
     //Record data for avoiding send data repeatly
-    scene.lastArrivedData = dataString;
-    console.log("------------------------------------------------------------ scene.lastArrivedData : " + scene.lastArrivedData +"\n");
-    scene.inDetailPage = false;
-    scene.setCurrentPhotoIndex(JSON.parse(data));
+    window.lastArrivedData = dataString;
+    console.log("------------------------------------------------------------ window.lastArrivedData : " + window.lastArrivedData +"\n");
+    window.inDetailPage = false;
+    window.setCurrentPhotoIndex(JSON.parse(data));
 
     //Send "StandBy" request again.
     //You can change the request time by moving it.
@@ -212,8 +212,8 @@ function handleStandByData(data)
     var dataString = String(data);
 
     //Record data for avoiding send data repeatly
-    scene.lastArrivedData = dataString;
-    scene.setCurrentPhotoIndex(data);
+    window.lastArrivedData = dataString;
+    window.setCurrentPhotoIndex(data);
 }
 
 //Only this one, you may change the function name, arguments or whatever.
@@ -226,21 +226,21 @@ function sendMyData(data)
     var dataString = String(data);
     //Compare data for avoiding send data repeatly
 
-    if(scene.isFirstStart) {
-        if(data <= 0 || dataString == scene.lastArrivedData)
+    if(window.isFirstStart) {
+        if(data <= 0 || dataString == window.lastArrivedData)
             return;
         else
-            scene.isFirstStart = false;
+            window.isFirstStart = false;
     }
 
-    if(!(dataString.indexOf(scene.lastArrivedData)==0 && scene.lastArrivedData.indexOf(dataString)==0)) {
+    if(!(dataString.indexOf(window.lastArrivedData)==0 && window.lastArrivedData.indexOf(dataString)==0)) {
         sendDataRequest(data);
-        scene.lastArrivedData = dataString;
+        window.lastArrivedData = dataString;
     }
 }
 
 function getInitIndex()
 {
     initRequestInfo();
-    return Number(scene.lastArrivedData);
+    return Number(window.lastArrivedData);
 }
