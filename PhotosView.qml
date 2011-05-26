@@ -12,8 +12,6 @@ import MeeGo.Media 0.1
 Item {
     id: container
 
-    property alias cellWidth: view.cellWidth
-    property alias cellHeight: view.cellHeight
     property color cellBackgroundColor: selectionMode ? "#5f5f5f" : "black"
     property color cellTextColor: "white"
 
@@ -54,6 +52,36 @@ Item {
     signal openPhoto(variant item, bool fullscreen, bool startSlideshow)
     signal pressAndHold(int x, int y, variant payload)
 
+    Image {
+        id: globalbg
+        anchors.fill: parent
+        visible: (panel.height < parent.height)
+        source: "image://themedimage/widgets/apps/media/assets/global-bg"
+    }
+
+    Rectangle {
+        id: globalbgsolid
+        anchors.fill: parent
+        visible: !globalbg.visible
+        color: "black"
+    }
+
+    BorderImage {
+        id: panel
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.topMargin: 8
+        anchors.leftMargin: 8
+        anchors.rightMargin: 8
+        anchors.bottomMargin: 5
+        source: "image://themedimage/widgets/apps/media/assets/content-background"
+        border.left:   8
+        border.top:    8
+        border.bottom: 8
+        border.right:  8
+    }
+
     NoContent {
         id: noContent
 
@@ -70,7 +98,10 @@ Item {
         id: view
 
         anchors.fill: parent
-        anchors.topMargin: 5
+        anchors.topMargin: 11
+        anchors.bottomMargin: 11
+        anchors.leftMargin: 10
+
         visible: count != 0 || !modelConnectionReady
 
         type: phototype
@@ -84,23 +115,6 @@ Item {
         borderImageBottom: borderImageTop
         borderImageLeft: borderImageTop
         borderImageRight: borderImageTop
-
-        cellWidth: {
-            // for now, prefer portrait - later pull from platform setting
-            var preferLandscape = true
-            var preferPortrait = false
-
-            // find cell size for at least ten wide in landscape, six in portrait
-            var sizeL = Math.floor(Math.max(window.width, window.height) / 10)
-            var sizeP = Math.floor(Math.min(window.width, window.height) / 6)
-
-            if (preferPortrait)
-                return sizeP
-            else if (preferLandscape)
-                return sizeL
-            else return Math.min(sizeP, sizeL)
-        }
-        cellHeight: cellWidth
 
         onClicked: {
             if (container.selectionMode) {
@@ -121,6 +135,17 @@ Item {
             if (!container.selectionMode) {
                 container.pressAndHold(mouseX, mouseY, payload);
             }
+        }
+        onContentHeightChanged: {
+            console.log("contentHeight: " + contHeight)
+            if (contHeight + 5 >= parent.height) {
+                console.log("bottom ")
+                panel.anchors.bottom = parent.bottom
+            } else {
+                console.log("undefined")
+                panel.anchors.bottom = undefined
+            }
+            panel.height = contHeight + 5
         }
     }
 }

@@ -86,6 +86,36 @@ Item {
         }
     }
 
+    Image {
+        id: globalbg
+        anchors.fill: parent
+        visible: (panel.height < parent.height)
+        source: "image://themedimage/widgets/apps/media/assets/global-bg"
+    }
+
+    Rectangle {
+        id: globalbgsolid
+        anchors.fill: parent
+        visible: !globalbg.visible
+        color: "black"
+    }
+
+    BorderImage {
+        id: panel
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.topMargin: 8
+        anchors.leftMargin: 8
+        anchors.rightMargin: 8
+        anchors.bottomMargin: 5
+        source: "image://themedimage/widgets/apps/media/assets/content-background"
+        border.left:   8
+        border.top:    8
+        border.bottom: 8
+        border.right:  8
+    }
+
     NoContent {
         id: noContent
 
@@ -102,39 +132,16 @@ Item {
         id: view
 
         anchors.fill: parent
+        anchors.topMargin: 11
+        anchors.bottomMargin: 11
+        anchors.leftMargin: 8
+        anchors.rightMargin: 8
         visible: count != 0
 
         type: photoalbumtype
         defaultThumbnail: "image://themedimage/images/media/photo_thumb_default"
-        spacing: 10
+        spacing: 0
         showHeader: true
-
-        delegateFooterSource: "image://themedimage/widgets/apps/media/photo-album-shadow"
-        delegateFooterVisible: true
-
-        borderImageSource: "image://themedimage/widgets/apps/media/photo-album-border"
-        borderImageTop: 8
-        borderImageBottom: 6
-        borderImageLeft: 8
-        borderImageRight: 8
-        borderImageInnerMargin: 2
-
-        cellWidth: {
-            // for now, prefer portrait - later pull from platform setting
-            var preferLandscape = true
-            var preferPortrait = false
-
-            // find cell size for at least six wide in landscape, three in portrait
-            var sizeL = Math.floor(Math.max(window.width, window.height) / 6)
-            var sizeP = Math.floor(Math.min(window.width, window.height) / 4)
-
-            if (preferPortrait)
-                return sizeP
-            else if (preferLandscape)
-                return sizeL
-            else return Math.min(sizeP, sizeL)
-        }
-        cellHeight: cellWidth
 
         onClicked: {
             view.currentIndex = payload.mindex;
@@ -160,6 +167,17 @@ Item {
             albumsContextMenu.mouseY = map.y
             albumsContextMenu.setPosition(map.x, map.y)
             albumsContextMenu.show()
+        }
+        onContentHeightChanged: {
+            console.log("contHeight: " + contHeight)
+            if (contHeight + 5 >= parent.height) {
+                console.log("bottom ")
+                panel.anchors.bottom = parent.bottom
+            } else {
+                console.log("undefined")
+                panel.anchors.bottom = undefined
+            }
+            panel.height = contHeight + 5
         }
     }
 }
