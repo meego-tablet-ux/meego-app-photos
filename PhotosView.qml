@@ -52,30 +52,20 @@ Item {
     signal openPhoto(variant item, bool fullscreen, bool startSlideshow)
     signal pressAndHold(int x, int y, variant payload)
 
-    Image {
-        id: globalbg
-        anchors.fill: parent
-        visible: (panel.height < parent.height)
-        source: "image://themedimage/widgets/apps/media/assets/global-bg"
-    }
-
     Rectangle {
         id: globalbgsolid
         anchors.fill: parent
-        visible: !globalbg.visible
         color: "black"
     }
 
     BorderImage {
         id: panel
-        anchors.top: parent.top
-        anchors.left: parent.left
-        anchors.right: parent.right
+        anchors.fill: parent
         anchors.topMargin: 8
         anchors.leftMargin: 8
         anchors.rightMargin: 8
         anchors.bottomMargin: 5
-        source: "image://themedimage/widgets/apps/media/assets/content-background"
+        source: "image://themedimage/widgets/apps/media/content-background"
         border.left:   8
         border.top:    8
         border.bottom: 8
@@ -98,16 +88,16 @@ Item {
         id: view
 
         anchors.fill: parent
-        anchors.topMargin: 11
-        anchors.bottomMargin: 11
-        anchors.leftMargin: 10
+        anchors.topMargin: 10
+        anchors.bottomMargin: 10
+        anchors.leftMargin: (parent.width - Math.floor(parent.width / 110)*110) / 2
+        anchors.rightMargin: anchors.leftMargin
 
         visible: count != 0 || !modelConnectionReady
 
         type: phototype
         selectionMode: container.selectionMode
         defaultThumbnail: "image://themedimage/images/media/photo_thumb_default"
-        spacing: 10
         showHeader: true
 
         borderImageSource: "image://themedimage/widgets/apps/media/photo-border"
@@ -135,17 +125,6 @@ Item {
             if (!container.selectionMode) {
                 container.pressAndHold(mouseX, mouseY, payload);
             }
-        }
-        onContentHeightChanged: {
-            console.log("contentHeight: " + contHeight)
-            if (contHeight + 5 >= parent.height) {
-                console.log("bottom ")
-                panel.anchors.bottom = parent.bottom
-            } else {
-                console.log("undefined")
-                panel.anchors.bottom = undefined
-            }
-            panel.height = contHeight + 5
         }
     }
 }

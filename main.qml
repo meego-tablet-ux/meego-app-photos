@@ -18,11 +18,11 @@ Window {
     id: window
 
     toolBarTitle: labelPhotoApp
-    bookMenuModel: [labelAllPhotos, labelAlbums, labelTimeline]
-    bookMenuPayload: [allPhotosComponent, allAlbumsComponent, timelineComponent]
+    bookMenuModel: [labelAlbums, labelAllPhotos, labelTimeline]
+    bookMenuPayload: [allAlbumsComponent, allPhotosComponent, timelineComponent]
 
     Component.onCompleted: {
-        openBook(allPhotosComponent)
+        openBook(allAlbumsComponent)
         loadingTimer.start()
     }
 
