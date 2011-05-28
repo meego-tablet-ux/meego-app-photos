@@ -32,7 +32,7 @@ Window {
     property string labelRecentlyViewed: qsTr("Recently viewed")
     property string labelShare: qsTr("Share")
     property string labelPhotoApp: qsTr("Photos")
-    property string labelAllPhotos: qsTr("All photos")
+    property string labelAllPhotos: qsTr("Photos")
     property string labelAlbums: qsTr("Albums")
     property string labelTimeline: qsTr("Timeline")
     property string labelNewAlbum : qsTr("New album")
