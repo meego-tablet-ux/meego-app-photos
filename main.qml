@@ -54,7 +54,6 @@ Window {
     property string labelCreateNewAlbum: qsTr("Create new album")
     property string labelCancel: qsTr("Cancel");
     property string labelSetAsBackground: qsTr("Set as background")
-    property string labelViewBy: qsTr("View by:")
 
     property string labelDeletePhotoText: qsTr("Are you sure you want to delete this photo?")
     property string labelDeletePhotosText: qsTr("Are you sure you want to delete the %1 selected photos?")
