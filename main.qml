@@ -1168,8 +1168,8 @@ Window {
                         anchors.top: entry.visible ? entry.bottom : (camera.visible ? camera.bottom : creation.bottom)
                         anchors.topMargin: parent.margin
                         anchors.horizontalCenter: parent.horizontalCenter
-                        bgSourceUp: "image://theme/btn_blue_up"
-                        bgSourceDn: "image://theme/btn_blue_dn"
+                        bgSourceUp: "image://themedimage/images/btn_blue_up"
+                        bgSourceDn: "image://themedimage/images/btn_blue_dn"
 
                         Behavior on x {
                             NumberAnimation { duration: 500 }
@@ -1194,8 +1194,8 @@ Window {
                         anchors.topMargin: parent.margin
                         anchors.horizontalCenter: parent.horizontalCenter
 
-                        bgSourceUp: "image://theme/btn_red_up"
-                        bgSourceDn: "image://theme/btn_red_dn"
+                        bgSourceUp: "image://themedimage/images/btn_red_up"
+                        bgSourceDn: "image://themedimage/images/btn_red_dn"
 
                         text: labelDeletePhoto
                         onClicked: {
