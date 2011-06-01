@@ -69,11 +69,9 @@ Rectangle {
         clip: true
         snapMode:ListView.SnapOneItem
         orientation: ListView.Horizontal
-        highlightFollowsCurrentItem: true
         spacing: 30
         focus: true
         pressDelay: 0
-        highlightMoveDuration: 300
         property bool initialPhoto: true
         property int rotateDuration: 0
 
@@ -502,7 +500,6 @@ Rectangle {
         spacing: 2
         opacity: 0
         visible: opacity != 0
-        highlightMoveDuration: 200
         onShowChanged: {
             // start the timer
             if (show == true) {
