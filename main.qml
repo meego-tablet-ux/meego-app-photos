@@ -14,8 +14,8 @@ import MeeGo.Sharing 0.1
 import MeeGo.Sharing.UI 0.1
 import Qt.labs.gestures 2.0
 
-import AcerWidgetsDaemonInterface 0.1 //Luke 0427
-import "awd-client.js" as Awd   //Luke 0413
+import AcerWidgetsDaemonInterface 0.1
+import "awd-client.js" as Awd
 
 Window {
     id: window
@@ -104,16 +104,14 @@ Window {
 
     property bool modelConnectionReady: false
 
-    //Luke 0413 ------------ begin ------------
     property string lastArrivedData: "0"
-    property variant apmVar
     property variant photoDTV
     property bool isFirstStart: true
     property bool inDetailPage: false
     function setCurrentPhotoIndex(index) {
         if(!inDetailPage) {
             photoDetailModel = allPhotosModel;
-            apmVar.addPage(photoDetailComponent);
+            addPage(photoDetailComponent);
         }
         photoDTV.showPhotoAtIndex(index);
     }
@@ -123,7 +121,7 @@ Window {
         name: "photo"
         type: "app"
     }
-    //Luke 0427 ------------- end -------------
+
 
     overlayItem: Item {
         ShareObj {
@@ -201,18 +199,15 @@ Window {
                 addPage(photoDetailComponent);
             }
         }
-        //Luke 0413 ------------- begin ----------------
-        onTotalChanged: {
-            console.log("onTotalChanged ------------------------------------------")
-            console.log("inDetailPage -------------------------------"+window.inDetailPage+"-----------")
+        onTotalChanged: {            
             if(!inDetailPage) {
                 photoDetailModel = allPhotosModel;
                 Awd.initRequestInfo();
                 inDetailPage = true;
             }
         }
-        //Luke 0413 ------------- end -----------------
     }
+
 
     PhotoListModel {
         id: albumModel
@@ -561,10 +556,6 @@ Window {
                 onCancel: {
                     allPhotosView.selectionMode = false;
                 }
-            }
-
-            Component.onCompleted: {
-                apmVar = allPhotosPage; //Luke 0413
             }
         }
     }
@@ -1294,12 +1285,12 @@ Window {
                     currentPhotoCamera = currentItem.pcamera
                     currentPhotoItemId = currentItem.pitemid
                     currentPhotoURI = currentItem.puri
-                    Awd.sendMyData(currentIndex); //Luke 0504
+                    Awd.sendMyData(currentIndex);
                 }
 
                 Component.onCompleted: {
                     showPhotoAtIndex(detailViewIndex);
-                    photoDTV = photodtview; //Luke 0413
+                    photoDTV = photodtview;
                 }
             }
 
@@ -1352,17 +1343,12 @@ Window {
                         photoDetailContextMenu.hide()
                     }
                 }
-                //Luke 0504 ------------- begin -------------
                 Component.onCompleted: {
                     window.inDetailPage = true;
-                    console.log("inDetailPage in ---------------------------"+window.inDetailPage+"-------------------")
                 }
-
                 Component.onDestruction: {
                     window.inDetailPage = false;
-                    console.log("inDetailPage out -------------------------------"+window.inDetailPage+"-----------")
                 }
-                //Luke 0504 -------------- end --------------
             }
         }
     }
