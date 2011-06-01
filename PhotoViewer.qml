@@ -467,18 +467,10 @@ Rectangle {
             currentIndex: photoListView.currentIndex
 
             onSlideshowStopped: {
-                photoListView.currentIndex = aFinalIndex
-                sstimer.start()
+                showPhotoAtIndex(aFinalIndex)
                 photoViewer.slideshowStopped()
-            }
-
-            Timer {
-                id: sstimer
-                interval: 500
-                onTriggered: {
-                    slideshow.destroy()
-                    photoViewer.slideshow = undefined
-                }
+                slideshow.destroy()
+                photoViewer.slideshow = undefined
             }
         }
     }
