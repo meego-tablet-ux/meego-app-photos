@@ -49,7 +49,7 @@ Item {
         model.clearSelected();
     }
 
-    signal openPhoto(variant item, bool fullscreen, bool startSlideshow)
+    signal openPhoto(variant mediaItem, bool fullscreen, bool startSlideshow)
     signal pressAndHold(int x, int y, variant payload)
 
     Rectangle {
@@ -116,7 +116,6 @@ Item {
                 thumburis = view.model.getSelectedURIs();
             }
             else {
-                view.currentIndex = payload.mindex;
                 container.openPhoto(payload, false, false);
             }
         }

@@ -18,7 +18,7 @@ Rectangle {
 
     property variant appPage
     property alias model: photoListView.model
-    property alias currentIndex: photoListView.currentIndex
+    property alias initialIndex: photoListView.initialIndex
     property alias currentItem: photoListView.currentItem
     property alias count: photoListView.count
 
@@ -72,8 +72,8 @@ Rectangle {
         spacing: 30
         focus: true
         pressDelay: 0
-        property bool initialPhoto: true
         property int rotateDuration: 0
+        property int initialIndex: 0
 
         signal startingSlideshow()
 
@@ -203,7 +203,7 @@ Rectangle {
                 ]
 
                 Component.onCompleted: {
-                    if (index == currentIndex) {
+                    if (index == photoListView.currentIndex) {
                         if (photoListView.moving) {
                             load = true
                         }
@@ -230,7 +230,7 @@ Rectangle {
                    }
 
                     onCurrentIndexChanged: {
-                        if (index == currentIndex) {
+                        if (index == photoListView.currentIndex) {
                             if (photoListView.moving) {
                                 fullImage.load = true
                             }
@@ -415,6 +415,7 @@ Rectangle {
         Component.onCompleted: {
             // start the timer the first time.
             hideThumbnailTimer.start();
+            showPhotoAtIndex(initialIndex)
         }
 
         property variant previousTimestamp

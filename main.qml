@@ -384,10 +384,10 @@ Window {
                 noContentButtonText: variableAllPhotosNoContentButtonText
                 modelConnectionReady: window.modelConnectionReady
                 onOpenPhoto: {
-                    photoDetailModel = allPhotosModel;
-                    detailViewIndex = currentIndex;
-                    labelSinglePhoto = item.mtitle
-                    model.setViewed(item.elementid);
+                    photoDetailModel = allPhotosModel
+                    detailViewIndex = mediaItem.mindex
+                    labelSinglePhoto = mediaItem.mtitle
+                    model.setViewed(mediaItem.elementid)
                     showFullscreen = fullscreen
                     showSlideshow = startSlideshow
                     addPage(photoDetailComponent)
@@ -436,13 +436,11 @@ Window {
                         if (model[index] == labelOpen)
                         {
                             // Open the photo
-                            allPhotosView.currentIndex = payload.mindex;
-                            allPhotosView.openPhoto(payload, false, false);
+                            allPhotosView.openPhoto(payload, false, false)
                         }
                         else if (model[index] == labelPlay)
                         {
                             // Kick off slide show starting with this photo
-                            allPhotosView.currentIndex = payload.mindex;
                             allPhotosView.openPhoto(payload, true, true)
                         }
                         else if (model[index] == labelFavorite || model[index] == labelUnfavorite)
@@ -935,10 +933,10 @@ Window {
                 modelConnectionReady: window.modelConnectionReady
                 onOpenPhoto: {
                     // opening a photo from album detail view
-                    photoDetailModel = albumModel;
-                    detailViewIndex = currentIndex;
-                    labelSinglePhoto = item.mtitle
-                    model.setViewed(item.elementid);
+                    photoDetailModel = albumModel
+                    detailViewIndex = mediaItem.mindex
+                    labelSinglePhoto = mediaItem.mtitle
+                    model.setViewed(mediaItem.elementid)
                     showFullscreen = fullscreen
                     showSlideshow = startSlideshow
                     addPage(photoDetailComponent)
@@ -977,13 +975,11 @@ Window {
                         if (model[index] == labelOpen)
                         {
                             // Open the photo
-                            albumDetailsView.currentIndex = payload.mindex;
-                            albumDetailsView.openPhoto(payload, false, false);
+                            albumDetailsView.openPhoto(payload, false, false)
                         }
                         else if (model[index] == labelPlay)
                         {
                             // Kick off slide show starting with this photo
-                            albumDetailsView.currentIndex = payload.mindex;
                             albumDetailsView.openPhoto(payload, true, true)
                         }
                         else if (model[index] == labelFavorite || model[index] == labelUnfavorite)
@@ -1232,7 +1228,7 @@ Window {
                 anchors.fill: parent
                 model: photoDetailModel
                 appPage: photoDetailPage
-                currentIndex: detailViewIndex
+                initialIndex: detailViewIndex
 
                 startInFullscreen: showFullscreen
                 startInSlideshow: showSlideshow

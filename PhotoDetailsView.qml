@@ -23,7 +23,7 @@ Item {
     property bool startInFullscreen: false
     property bool startInSlideshow: false
 
-    property alias currentIndex: photoViewer.currentIndex
+    property alias initialIndex: photoViewer.initialIndex
     property alias currentItem: photoViewer.currentItem
     property alias toolbar: toolbar
 
