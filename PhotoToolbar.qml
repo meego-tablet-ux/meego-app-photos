@@ -10,7 +10,7 @@ import Qt 4.7
 import MeeGo.Components 0.1
 import MeeGo.Sharing 0.1
 import MeeGo.Sharing.UI 0.1
-import Qt.labs.gestures 2.0
+import MeeGo.Ux.Gestures 0.1
 
 Item {
     id: container
@@ -42,7 +42,8 @@ Item {
     // block all gestures from falling through
     GestureArea {
         anchors.fill: parent
-
+        absolutePosition: true
+        acceptUnhandledEvents: true
         Tap {}
         TapAndHold {}
         Pan {}

@@ -8,6 +8,7 @@
 
 import Qt 4.7
 import MeeGo.Labs.Components 0.1 as Labs
+import MeeGo.Ux.Gestures 0.1
 import MeeGo.Media 0.1
 
 Rectangle {
@@ -177,9 +178,9 @@ Rectangle {
         }
     }
 
-    MouseArea {
+    GestureArea {
         anchors.fill: parent
-        onPressed: stop()
+        Tap { onStarted: stop() }
     }
 
     states: [
