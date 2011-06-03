@@ -149,34 +149,48 @@ Window {
         limit: 0
         sort: PhotoListModel.SortByCreationTime
         onItemAvailable: {
-            var itemtype;
-            var title;
-            var index;
+            var itemtype
+            var title
+            var index
+            var id
 
-            if(allPhotosModel.isURN(identifier)) {
-                itemtype = allPhotosModel.getTypefromURN(identifier);
-                title = allPhotosModel.getTitlefromURN(identifier);
-                index = allPhotosModel.getIndexfromURN(identifier);
+            if (allPhotosModel.isURN(identifier)) {
+                itemtype = allPhotosModel.getTypefromURN(identifier)
+                title = allPhotosModel.getTitlefromURN(identifier)
+                index = allPhotosModel.getIndexfromURN(identifier)
+                id = allPhotosModel.getIDfromURN(identifier)
             }
             else {
-                itemtype = allPhotosModel.getTypefromID(identifier);
-                title = allPhotosModel.getTitlefromID(identifier);
-                index = allPhotosModel.itemIndex(identifier);
+                itemtype = allPhotosModel.getTypefromID(identifier)
+                title = allPhotosModel.getTitlefromID(identifier)
+                index = allPhotosModel.itemIndex(identifier)
+                id = identifier
             }
 
-            if (index == -1)
-                return;
-            if (itemtype == 0) {
+            if (index == -1) {
+                console.log("available item has invalid index")
+                return
+            }
+
+            if (itemtype == MediaItem.PhotoItem) {
                 // load a photo passed on cmdline
-                popPage()
-                photoDetailModel = allPhotosModel;
-                detailViewIndex = index;
-                labelSinglePhoto = title;
-                showFullscreen = false;
-                showSlideshow = false;
-                addPage(photoDetailComponent);
+                singlePhotoModel.clear()
+                singlePhotoModel.addItems(id)
+                photoDetailModel = singlePhotoModel
+                detailViewIndex = 0
+                labelSinglePhoto = title
+                showFullscreen = false
+                showSlideshow = false
+                addPage(photoDetailComponent)
             }
         }
+    }
+
+    PhotoListModel {
+        id: singlePhotoModel
+        type: PhotoListModel.Editor
+        limit: 0
+        sort: PhotoListModel.SortByDefault
     }
 
     PhotoListModel {
@@ -251,11 +265,9 @@ Window {
              var cmd = parameters[0];
              var cdata = parameters[1];
              if (cmd == "showPhoto") {
-                 openBook(allPhotosComponent)
                  allPhotosModel.requestItem(0, cdata);
              }
              else if (cmd == "showAlbum") {
-                 openBook(allAlbumsComponent)
                  allAlbumsModel.requestItem(1, cdata);
              }
              else {
