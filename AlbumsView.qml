@@ -26,9 +26,13 @@ Item {
     property alias noContentButtonText: noContent.buttonText
     property alias noContentVisible: view.visible
 
+    //: This is a context menu command for opening a photo album
     property string labelOpen: qsTr("Open")
+    //: This is a context menu command for starting a slideshow of a photo album
     property string labelPlay: qsTr("Play slideshow")
+    //: This is a context menu command for sharing photo albums over services
     property string labelShare: qsTr("Share")
+    //: This is a context menu command for deleting photo albums
     property string labelDelete: qsTr("Delete")
 
     signal openAlbum(variant elementid, string title, bool isvirtual, bool fullscreen)

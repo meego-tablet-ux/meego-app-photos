@@ -31,13 +31,21 @@ Item {
 
     property alias footerHeight: view.footerHeight
 
+    //: This is a context menu command for opening photos
     property string labelOpen: qsTr("Open")
+    //: This is a context menu command for showing a slide show of photos
     property string labelPlay: qsTr("Play slideshow")
+    //: This is a context menu command for sharing photos over services
     property string labelShare: qsTr("Share")
+    //: This is a context menu command for marking photos as favorite
     property string labelFavorite: qsTr("Favorite");
+    //: This is a context menu command for removing favorite mark from photos
     property string labelUnfavorite: qsTr("Unfavorite");
+    //: This is a context menu command for adding photos to albums
     property string labelAddToAlbum: qsTr("Add to album");
+    //: This is a context menu command for deleting photos
     property string labelDelete: qsTr("Delete")
+    //: This is a context menu command for starting the multiselect mode
     property string labelMultiSelMode: qsTr("Select multiple photos")
 
     signal toggleSelectedPhoto(string uri, bool selected)
