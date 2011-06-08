@@ -18,7 +18,7 @@ Image {
         var imageLong = Math.max(sourceSize.width, sourceSize.height)
         var imageShort = Math.min(sourceSize.width, sourceSize.height)
 
-        if (1.0 * imageLong / imageShort > 1.0 * screenLong / screenShort) {
+        if (imageLong / imageShort > screenLong / screenShort) {
             // limit the long side
             if (imageLong == sourceSize.width) {
                 if (sourceSize.width > screenLong) {

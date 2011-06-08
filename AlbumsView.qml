@@ -128,13 +128,12 @@ Item {
         anchors.fill: parent
         anchors.topMargin: 10
         anchors.bottomMargin: 10
-        anchors.leftMargin: (parent.width - Math.floor(parent.width / 110)*110) / 2
+        anchors.leftMargin: (parent.width - Math.floor(parent.width / cellWidth)*cellWidth) / 2
         anchors.rightMargin: anchors.leftMargin
         visible: count != 0
 
         type: photoalbumtype
         defaultThumbnail: "image://themedimage/images/media/photo_thumb_default"
-        showHeader: true
 
         onClicked: {
             view.currentIndex = payload.mindex;

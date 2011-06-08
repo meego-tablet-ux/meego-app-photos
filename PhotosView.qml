@@ -98,7 +98,7 @@ Item {
         anchors.fill: parent
         anchors.topMargin: 10
         anchors.bottomMargin: 10
-        anchors.leftMargin: (parent.width - Math.floor(parent.width / 110)*110) / 2
+        anchors.leftMargin: (parent.width - Math.floor(parent.width / cellWidth)*cellWidth) / 2
         anchors.rightMargin: anchors.leftMargin
 
         visible: count != 0 || !modelConnectionReady
@@ -106,7 +106,6 @@ Item {
         type: phototype
         selectionMode: container.selectionMode
         defaultThumbnail: "image://themedimage/images/media/photo_thumb_default"
-        showHeader: true
 
         borderImageSource: "image://themedimage/widgets/apps/media/photo-border"
         borderImageTop: 3

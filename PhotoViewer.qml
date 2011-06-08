@@ -356,8 +356,6 @@ Rectangle {
                 }
             ]
             function restorePhoto() {
-                //   image.sourceSize.width = 1024;
-                //   image.scale = 1;
                 if (photoRotate == 0 || photoRotate == 2) {
                     image.width = dinstance.width;
                     image.height = dinstance.height;
