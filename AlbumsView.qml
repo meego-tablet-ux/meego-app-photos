@@ -34,6 +34,10 @@ Item {
     property string labelShare: qsTr("Share")
     //: This is a context menu command for deleting photo albums
     property string labelDelete: qsTr("Delete")
+    //: This is a title for the album rename modal dialog
+    property string labelRenameAlbum: qsTr("Rename album")
+    //: This is a rename album modal dialog accept button label
+    property string labelRename: qsTr("Rename")
 
     signal openAlbum(variant elementid, string title, bool isvirtual, bool fullscreen)
     signal playSlideshow(variant elementid, string title)
@@ -53,6 +57,46 @@ Item {
         }
     }
 
+    ModalDialog {
+        id: renameAlbumDialog
+        title: labelRenameAlbum
+        acceptButtonText: labelRename
+
+        property string albumUrn
+        property string albumTitle
+
+        content: Item {
+            property alias text: albumEntry.text
+            anchors.fill: parent
+            anchors.leftMargin: 20
+            anchors.topMargin: 20
+            anchors.rightMargin: 20
+            anchors.bottomMargin: 20
+
+            TextEntry {
+                id: albumEntry
+                defaultText: renameAlbumDialog.albumTitle
+                anchors.centerIn: parent
+                width: parent.width
+            }
+        }
+
+        onAccepted: {
+            if (albumEntry.text == albumTitle) {
+                // name stays the same => nothing to do
+            } else if (!albumEditorModel.hasAlbumByTitle(albumEntry.text)) {
+                albumEditorModel.changeTitleByURN(albumUrn,albumEntry.text)
+            } else {
+                // TODO inform user about failed rename
+                console.log("Album with that name already exists")
+            }
+            albumEntry.text = ""
+        }
+
+        onRejected: {
+            albumEntry.text = ""
+        }
+    }
     ContextMenu {
         id: albumsContextMenu
         property alias payload: albumsActionMenu.payload
@@ -84,6 +128,12 @@ Item {
                     confirmer.text = labelDeleteAlbumText
                     confirmer.items = [ payload.mitemid ]
                     confirmer.show()
+                }
+                else if (model[index] == labelRename) {
+                    // Rename
+                    renameAlbumDialog.albumUrn = payload.murn
+                    renameAlbumDialog.albumTitle = payload.mtitle
+                    renameAlbumDialog.show()
                 }
                 albumsContextMenu.hide()
             }
@@ -148,8 +198,9 @@ Item {
             //     go _back_ to the album detail view
             var options = [labelOpen, labelShare]   // labelPlay removed for now
 
-            // only add delete option if the album is not virtual
+            // only add rename and delete option if the album is not virtual
             if (!payload.misvirtual) {
+                options.push(labelRename)
                 options.push(labelDelete)
             }
 
