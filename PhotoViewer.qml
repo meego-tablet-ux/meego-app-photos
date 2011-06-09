@@ -83,6 +83,7 @@ Rectangle {
             height: photoViewer.height
             property alias imageExtension: extension
             property variant centerPoint
+            boundsBehavior: Flickable.StopAtBounds
 
             onWidthChanged: {
                 restorePhoto();
@@ -391,7 +392,7 @@ Rectangle {
                     onUpdated: {
                         var cw = dinstance.contentWidth;
                         var ch = dinstance.contentHeight;
-                        image.scale = Math.max(0.25, Math.min(10.0, image.scale * gesture.scaleFactor))
+                        image.scale = Math.max(0.75, Math.min(2.0, image.scale * gesture.scaleFactor))
                         fullImage.scale = image.scale;
                         if (fullImage.scale < 1.0) {
                             dinstance.contentX =  0;
@@ -404,6 +405,11 @@ Rectangle {
                     }
 
                     onFinished: {
+                        if (image.scale < 1.0) {
+                            image.scale = 1.0
+                        }
+                        fullImage.scale = image.scale;
+
                         dinstance.interactive = fullImage.scale > 1;
                         photoListView.interactive = true;
                     }
