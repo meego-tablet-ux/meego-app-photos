@@ -17,6 +17,7 @@ Item {
     property color cellBackgroundColor: "black"
     property color cellTextColor: theme_fontColorHighlight
     property int cellTextPointSize: theme_fontPixelSizeNormal
+    property bool modelConnectionReady: false
 
     property alias model: view.model
     property alias currentItem: view.currentItem
@@ -128,9 +129,9 @@ Item {
         anchors.fill: parent
         anchors.topMargin: 10
         anchors.bottomMargin: 10
-        anchors.leftMargin: (parent.width - Math.floor(parent.width / cellWidth)*cellWidth) / 2
+        anchors.leftMargin: 15
         anchors.rightMargin: anchors.leftMargin
-        visible: count != 0
+        visible: count != 0 || !modelConnectionReady
 
         type: photoalbumtype
         defaultThumbnail: "image://themedimage/images/media/photo_thumb_default"
