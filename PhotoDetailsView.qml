@@ -18,12 +18,12 @@ Item {
     // view modes
     // 0 - photo viewer with side bar and tool bar
     // 1 - photo viewer only
-    property int viewMode: 0
+    property int viewMode: 1
 
-    property bool startInFullscreen: false
+    property bool startInFullscreen: true
     property bool startInSlideshow: false
 
-    property alias currentIndex: photoViewer.currentIndex
+    property alias initialIndex: photoViewer.initialIndex
     property alias currentItem: photoViewer.currentItem
     property alias toolbar: toolbar
 

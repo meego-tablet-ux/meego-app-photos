@@ -31,13 +31,21 @@ Item {
 
     property alias footerHeight: view.footerHeight
 
+    //: This is a context menu command for opening photos
     property string labelOpen: qsTr("Open")
+    //: This is a context menu command for showing a slide show of photos
     property string labelPlay: qsTr("Play slideshow")
+    //: This is a context menu command for sharing photos over services
     property string labelShare: qsTr("Share")
+    //: This is a context menu command for marking photos as favorite
     property string labelFavorite: qsTr("Favorite");
+    //: This is a context menu command for removing favorite mark from photos
     property string labelUnfavorite: qsTr("Unfavorite");
+    //: This is a context menu command for adding photos to albums
     property string labelAddToAlbum: qsTr("Add to album");
+    //: This is a context menu command for deleting photos
     property string labelDelete: qsTr("Delete")
+    //: This is a context menu command for starting the multiselect mode
     property string labelMultiSelMode: qsTr("Select multiple photos")
 
     signal toggleSelectedPhoto(string uri, bool selected)
@@ -49,7 +57,7 @@ Item {
         model.clearSelected();
     }
 
-    signal openPhoto(variant item, bool fullscreen, bool startSlideshow)
+    signal openPhoto(variant mediaItem, bool fullscreen, bool startSlideshow)
     signal pressAndHold(int x, int y, variant payload)
 
     Rectangle {
@@ -90,7 +98,7 @@ Item {
         anchors.fill: parent
         anchors.topMargin: 10
         anchors.bottomMargin: 10
-        anchors.leftMargin: (parent.width - Math.floor(parent.width / 110)*110) / 2
+        anchors.leftMargin: (parent.width - Math.floor(parent.width / cellWidth)*cellWidth) / 2
         anchors.rightMargin: anchors.leftMargin
 
         visible: count != 0 || !modelConnectionReady
@@ -98,7 +106,6 @@ Item {
         type: phototype
         selectionMode: container.selectionMode
         defaultThumbnail: "image://themedimage/images/media/photo_thumb_default"
-        showHeader: true
 
         borderImageSource: "image://themedimage/widgets/apps/media/photo-border"
         borderImageTop: 3
@@ -116,7 +123,6 @@ Item {
                 thumburis = view.model.getSelectedURIs();
             }
             else {
-                view.currentIndex = payload.mindex;
                 container.openPhoto(payload, false, false);
             }
         }

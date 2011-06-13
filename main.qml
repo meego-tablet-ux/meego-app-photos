@@ -14,9 +14,6 @@ import MeeGo.Sharing 0.1
 import MeeGo.Sharing.UI 0.1
 import Qt.labs.gestures 2.0
 
-import AcerWidgetsDaemonInterface 0.1
-import "awd-client.js" as Awd
-
 Window {
     id: window
 
@@ -29,50 +26,100 @@ Window {
         loadingTimer.start()
     }
 
+    //: This is a filter menu title
+    property string labelFilters: qsTr("Show only:")
+    //: This is a filter menu option for showing everything in the data model (photos/albums)
     property string labelAll: qsTr("All")
+    //: This is a filter menu option for showing recently added items in the data model (photos/albums)
     property string labelNewest: qsTr("Newest")
+    //: This is a filter menu option for showing items with favorite mark in the data model (photos/albums)
     property string labelFavorites: qsTr("Favorites")
+    //: This is a filter menu option for showing items recently viewed in the data model (photos/albums)
     property string labelRecentlyViewed: qsTr("Recently viewed")
+    //: This is a context menu option for sharing items (photos/albums)
     property string labelShare: qsTr("Share")
+    //: This is the title of the application
     property string labelPhotoApp: qsTr("Photos")
+    //: This is the title for the photos view
     property string labelAllPhotos: qsTr("Photos")
+    //: This is the title for the albums view
     property string labelAlbums: qsTr("Albums")
+    //: This is the title for the timeline view (Show by date)
     property string labelTimeline: qsTr("Timeline")
+    //: This is the action menu button label for creating a new album
     property string labelNewAlbum : qsTr("New album")
+    //: This is a context menu option for opening items (photos/albums)
     property string labelOpen: qsTr("Open")
+    //: This is a context menu option for starting a slideshow of items (photos/album)
     property string labelPlay: qsTr("Play slideshow")
+    //: This is a context menu option for changing to the fullscreen mode
     property string labelFullScreen: qsTr("Full screen")
+    //: This is a context menu option for changing back from the fullscreen mode
     property string labelLeaveFullScreen: qsTr("Leave full screen")
+    //: This is a context menu option for marking items (photos) as favorite
     property string labelFavorite: qsTr("Favorite");
+    //: This is a context menu option for removing favorite markings from items (photos)
     property string labelUnfavorite: qsTr("Unfavorite");
+    //: This is a context menu option for adding items (photos) to albums
     property string labelAddToAlbum: qsTr("Add to album");
+    //: This is a context menu option for removing items (photos) from album
     property string labelRemoveFromAlbum: qsTr("Remove from album")
+    //: This is a title for the deletion confirmation modal dialog
     property string labelConfirmDelete: qsTr("Delete?")
+    //: This is a context menu option for deleting items (photos/albums)
     property string labelDelete: qsTr("Delete")
+    //: This is an action menu button label for deleting the current album
     property string labelDeleteAlbum: qsTr("Delete album")
+    //: This is an action menu button label for deleting the current photo
     property string labelDeletePhoto: qsTr("Delete photo")
+    //: This is an action menu button label for renaming the current album
     property string labelRenamePhoto: qsTr("Rename photo")
+    //: This is a metadata label for indicating that there is only 1 photo in the album
     property string label1Photo: qsTr("1 photo")
+    //: This is a metadata label for indicating that there are a number of photos in the album
     property string labelNPhotos: qsTr("%1 photos")
-    property string labelCreateNewAlbum: qsTr("Create new album")
+    //: This is a generic modal dialog reject button label
     property string labelCancel: qsTr("Cancel");
+    //: This is a title for the new album creation modal dialog
+    property string labelCreateNewAlbum: qsTr("Create new album")
+    //: This is a create album modal dialog accept button label
+    property string labelCreate: qsTr("Create")
+    //: This is a create album modal dialog default text
+    property string labelDefaultAlbumName: qsTr("Album name")
+    //: This is a context menu option for setting a photo as the background image
     property string labelSetAsBackground: qsTr("Set as background")
+    //: This is an action menu rename photo text entry area's default text
+    property string labelDefaultNewPhotoName: qsTr("Type in a new name")
 
+    //: This is a label for the photo deletion confirmation modal dialog when removing 1 photo
     property string labelDeletePhotoText: qsTr("Are you sure you want to delete this photo?")
+    //: This is a label for the photo deletion confirmation modal dialog when removing several photos
     property string labelDeletePhotosText: qsTr("Are you sure you want to delete the %1 selected photos?")
+    //: This is a label for the photo deletion confirmation modal dialog when removing an album
     property string labelDeleteAlbumText: qsTr("Are you sure you want to delete this album?")
 
+    //: This is an information label telling the user that there are no photos
     property string labelNoPhotosText: qsTr("You have no photos")
+    //: This is an information label telling the user that there are no recently added photos
     property string labelNoNewestPhotosText: qsTr("You haven't added any photos recently")
+    //: This is an information label telling the user that none of the photos are marked as favorite
     property string labelNoFavoritePhotosText: qsTr("You don't have any favorite photos")
+    //: This is an information label telling the user that none of the photos have been viewed for a while
     property string labelNoRecentlyViewedPhotosText: qsTr("You haven't viewed any photos recently")
+    //: This is an information label telling the user that there are no albums
     property string labelNoAlbumsText: qsTr("You have no albums")
+    //: This is an information label telling the user that there are no recently added albums
     property string labelNoNewestAlbumsText: qsTr("You haven't added any albums recently")
+    //: This is an information label telling the user that none of the albums have been viewed recently
     property string labelNoRecentlyViewedAlbumsText: qsTr("You haven't viewed any albums recently")
+    //: This is an information label telling the user that the current album is empty
     property string labelNoPhotosInAlbumText: qsTr("You don't have any photos in this album")
 
+    //: This is an action button label launching the camera application
     property string labelNoContentTakePhotoButtonText: qsTr("Take a photo")
+    //: This is an action button label for going to the photos view with all filter used
     property string labelNoContentViewPhotosButtonText: qsTr("View all photos")
+    //: This is an action button label for creating a new album
     property string labelNoContentCreateAlbumButtonText: qsTr("Create an album")
 
     property string variableAllPhotosNoContentText: labelNoPhotosText
@@ -82,6 +129,7 @@ Window {
     property string variableTimelineNoContentText: labelNoPhotosText
     property string variableTimelineNoContentButtonText: labelNoContentTakePhotoButtonText
 
+    //: This is the default title for albums in album details view
     property string labelSingleAlbum: qsTr("Album title")
     onLabelSingleAlbumChanged: {
         albumModel.search = "";
@@ -90,6 +138,7 @@ Window {
     property string albumId
     property bool albumIsVirtual
 
+    //: This is the default title for photos in photo details view
     property string labelSinglePhoto: qsTr("Photo title")
 
     property string currentPhotoCreationTime: ""
@@ -104,24 +153,8 @@ Window {
 
     property bool modelConnectionReady: false
 
-    property string lastArrivedData: "0"
-    property variant photoDTV
-    property bool isFirstStart: true
-    property bool inDetailPage: false
-    function setCurrentPhotoIndex(index) {
-        if(!inDetailPage) {
-            photoDetailModel = allPhotosModel;
-            addPage(photoDetailComponent);
-        }
-        photoDTV.showPhotoAtIndex(index);
-    }
-
-    AwdAddress {
-        id: awdAPI
-        name: "photo"
-        type: "app"
-    }
-
+    property variant awdPhotoDetailsView
+    property variant awdAlbumDetailsView
 
     overlayItem: Item {
         ShareObj {
@@ -165,49 +198,58 @@ Window {
         directories: [ "/usr/share/meego-ux-appgrid/applications", "/usr/share/applications", "~/.local/share/applications" ]
     }
 
+    PhotoAwdInterface {
+    }
+
     PhotoListModel {
         id: allPhotosModel
         type: PhotoListModel.ListofPhotos
         limit: 0
         sort: PhotoListModel.SortByCreationTime
         onItemAvailable: {
-            var itemtype;
-            var title;
-            var index;
+            var itemtype
+            var title
+            var index
+            var id
 
-            if(allPhotosModel.isURN(identifier)) {
-                itemtype = allPhotosModel.getTypefromURN(identifier);
-                title = allPhotosModel.getTitlefromURN(identifier);
-                index = allPhotosModel.getIndexfromURN(identifier);
+            if (allPhotosModel.isURN(identifier)) {
+                itemtype = allPhotosModel.getTypefromURN(identifier)
+                title = allPhotosModel.getTitlefromURN(identifier)
+                index = allPhotosModel.getIndexfromURN(identifier)
+                id = allPhotosModel.getIDfromURN(identifier)
             }
             else {
-                itemtype = allPhotosModel.getTypefromID(identifier);
-                title = allPhotosModel.getTitlefromID(identifier);
-                index = allPhotosModel.itemIndex(identifier);
+                itemtype = allPhotosModel.getTypefromID(identifier)
+                title = allPhotosModel.getTitlefromID(identifier)
+                index = allPhotosModel.itemIndex(identifier)
+                id = identifier
             }
 
-            if (index == -1)
-                return;
-            if (itemtype == 0) {
-                // load a photo passed on cmdline
-                popPage()
-                photoDetailModel = allPhotosModel;
-                detailViewIndex = index;
-                labelSinglePhoto = title;
-                showFullscreen = false;
-                showSlideshow = false;
-                addPage(photoDetailComponent);
+            if (index == -1) {
+                console.log("available item has invalid index")
+                return
             }
-        }
-        onTotalChanged: {            
-            if(!inDetailPage) {
-                photoDetailModel = allPhotosModel;
-                Awd.initRequestInfo();
-                inDetailPage = true;
+
+            if (itemtype == MediaItem.PhotoItem) {
+                // load a photo passed on cmdline
+                singlePhotoModel.clear()
+                singlePhotoModel.addItems(id)
+                photoDetailModel = singlePhotoModel
+                detailViewIndex = 0
+                labelSinglePhoto = title
+                showFullscreen = false
+                showSlideshow = false
+                addPage(photoDetailComponent)
             }
         }
     }
 
+    PhotoListModel {
+        id: singlePhotoModel
+        type: PhotoListModel.Editor
+        limit: 0
+        sort: PhotoListModel.SortByDefault
+    }
 
     PhotoListModel {
         id: albumModel
@@ -281,11 +323,9 @@ Window {
              var cmd = parameters[0];
              var cdata = parameters[1];
              if (cmd == "showPhoto") {
-                 openBook(allPhotosComponent)
                  allPhotosModel.requestItem(0, cdata);
              }
              else if (cmd == "showAlbum") {
-                 openBook(allAlbumsComponent)
                  allAlbumsModel.requestItem(1, cdata);
              }
              else {
@@ -321,7 +361,7 @@ Window {
                     Text {
                         anchors.left: parent.left
                         anchors.leftMargin: 10
-                        text: qsTr("Show only:")
+                        text: labelFilters
                         font.pixelSize: theme_fontPixelSizeNormal
                         color: theme_fontColorHighlight
                     }
@@ -414,10 +454,10 @@ Window {
                 noContentButtonText: variableAllPhotosNoContentButtonText
                 modelConnectionReady: window.modelConnectionReady
                 onOpenPhoto: {
-                    photoDetailModel = allPhotosModel;
-                    detailViewIndex = currentIndex;
-                    labelSinglePhoto = item.mtitle
-                    model.setViewed(item.elementid);
+                    photoDetailModel = allPhotosModel
+                    detailViewIndex = mediaItem.mindex
+                    labelSinglePhoto = mediaItem.mtitle
+                    model.setViewed(mediaItem.elementid)
                     showFullscreen = fullscreen
                     showSlideshow = startSlideshow
                     addPage(photoDetailComponent)
@@ -466,13 +506,11 @@ Window {
                         if (model[index] == labelOpen)
                         {
                             // Open the photo
-                            allPhotosView.currentIndex = payload.mindex;
-                            allPhotosView.openPhoto(payload, false, false);
+                            allPhotosView.openPhoto(payload, false, false)
                         }
                         else if (model[index] == labelPlay)
                         {
                             // Kick off slide show starting with this photo
-                            allPhotosView.currentIndex = payload.mindex;
                             allPhotosView.openPhoto(payload, true, true)
                         }
                         else if (model[index] == labelFavorite || model[index] == labelUnfavorite)
@@ -609,7 +647,7 @@ Window {
                     Text {
                         anchors.left: parent.left
                         anchors.leftMargin: parent.margin
-                        text: qsTr("Show only:")
+                        text: labelFilters
                         font.pixelSize: theme_fontPixelSizeNormal
                         color: theme_fontColorHighlight
                     }
@@ -672,7 +710,7 @@ Window {
             ModalDialog {
                 id: createAlbumDialog
                 title: labelCreateNewAlbum
-                acceptButtonText: qsTr("Create")
+                acceptButtonText: labelCreate
 
                 content: Item {
                     property alias text: albumEntry.text
@@ -684,7 +722,7 @@ Window {
 
                     TextEntry {
                         id: albumEntry
-                        defaultText: qsTr("Album name")
+                        defaultText: labelDefaultAlbumName
                         anchors.centerIn: parent
                         width: parent.width
                     }
@@ -769,7 +807,7 @@ Window {
                     Text {
                         anchors.left: parent.left
                         anchors.leftMargin: parent.margin
-                        text: qsTr("Show only:")
+                        text: labelFilters
                         font.pixelSize: theme_fontPixelSizeNormal
                         color: theme_fontColorHighlight
                     }
@@ -965,10 +1003,10 @@ Window {
                 modelConnectionReady: window.modelConnectionReady
                 onOpenPhoto: {
                     // opening a photo from album detail view
-                    photoDetailModel = albumModel;
-                    detailViewIndex = currentIndex;
-                    labelSinglePhoto = item.mtitle
-                    model.setViewed(item.elementid);
+                    photoDetailModel = albumModel
+                    detailViewIndex = mediaItem.mindex
+                    labelSinglePhoto = mediaItem.mtitle
+                    model.setViewed(mediaItem.elementid)
                     showFullscreen = fullscreen
                     showSlideshow = startSlideshow
                     addPage(photoDetailComponent)
@@ -989,6 +1027,9 @@ Window {
                 onNoContentAction: {
                     window.openBook(allPhotosComponent)
                 }
+                Component.onCompleted: {
+                    awdAlbumDetailsView = albumDetailsView
+                }
             }
 
             ContextMenu {
@@ -1007,13 +1048,11 @@ Window {
                         if (model[index] == labelOpen)
                         {
                             // Open the photo
-                            albumDetailsView.currentIndex = payload.mindex;
-                            albumDetailsView.openPhoto(payload, false, false);
+                            albumDetailsView.openPhoto(payload, false, false)
                         }
                         else if (model[index] == labelPlay)
                         {
                             // Kick off slide show starting with this photo
-                            albumDetailsView.currentIndex = payload.mindex;
                             albumDetailsView.openPhoto(payload, true, true)
                         }
                         else if (model[index] == labelFavorite || model[index] == labelUnfavorite)
@@ -1190,7 +1229,7 @@ Window {
                             NumberAnimation { duration: 600 }
                         }
 
-                        defaultText: qsTr("Type in a new name")
+                        defaultText: labelDefaultNewPhotoName
                     }
 
                     Button {
@@ -1262,7 +1301,7 @@ Window {
                 anchors.fill: parent
                 model: photoDetailModel
                 appPage: photoDetailPage
-                currentIndex: detailViewIndex
+                initialIndex: detailViewIndex
 
                 startInFullscreen: showFullscreen
                 startInSlideshow: showSlideshow
@@ -1285,12 +1324,11 @@ Window {
                     currentPhotoCamera = currentItem.pcamera
                     currentPhotoItemId = currentItem.pitemid
                     currentPhotoURI = currentItem.puri
-                    Awd.sendMyData(currentIndex);
                 }
 
                 Component.onCompleted: {
                     showPhotoAtIndex(detailViewIndex);
-                    photoDTV = photodtview;
+                    awdPhotoDetailsView = photodtview
                 }
             }
 
@@ -1342,12 +1380,6 @@ Window {
                         }
                         photoDetailContextMenu.hide()
                     }
-                }
-                Component.onCompleted: {
-                    window.inDetailPage = true;
-                }
-                Component.onDestruction: {
-                    window.inDetailPage = false;
                 }
             }
         }

@@ -18,7 +18,7 @@ Rectangle {
 
     property variant appPage
     property alias model: photoListView.model
-    property alias currentIndex: photoListView.currentIndex
+    property alias initialIndex: photoListView.initialIndex
     property alias currentItem: photoListView.currentItem
     property alias count: photoListView.count
 
@@ -69,13 +69,11 @@ Rectangle {
         clip: true
         snapMode:ListView.SnapOneItem
         orientation: ListView.Horizontal
-        highlightFollowsCurrentItem: true
         spacing: 30
         focus: true
         pressDelay: 0
-        highlightMoveDuration: 300
-        property bool initialPhoto: true
         property int rotateDuration: 0
+        property int initialIndex: 0
 
         signal startingSlideshow()
 
@@ -85,6 +83,7 @@ Rectangle {
             height: photoViewer.height
             property alias imageExtension: extension
             property variant centerPoint
+            boundsBehavior: Flickable.StopAtBounds
 
             onWidthChanged: {
                 restorePhoto();
@@ -205,7 +204,7 @@ Rectangle {
                 ]
 
                 Component.onCompleted: {
-                    if (index == currentIndex) {
+                    if (index == photoListView.currentIndex) {
                         if (photoListView.moving) {
                             load = true
                         }
@@ -232,7 +231,7 @@ Rectangle {
                    }
 
                     onCurrentIndexChanged: {
-                        if (index == currentIndex) {
+                        if (index == photoListView.currentIndex) {
                             if (photoListView.moving) {
                                 fullImage.load = true
                             }
@@ -358,8 +357,6 @@ Rectangle {
                 }
             ]
             function restorePhoto() {
-                //   image.sourceSize.width = 1024;
-                //   image.scale = 1;
                 if (photoRotate == 0 || photoRotate == 2) {
                     image.width = dinstance.width;
                     image.height = dinstance.height;
@@ -395,7 +392,7 @@ Rectangle {
                     onUpdated: {
                         var cw = dinstance.contentWidth;
                         var ch = dinstance.contentHeight;
-                        image.scale = Math.max(0.25, Math.min(10.0, image.scale * gesture.scaleFactor))
+                        image.scale = Math.max(0.75, Math.min(2.0, image.scale * gesture.scaleFactor))
                         fullImage.scale = image.scale;
                         if (fullImage.scale < 1.0) {
                             dinstance.contentX =  0;
@@ -408,6 +405,11 @@ Rectangle {
                     }
 
                     onFinished: {
+                        if (image.scale < 1.0) {
+                            image.scale = 1.0
+                        }
+                        fullImage.scale = image.scale;
+
                         dinstance.interactive = fullImage.scale > 1;
                         photoListView.interactive = true;
                     }
@@ -417,6 +419,7 @@ Rectangle {
         Component.onCompleted: {
             // start the timer the first time.
             hideThumbnailTimer.start();
+            showPhotoAtIndex(initialIndex)
         }
 
         property variant previousTimestamp
@@ -468,18 +471,10 @@ Rectangle {
             currentIndex: photoListView.currentIndex
 
             onSlideshowStopped: {
-                photoListView.currentIndex = aFinalIndex
-                sstimer.start()
+                showPhotoAtIndex(aFinalIndex)
                 photoViewer.slideshowStopped()
-            }
-
-            Timer {
-                id: sstimer
-                interval: 500
-                onTriggered: {
-                    slideshow.destroy()
-                    photoViewer.slideshow = undefined
-                }
+                slideshow.destroy()
+                photoViewer.slideshow = undefined
             }
         }
     }
@@ -502,7 +497,6 @@ Rectangle {
         spacing: 2
         opacity: 0
         visible: opacity != 0
-        highlightMoveDuration: 200
         onShowChanged: {
             // start the timer
             if (show == true) {
