@@ -18,11 +18,11 @@ Window {
     id: window
 
     toolBarTitle: labelPhotoApp
-    bookMenuModel: [labelAlbums, labelAllPhotos, labelTimeline]
-    bookMenuPayload: [allAlbumsComponent, allPhotosComponent, timelineComponent]
+    bookMenuModel: [labelAllPhotos, labelAlbums, labelTimeline]
+    bookMenuPayload: [allPhotosComponent, allAlbumsComponent, timelineComponent]
 
     Component.onCompleted: {
-        openBook(allAlbumsComponent)
+        openBook(allPhotosComponent)
         loadingTimer.start()
     }
 
@@ -738,6 +738,7 @@ Window {
                 anchors.fill: parent
                 noContentText: variableAllAlbumsNoContentText
                 noContentButtonText: variableAllAlbumsNoContentButtonText
+                modelConnectionReady: window.modelConnectionReady
 
                 clip: true
                 model:  allAlbumsModel
@@ -859,6 +860,7 @@ Window {
                 anchors.fill: parent
                 noContentText: variableTimelineNoContentText
                 noContentButtonText: variableTimelineNoContentButtonText
+                modelConnectionReady: window.modelConnectionReady
 
                 clip: true
                 model:  allVirtualAlbumsModel
