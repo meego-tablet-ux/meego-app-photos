@@ -18,11 +18,11 @@ Window {
     id: window
 
     toolBarTitle: labelPhotoApp
-    bookMenuModel: [labelAllPhotos, labelAlbums, labelTimeline]
-    bookMenuPayload: [allPhotosComponent, allAlbumsComponent, timelineComponent]
+    bookMenuModel: [labelTimeline, labelAllPhotos, labelAlbums]
+    bookMenuPayload: [timelineComponent, allPhotosComponent, allAlbumsComponent]
 
     Component.onCompleted: {
-        openBook(allPhotosComponent)
+        openBook(timelineComponent)
         loadingTimer.start()
     }
 
@@ -321,6 +321,8 @@ Window {
              }
              else if (cmd == "showAlbum") {
                  allAlbumsModel.requestItem(1, cdata);
+             }
+             else if (cmd == "showTimeline") {
              }
              else {
                  console.log("Got unknown cmd "+ cmd)
