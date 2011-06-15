@@ -74,10 +74,6 @@ Window {
     property string labelDeletePhoto: qsTr("Delete photo")
     //: This is an action menu button label for renaming the current album
     property string labelRenamePhoto: qsTr("Rename photo")
-    //: This is a metadata label for indicating that there is only 1 photo in the album
-    property string label1Photo: qsTr("1 photo")
-    //: This is a metadata label for indicating that there are a number of photos in the album
-    property string labelNPhotos: qsTr("%1 photos")
     //: This is a generic modal dialog reject button label
     property string labelCancel: qsTr("Cancel");
     //: This is a title for the new album creation modal dialog
@@ -91,10 +87,6 @@ Window {
     //: This is an action menu rename photo text entry area's default text
     property string labelDefaultNewPhotoName: qsTr("Type in a new name")
 
-    //: This is a label for the photo deletion confirmation modal dialog when removing 1 photo
-    property string labelDeletePhotoText: qsTr("Are you sure you want to delete this photo?")
-    //: This is a label for the photo deletion confirmation modal dialog when removing several photos
-    property string labelDeletePhotosText: qsTr("Are you sure you want to delete the %1 selected photos?")
     //: This is a label for the photo deletion confirmation modal dialog when removing an album
     property string labelDeleteAlbumText: qsTr("Are you sure you want to delete this album?")
 
@@ -582,7 +574,8 @@ Window {
 
                     var text = labelDeletePhotoText
                     if (allPhotosView.selected.length != 1) {
-                        text = labelDeletePhotosText.arg(allPhotosView.selected.length)
+                        //: This is a label for the photo deletion confirmation modal dialog when removing photos
+                        text = qsTr("Are you sure you want to delete the %n selected photos?", "", allPhotosView.selected.length)
                     }
 
                     confirmer.text = text
@@ -938,7 +931,8 @@ Window {
 
                     Text {
                         id: albumCount
-                        text: albumModel.count == 1 ? label1Photo : labelNPhotos.arg(albumModel.count)
+                        //: This is a metadata label for indicating the number of photos in the album
+                        text: qsTr("%n photo(s)", "", albumModel.count)
                         font.pixelSize: theme_fontPixelSizeLarge
                         width: paintedWidth + 2 * parent.textMargin
                         height: paintedHeight + 2 * parent.textMargin
