@@ -40,7 +40,7 @@ Item {
     //: This is a rename album modal dialog accept button label
     property string labelRename: qsTr("Rename")
 
-    signal openAlbum(variant elementid, string title, bool isvirtual, bool fullscreen)
+    signal openAlbum(variant elementid, string title, variant addedtime, bool isvirtual, bool fullscreen)
     signal playSlideshow(variant elementid, string title)
     signal shareAlbum(variant albumid, string title, int mouseX, int mouseY)
     signal noContentAction()
@@ -112,7 +112,7 @@ Item {
                 var target = container.anchors
                 if (model[index] == labelOpen) {
                     // Open the photo
-                    openAlbum(payload.mitemid, payload.mtitle, payload.misvirtual, false)
+                    openAlbum(payload.mitemid, payload.mtitle, payload.maddedtime, payload.misvirtual, false)
                 }
                 else if (model[index] == labelPlay) {
                     // TODO: this is currently disabled below
@@ -188,7 +188,7 @@ Item {
 
         onClicked: {
             view.currentIndex = payload.mindex;
-            openAlbum(payload.mitemid, payload.mtitle, payload.misvirtual, false);
+            openAlbum(payload.mitemid, payload.mtitle, payload.maddedtime, payload.misvirtual, false);
         }
 
         onLongPressAndHold: {

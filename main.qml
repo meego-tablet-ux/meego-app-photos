@@ -116,6 +116,9 @@ Window {
 
     //: This is a label text for the photo details dialog. The %1 is a fuzzy date/time string, e.g. "1/31/11 - a few months ago"
     property string labelPhotoTakenOnText: qsTr("This photo was taken on\n%1")
+    //: This is a label text for the photo details dialog. The %1 is a fuzzy date/time string, e.g. "1/31/11 - a few months ago"
+    property string labelAlbumAddedOnText: qsTr("This album was added on\n%1")
+
     property string variableAllPhotosNoContentText: labelNoPhotosText
     property string variableAllPhotosNoContentButtonText: labelNoContentTakePhotoButtonText
     property string variableAllAlbumsNoContentText: labelNoAlbumsText
@@ -131,6 +134,8 @@ Window {
 
     property string albumId
     property bool albumIsVirtual
+
+    property string currentAlbumAddedTime: ""
 
     //: This is the default title for photos in photo details view
     property string labelSinglePhoto: qsTr("Photo title")
@@ -741,6 +746,7 @@ Window {
                 model:  allAlbumsModel
                 onOpenAlbum: {
                     labelSingleAlbum = title;
+                    currentAlbumAddedTime = addedtime;
                     albumId = elementid;
                     albumIsVirtual = isvirtual;
                     addPage(albumDetailComponent);
@@ -863,6 +869,7 @@ Window {
                 model:  allVirtualAlbumsModel
                 onOpenAlbum: {
                     labelSingleAlbum = title;
+                    currentAlbumAddedTime = addedtime;
                     albumId = elementid;
                     albumIsVirtual = isvirtual;
                     addPage(albumDetailComponent);
@@ -908,6 +915,12 @@ Window {
                 albumDetailActions.show()
             }
 
+            resources: [
+                FuzzyDateTime {
+                    id: fuzzy
+                }
+            ]
+
             ContextMenu {
                 id: albumDetailActions
                 forceFingerMode: 2
@@ -932,6 +945,17 @@ Window {
                         id: albumCount
                         //: This is a metadata label for indicating the number of photos in the album
                         text: qsTr("%n photo(s)", "", albumModel.count)
+                        font.pixelSize: theme_fontPixelSizeLarge
+                        width: paintedWidth + 2 * parent.textMargin
+                        height: paintedHeight + 2 * parent.textMargin
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                        color: theme_contextMenuFontColor
+                    }
+
+                    Text {
+                        id: albumAdded
+                        text: labelAlbumAddedOnText.arg(fuzzy.getFuzzy(currentAlbumAddedTime))
                         font.pixelSize: theme_fontPixelSizeLarge
                         width: paintedWidth + 2 * parent.textMargin
                         height: paintedHeight + 2 * parent.textMargin
