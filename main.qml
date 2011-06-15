@@ -122,9 +122,8 @@ Window {
     //: This is an action button label for creating a new album
     property string labelNoContentCreateAlbumButtonText: qsTr("Create an album")
 
-    //: This is a label text for the photo details dialog. It will be onscreen as eg. "This photo was taken on\n10/25/10 - 8 months ago"
-    property string labelPhotoTakenOnText: qsTr("This photo was taken on\n")
-
+    //: This is a label text for the photo details dialog. The %1 is a fuzzy date/time string, e.g. "1/31/11 - a few months ago"
+    property string labelPhotoTakenOnText: qsTr("This photo was taken on\n%1")
     property string variableAllPhotosNoContentText: labelNoPhotosText
     property string variableAllPhotosNoContentButtonText: labelNoContentTakePhotoButtonText
     property string variableAllAlbumsNoContentText: labelNoAlbumsText
@@ -1192,7 +1191,7 @@ Window {
                         anchors.topMargin: parent.margin
                         anchors.left: photoName.left
 
-                        text: labelPhotoTakenOnText + fuzzy.getFuzzy(currentPhotoCreationTime)
+                        text: labelPhotoTakenOnText.arg(fuzzy.getFuzzy(currentPhotoCreationTime))
                         visible: (text == "") ? 0 : 1
                         font.pixelSize: theme_contextMenuFontPixelSize
                         verticalAlignment: Text.AlignVCenter
