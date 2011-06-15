@@ -57,7 +57,7 @@ Window {
     //: This is a context menu option for changing back from the fullscreen mode
     property string labelLeaveFullScreen: qsTr("Leave full screen")
     //: This is a context menu option for marking items (photos) as favorite
-    property string labelFavorite: qsTr("Favorite");
+    property string labelFavorite: qsTr("Favorite", "Verb");
     //: This is a context menu option for removing favorite markings from items (photos)
     property string labelUnfavorite: qsTr("Unfavorite");
     //: This is a context menu option for adding items (photos) to albums
