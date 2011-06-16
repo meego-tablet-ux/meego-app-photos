@@ -926,6 +926,7 @@ Window {
                 forceFingerMode: 2
 
                 content: Column {
+                    id: albumDetailActionsContent
                     property int textMargin: 16
                     width: childrenRect.width
 
@@ -964,15 +965,24 @@ Window {
                         color: theme_contextMenuFontColor
                     }
 
+                    Image {
+                        id: alwaysVisibleSeparator
+                        width: parent.width
+                        visible: !albumIsVirtual
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        source: "image://themedimage/images/menu_item_separator"
+                    }
+
                     Item {
-                        width: button.width + 2 * parent.textMargin
-                        height: button.height + 2 * parent.textMargin - 8
-
-                        visible: !albumIsVirtual;
-
+                        width: parent.width
+                        height: button.height + parent.textMargin
+                        anchors.horizontalCenter: parent.horizontalCenter
                         Button {
                             id: button
-                            anchors.centerIn: parent
+                            anchors.left: parent.left
+                            anchors.right: parent.right
+                            anchors.bottom: parent.bottom
+                            visible: !albumIsVirtual
                             text: labelDeleteAlbum
                             onClicked: {
                                 albumDetailActions.hide()
@@ -1231,11 +1241,20 @@ Window {
                         color: theme_contextMenuFontColor
                     }
 
+                    Image {
+                        id: alwaysVisibleSeparator
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        anchors.top: camera.visible ? camera.bottom : creation.bottom
+                        anchors.margins: parent.textMargin
+                        source: "image://themedimage/images/menu_item_separator"
+                    }
+
                     TextEntry {
                         id: entry
                         anchors.left: parent.left
                         anchors.right: parent.right
-                        anchors.top: camera.visible ? camera.bottom : creation.bottom
+                        anchors.top: alwaysVisibleSeparator.bottom
                         anchors.margins: parent.textMargin
                         visible: false
                         opacity: visible ? 1.0 : 0.0
@@ -1247,13 +1266,29 @@ Window {
                         defaultText: labelDefaultNewPhotoName
                     }
 
+                    Image {
+                        id: entrySeparator
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        anchors.top: entry.bottom
+                        anchors.margins: parent.textMargin
+                        visible: entry.visible
+                        opacity: visible ? 1.0 : 0.0
+
+                        Behavior on opacity {
+                            NumberAnimation { duration: 600 }
+                        }
+                        source: "image://themedimage/images/menu_item_separator"
+                    }
+
                     Button {
                         id: renameButton
-                        anchors.top: entry.visible ? entry.bottom : (camera.visible ? camera.bottom : creation.bottom)
-                        anchors.topMargin: parent.margin
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        bgSourceUp: "image://themedimage/images/btn_blue_up"
-                        bgSourceDn: "image://themedimage/images/btn_blue_dn"
+                        anchors.top: entrySeparator.visible ? entrySeparator.bottom : alwaysVisibleSeparator.bottom
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        anchors.margins: parent.margin
+                        bgSourceUp: "image://themedimage/widgets/common/button/button-default"
+                        bgSourceDn: "image://themedimage/widgets/common/button/button-default-pressed"
 
                         Behavior on x {
                             NumberAnimation { duration: 500 }
@@ -1275,11 +1310,11 @@ Window {
                     Button {
                         id: deleteButton
                         anchors.top: renameButton.bottom
-                        anchors.topMargin: parent.margin
-                        anchors.horizontalCenter: parent.horizontalCenter
-
-                        bgSourceUp: "image://themedimage/images/btn_red_up"
-                        bgSourceDn: "image://themedimage/images/btn_red_dn"
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        anchors.margins: parent.margin
+                        bgSourceUp: "image://themedimage/widgets/common/button/button-negative"
+                        bgSourceDn: "image://themedimage/widgets/common/button/button-negative-pressed"
 
                         text: labelDeletePhoto
                         onClicked: {
