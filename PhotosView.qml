@@ -38,7 +38,7 @@ Item {
     //: This is a context menu command for sharing photos over services
     property string labelShare: qsTr("Share")
     //: This is a context menu command for marking photos as favorite
-    property string labelFavorite: qsTr("Favorite");
+    property string labelFavorite: qsTr("Favorite", "Verb");
     //: This is a context menu command for removing favorite mark from photos
     property string labelUnfavorite: qsTr("Unfavorite");
     //: This is a context menu command for adding photos to albums

@@ -17,6 +17,7 @@ Item {
     property color cellBackgroundColor: "black"
     property color cellTextColor: theme_fontColorHighlight
     property int cellTextPointSize: theme_fontPixelSizeNormal
+    property bool modelConnectionReady: false
 
     property alias model: view.model
     property alias currentItem: view.currentItem
@@ -39,7 +40,7 @@ Item {
     //: This is a rename album modal dialog accept button label
     property string labelRename: qsTr("Rename")
 
-    signal openAlbum(variant elementid, string title, bool isvirtual, bool fullscreen)
+    signal openAlbum(variant elementid, string title, variant addedtime, bool isvirtual, bool fullscreen)
     signal playSlideshow(variant elementid, string title)
     signal shareAlbum(variant albumid, string title, int mouseX, int mouseY)
     signal noContentAction()
@@ -111,7 +112,7 @@ Item {
                 var target = container.anchors
                 if (model[index] == labelOpen) {
                     // Open the photo
-                    openAlbum(payload.mitemid, payload.mtitle, payload.misvirtual, false)
+                    openAlbum(payload.mitemid, payload.mtitle, payload.maddedtime, payload.misvirtual, false)
                 }
                 else if (model[index] == labelPlay) {
                     // TODO: this is currently disabled below
@@ -178,16 +179,16 @@ Item {
         anchors.fill: parent
         anchors.topMargin: 10
         anchors.bottomMargin: 10
-        anchors.leftMargin: (parent.width - Math.floor(parent.width / cellWidth)*cellWidth) / 2
+        anchors.leftMargin: 15
         anchors.rightMargin: anchors.leftMargin
-        visible: count != 0
+        visible: count != 0 || !modelConnectionReady
 
         type: photoalbumtype
         defaultThumbnail: "image://themedimage/images/media/photo_thumb_default"
 
         onClicked: {
             view.currentIndex = payload.mindex;
-            openAlbum(payload.mitemid, payload.mtitle, payload.misvirtual, false);
+            openAlbum(payload.mitemid, payload.mtitle, payload.maddedtime, payload.misvirtual, false);
         }
 
         onLongPressAndHold: {

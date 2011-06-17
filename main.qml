@@ -18,11 +18,11 @@ Window {
     id: window
 
     toolBarTitle: labelPhotoApp
-    bookMenuModel: [labelAlbums, labelAllPhotos, labelTimeline]
-    bookMenuPayload: [allAlbumsComponent, allPhotosComponent, timelineComponent]
+    bookMenuModel: [labelTimeline, labelAllPhotos, labelAlbums]
+    bookMenuPayload: [timelineComponent, allPhotosComponent, allAlbumsComponent]
 
     Component.onCompleted: {
-        openBook(allAlbumsComponent)
+        openBook(timelineComponent)
         loadingTimer.start()
     }
 
@@ -57,7 +57,7 @@ Window {
     //: This is a context menu option for changing back from the fullscreen mode
     property string labelLeaveFullScreen: qsTr("Leave full screen")
     //: This is a context menu option for marking items (photos) as favorite
-    property string labelFavorite: qsTr("Favorite");
+    property string labelFavorite: qsTr("Favorite", "Verb");
     //: This is a context menu option for removing favorite markings from items (photos)
     property string labelUnfavorite: qsTr("Unfavorite");
     //: This is a context menu option for adding items (photos) to albums
@@ -74,10 +74,6 @@ Window {
     property string labelDeletePhoto: qsTr("Delete photo")
     //: This is an action menu button label for renaming the current album
     property string labelRenamePhoto: qsTr("Rename photo")
-    //: This is a metadata label for indicating that there is only 1 photo in the album
-    property string label1Photo: qsTr("1 photo")
-    //: This is a metadata label for indicating that there are a number of photos in the album
-    property string labelNPhotos: qsTr("%1 photos")
     //: This is a generic modal dialog reject button label
     property string labelCancel: qsTr("Cancel");
     //: This is a title for the new album creation modal dialog
@@ -91,10 +87,6 @@ Window {
     //: This is an action menu rename photo text entry area's default text
     property string labelDefaultNewPhotoName: qsTr("Type in a new name")
 
-    //: This is a label for the photo deletion confirmation modal dialog when removing 1 photo
-    property string labelDeletePhotoText: qsTr("Are you sure you want to delete this photo?")
-    //: This is a label for the photo deletion confirmation modal dialog when removing several photos
-    property string labelDeletePhotosText: qsTr("Are you sure you want to delete the %1 selected photos?")
     //: This is a label for the photo deletion confirmation modal dialog when removing an album
     property string labelDeleteAlbumText: qsTr("Are you sure you want to delete this album?")
 
@@ -122,6 +114,11 @@ Window {
     //: This is an action button label for creating a new album
     property string labelNoContentCreateAlbumButtonText: qsTr("Create an album")
 
+    //: This is a label text for the photo details dialog. The %1 is a fuzzy date/time string, e.g. "1/31/11 - a few months ago"
+    property string labelPhotoTakenOnText: qsTr("This photo was taken on\n%1")
+    //: This is a label text for the photo details dialog. The %1 is a fuzzy date/time string, e.g. "1/31/11 - a few months ago"
+    property string labelAlbumAddedOnText: qsTr("This album was added on\n%1")
+
     property string variableAllPhotosNoContentText: labelNoPhotosText
     property string variableAllPhotosNoContentButtonText: labelNoContentTakePhotoButtonText
     property string variableAllAlbumsNoContentText: labelNoAlbumsText
@@ -137,6 +134,8 @@ Window {
 
     property string albumId
     property bool albumIsVirtual
+
+    property string currentAlbumAddedTime: ""
 
     //: This is the default title for photos in photo details view
     property string labelSinglePhoto: qsTr("Photo title")
@@ -189,6 +188,9 @@ Window {
         switchBook(component)
     }
 
+    PhotoAwdInterface {
+    }
+
     Labs.BackgroundModel {
         id: backgroundModel
     }
@@ -196,9 +198,6 @@ Window {
     Labs.ApplicationsModel {
         id: appsModel
         directories: [ "/usr/share/meego-ux-appgrid/applications", "/usr/share/applications", "~/.local/share/applications" ]
-    }
-
-    PhotoAwdInterface {
     }
 
     PhotoListModel {
@@ -327,6 +326,8 @@ Window {
              }
              else if (cmd == "showAlbum") {
                  allAlbumsModel.requestItem(1, cdata);
+             }
+             else if (cmd == "showTimeline") {
              }
              else {
                  console.log("Got unknown cmd "+ cmd)
@@ -583,7 +584,8 @@ Window {
 
                     var text = labelDeletePhotoText
                     if (allPhotosView.selected.length != 1) {
-                        text = labelDeletePhotosText.arg(allPhotosView.selected.length)
+                        //: This is a label for the photo deletion confirmation modal dialog when removing photos
+                        text = qsTr("Are you sure you want to delete the %n selected photos?", "", allPhotosView.selected.length)
                     }
 
                     confirmer.text = text
@@ -744,11 +746,13 @@ Window {
                 anchors.fill: parent
                 noContentText: variableAllAlbumsNoContentText
                 noContentButtonText: variableAllAlbumsNoContentButtonText
+                modelConnectionReady: window.modelConnectionReady
 
                 clip: true
                 model:  allAlbumsModel
                 onOpenAlbum: {
                     labelSingleAlbum = title;
+                    currentAlbumAddedTime = addedtime;
                     albumId = elementid;
                     albumIsVirtual = isvirtual;
                     addPage(albumDetailComponent);
@@ -865,11 +869,13 @@ Window {
                 anchors.fill: parent
                 noContentText: variableTimelineNoContentText
                 noContentButtonText: variableTimelineNoContentButtonText
+                modelConnectionReady: window.modelConnectionReady
 
                 clip: true
                 model:  allVirtualAlbumsModel
                 onOpenAlbum: {
                     labelSingleAlbum = title;
+                    currentAlbumAddedTime = addedtime;
                     albumId = elementid;
                     albumIsVirtual = isvirtual;
                     addPage(albumDetailComponent);
@@ -915,11 +921,18 @@ Window {
                 albumDetailActions.show()
             }
 
+            resources: [
+                FuzzyDateTime {
+                    id: fuzzy
+                }
+            ]
+
             ContextMenu {
                 id: albumDetailActions
                 forceFingerMode: 2
 
                 content: Column {
+                    id: albumDetailActionsContent
                     property int textMargin: 16
                     width: childrenRect.width
 
@@ -937,7 +950,8 @@ Window {
 
                     Text {
                         id: albumCount
-                        text: albumModel.count == 1 ? label1Photo : labelNPhotos.arg(albumModel.count)
+                        //: This is a metadata label for indicating the number of photos in the album
+                        text: qsTr("%n photo(s)", "", albumModel.count)
                         font.pixelSize: theme_fontPixelSizeLarge
                         width: paintedWidth + 2 * parent.textMargin
                         height: paintedHeight + 2 * parent.textMargin
@@ -946,15 +960,35 @@ Window {
                         color: theme_contextMenuFontColor
                     }
 
+                    Text {
+                        id: albumAdded
+                        text: labelAlbumAddedOnText.arg(fuzzy.getFuzzy(currentAlbumAddedTime))
+                        font.pixelSize: theme_fontPixelSizeLarge
+                        width: paintedWidth + 2 * parent.textMargin
+                        height: paintedHeight + 2 * parent.textMargin
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                        color: theme_contextMenuFontColor
+                    }
+
+                    Image {
+                        id: alwaysVisibleSeparator
+                        width: parent.width
+                        visible: !albumIsVirtual
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        source: "image://themedimage/images/menu_item_separator"
+                    }
+
                     Item {
-                        width: button.width + 2 * parent.textMargin
-                        height: button.height + 2 * parent.textMargin - 8
-
-                        visible: !albumIsVirtual;
-
+                        width: parent.width
+                        height: button.height + parent.textMargin
+                        anchors.horizontalCenter: parent.horizontalCenter
                         Button {
                             id: button
-                            anchors.centerIn: parent
+                            anchors.left: parent.left
+                            anchors.right: parent.right
+                            anchors.bottom: parent.bottom
+                            visible: !albumIsVirtual
                             text: labelDeleteAlbum
                             onClicked: {
                                 albumDetailActions.hide()
@@ -1194,7 +1228,7 @@ Window {
                         anchors.topMargin: parent.margin
                         anchors.left: photoName.left
 
-                        text: fuzzy.getFuzzy(currentPhotoCreationTime)
+                        text: labelPhotoTakenOnText.arg(fuzzy.getFuzzy(currentPhotoCreationTime))
                         visible: (text == "") ? 0 : 1
                         font.pixelSize: theme_contextMenuFontPixelSize
                         verticalAlignment: Text.AlignVCenter
@@ -1216,11 +1250,20 @@ Window {
                         color: theme_contextMenuFontColor
                     }
 
+                    Image {
+                        id: alwaysVisibleSeparator
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        anchors.top: camera.visible ? camera.bottom : creation.bottom
+                        anchors.margins: parent.textMargin
+                        source: "image://themedimage/images/menu_item_separator"
+                    }
+
                     TextEntry {
                         id: entry
                         anchors.left: parent.left
                         anchors.right: parent.right
-                        anchors.top: camera.visible ? camera.bottom : creation.bottom
+                        anchors.top: alwaysVisibleSeparator.bottom
                         anchors.margins: parent.textMargin
                         visible: false
                         opacity: visible ? 1.0 : 0.0
@@ -1232,13 +1275,29 @@ Window {
                         defaultText: labelDefaultNewPhotoName
                     }
 
+                    Image {
+                        id: entrySeparator
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        anchors.top: entry.bottom
+                        anchors.margins: parent.textMargin
+                        visible: entry.visible
+                        opacity: visible ? 1.0 : 0.0
+
+                        Behavior on opacity {
+                            NumberAnimation { duration: 600 }
+                        }
+                        source: "image://themedimage/images/menu_item_separator"
+                    }
+
                     Button {
                         id: renameButton
-                        anchors.top: entry.visible ? entry.bottom : (camera.visible ? camera.bottom : creation.bottom)
-                        anchors.topMargin: parent.margin
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        bgSourceUp: "image://themedimage/images/btn_blue_up"
-                        bgSourceDn: "image://themedimage/images/btn_blue_dn"
+                        anchors.top: entrySeparator.visible ? entrySeparator.bottom : alwaysVisibleSeparator.bottom
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        anchors.margins: parent.margin
+                        bgSourceUp: "image://themedimage/widgets/common/button/button-default"
+                        bgSourceDn: "image://themedimage/widgets/common/button/button-default-pressed"
 
                         Behavior on x {
                             NumberAnimation { duration: 500 }
@@ -1260,11 +1319,11 @@ Window {
                     Button {
                         id: deleteButton
                         anchors.top: renameButton.bottom
-                        anchors.topMargin: parent.margin
-                        anchors.horizontalCenter: parent.horizontalCenter
-
-                        bgSourceUp: "image://themedimage/images/btn_red_up"
-                        bgSourceDn: "image://themedimage/images/btn_red_dn"
+                        anchors.left: parent.left
+                        anchors.right: parent.right
+                        anchors.margins: parent.margin
+                        bgSourceUp: "image://themedimage/widgets/common/button/button-negative"
+                        bgSourceDn: "image://themedimage/widgets/common/button/button-negative-pressed"
 
                         text: labelDeletePhoto
                         onClicked: {
@@ -1328,7 +1387,7 @@ Window {
 
                 Component.onCompleted: {
                     showPhotoAtIndex(detailViewIndex);
-                    awdPhotoDetailsView = photodtview
+                    awdPhotoDetailsView = photodtview;
                 }
             }
 

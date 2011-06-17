@@ -1,15 +1,9 @@
 import Qt 4.7
 import MeeGo.Media 0.1
 import AcerWidgetsDaemonInterface 0.1   //lib from meego-ux-media as awdapi
-import "awd-client.js" as AwdClient
 
 Item {
     id: photoAwdInterface
-
-    //string data for comparing to avoid chaos
-    property string lastArrivedData : ""    //currently lastArrivedData == lastSendData
-    property string thisArrivedData : ""    //data just arrived
-    property string currentData : ""        //current application photo data
 
     //Other control bool
     property bool allPhotosModelUpdating: true
@@ -19,11 +13,10 @@ Item {
                                     //3 for in awdAlbumDetailsView
     property string currentUrn
 
-    //AcerWidgetsDaemon API for composing a http url
-    AwdAddress {
-        id: awdAPI
+    AwdClient {
+        id: awdclient
         name: "photo"
-        type: "app"
+        type: "app"        
     }
 
     Connections {
@@ -37,16 +30,16 @@ Item {
         console.log("------------- inDetailPage "+inDetailPage)
         if(inDetailPage == 2) {
             currentUrn = allPhotosModel.datafromIndex(detailViewIndex, MediaItem.URN);
-            if(AwdClient.photoAwdData.urn != currentUrn) {
-                AwdClient.photoAwdData.urn = currentUrn;
-                shootData();
+            if(awdclient.getData("urn") != currentUrn) {
+                awdclient.setData("urn", currentUrn);
+                awdclient.shootData();
             }
         }
         else if(inDetailPage == 3) {
             currentUrn = allPhotosModel.datafromIndex(allPhotosModel.itemIndex(currentPhotoItemId), MediaItem.URN);
-            if(AwdClient.photoAwdData.urn != currentUrn) {
-                AwdClient.photoAwdData.urn = currentUrn;
-                shootData();
+            if(awdclient.getData("urn") != currentUrn) {
+                awdclient.setData("urn", currentUrn);
+                awdclient.shootData();
             }
         }
     }
@@ -54,7 +47,8 @@ Item {
     //sned init data for application
     function startup()
     {
-        AwdClient.initRequestInfo();
+        setDeafultData();
+        awdclient.startup();
     }
 
     function pageHandler(component) {
@@ -65,7 +59,7 @@ Item {
             openBook(allPhotosComponent);
         case 0:
             //Fix me. Wrong detailViewIndex when 3 -> 2
-            detailViewIndex = allPhotosModel.getIndexfromURN(AwdClient.photoAwdData.urn);
+            detailViewIndex = allPhotosModel.getIndexfromURN(awdclient.getData("urn"));
             addPage(photoDetailComponent);
             break;
         default:
@@ -73,9 +67,24 @@ Item {
         }
     }
 
+    function setDeafultData() {
+        //data to be transmitted
+        //[widget] for data needed by widget only
+        //[widget-current] for real-time data needed by widget which need to be transmitted all the time
+        //[application] for data needed by application only
+        //[application-start] for data needed by application only when application starts
+        //[application-current] for real-time data needed by application which need to be transmitted all the time
+        //[other] for other data which may be needed by both widget and application or for some special occasion
+        var photoAwdData =
+        {
+            "urn"   : "",   //[application-widget-current]: set the current urn to sync photo detail view
+        }
+        awdclient.setCurrentData(photoAwdData);
+    }
+
     //handle data from daemon
     function startUpControlHandle() {
-        var identifier = AwdClient.photoAwdData.urn
+        var identifier = awdclient.getData("urn")
         if(allPhotosModel.isURN(identifier)) {
             var itemtype = allPhotosModel.getTypefromURN(identifier);
             var title = allPhotosModel.getTitlefromURN(identifier);
@@ -95,7 +104,7 @@ Item {
 
     //handle control signal from widget
     function controlHandle() {
-        var identifier = AwdClient.photoAwdData.urn
+        var identifier = awdclient.getData("urn")
         if(allPhotosModel.isURN(identifier)) {
             var itemtype = allPhotosModel.getTypefromURN(identifier);
             var title = allPhotosModel.getTitlefromURN(identifier);
@@ -112,14 +121,7 @@ Item {
     //init data when there is no photo at all
     function initNoPhotoData()
     {
-        AwdClient.photoAwdData.urn = "";
-    }
-
-    //send collected data
-    function shootData()
-    {
-        lastArrivedData = AwdClient.Obj2JSON(AwdClient.photoAwdData);
-        AwdClient.sendDataRequest(lastArrivedData);
+        awdclient.setData("urn", "");
     }
 
     Connections {
@@ -146,9 +148,9 @@ Item {
         onCurrentItemChanged: {
             currentUrn = allPhotosModel.datafromIndex(allPhotosModel.itemIndex(currentPhotoItemId), MediaItem.URN);
             if(inDetailPage > 1) {
-                if(AwdClient.photoAwdData.urn != currentUrn) {
-                    AwdClient.photoAwdData.urn = currentUrn;
-                    shootData();
+                if(awdclient.getData("urn") != currentUrn) {
+                    awdclient.setData("urn", currentUrn);
+                    awdclient.shootData();
                 }
             }
         }
