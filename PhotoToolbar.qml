@@ -67,8 +67,8 @@ Item {
         IconButton {
             opacity: mode == 0 ? 1.0 : 0.0
             anchors.verticalCenter: parent.verticalCenter
-            icon: "image://themedimage/images/media/icn_back_up"
-            iconDown: "image://themedimage/images/media/icn_back_dn"
+            icon: "image://themedimage/icons/actionbar/media-backward"
+            iconDown: "image://themedimage/icons/actionbar/media-backward-active"
             hasBackground: false
             onClicked: container.prev()
         }
@@ -76,16 +76,16 @@ Item {
             id: playButton
             opacity: mode == 0 || mode == 1 ? 1.0 : 0.0
             anchors.verticalCenter: parent.verticalCenter
-            icon: "image://themedimage/images/icn_play_up"
-            iconDown: "image://themedimage/images/icn_play_dn"
+            icon: "image://themedimage/icons/actionbar/media-play"
+            iconDown: "image://themedimage/icons/actionbar/media-play-active"
             hasBackground: false
             onClicked: container.play()
         }
         IconButton {
             opacity: mode == 0 ? 1.0 : 0.0
             anchors.verticalCenter: parent.verticalCenter
-            icon: "image://themedimage/images/media/icn_forward_up"
-            iconDown: "image://themedimage/images/media/icn_forward_dn"
+            icon: "image://themedimage/icons/actionbar/media-forward"
+            iconDown: "image://themedimage/icons/actionbar/media-forward-active"
             hasBackground: false
             onClicked: container.next()
         }
@@ -93,29 +93,30 @@ Item {
     Row {
         id: mode2Buttons
         anchors.left: parent.left
+        anchors.right: parent.right
         width: parent.width
         anchors.verticalCenter: parent.verticalCenter
-        spacing: (width - 400)/3
+        spacing: (width - 200)/3
         visible: mode == 2
         IconButton {
             anchors.verticalCenter: parent.verticalCenter
-            icon: "image://themedimage/images/media/icn_trash_up"
-            iconDown: "image://themedimage/images/media/icn_trash_dn"
+            icon: "image://themedimage/icons/actionbar/edit-delete"
+            iconDown: "image://themedimage/icons/actionbar/edit-delete-active"
             hasBackground: false
             onClicked: container.deleteSelected()
         }
         IconButton {
             anchors.verticalCenter: parent.verticalCenter
-            icon: "image://themedimage/images/media/icn_addtoalbum_up"
-            iconDown: "image://themedimage/images/media/icn_addtoalbum_dn"
+            icon: "image://themedimage/icons/actionbar/media-addtoalbum"
+            iconDown: "image://themedimage/icons/actionbar/media-addtoalbum-active"
             hasBackground: false
             onClicked: container.addToAlbum()
         }
         IconButton {
             id: shareButton
             anchors.verticalCenter: parent.verticalCenter
-            icon: "image://themedimage/images/media/icn_share_up"
-            iconDown: "image://themedimage/images/media/icn_share_dn"
+            icon: "image://themedimage/icons/actionbar/media-share"
+            iconDown: "image://themedimage/icons/actionbar/media-share-active"
             hasBackground: false
             onClicked: {
                 var map = mapToItem(topItem.topItem, width / 2, 0);
@@ -123,8 +124,8 @@ Item {
             }
         }
         IconButton {
-            icon: "image://themedimage/images/media/icn_cancel_ms_up"
-            iconDown: "image://themedimage/images/media/icn_cancel_ms_dn"
+            icon: "image://themedimage/icons/actionbar/media_multiselectcancel"
+            iconDown: "image://themedimage/icons/actionbar/media_multiselectcancel-active"
             hasBackground: false
             onClicked: container.cancel()
         }
@@ -135,8 +136,8 @@ Item {
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: parent.left
         anchors.leftMargin: 10
-        icon: "image://themedimage/images/media/icn_rotate_cw_up"
-        iconDown: "image://themedimage/images/media/icn_rotate_cw_dn"
+        icon: "image://themedimage/icons/actionbar/media-repeat"
+        iconDown: "image://themedimage/icons/actionbar/media-repeat-active"
         hasBackground: false
         onClicked: container.rotateRight()
     }
@@ -145,8 +146,8 @@ Item {
         anchors.verticalCenter: parent.verticalCenter
         anchors.right: parent.right
         anchors.rightMargin: 10
-        icon: container.isFavorite ? "image://themedimage/images/media/icn_favourite_active" : "image://themedimage/images/media/icn_favourite_up"
-        iconDown: "image://themedimage/images/media/icn_favourite_dn"
+        icon: container.isFavorite ? "image://themedimage/icons/actionbar/favorite-active" : "image://themedimage/icons/actionbar/favorite"
+        iconDown: "image://themedimage/icons/actionbar/favorite-selected"
         hasBackground: false
         onClicked: {
             container.isFavorite = !container.isFavorite;
