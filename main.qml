@@ -152,8 +152,8 @@ Window {
 
     property bool modelConnectionReady: false
 
-    property variant awdPhotoDetailsView
-    property variant awdAlbumDetailsView
+    property variant widgetPhotoDetailsView
+    property variant widgetAlbumDetailsView
 
     overlayItem: Item {
         ShareObj {
@@ -188,7 +188,7 @@ Window {
         switchBook(component)
     }
 
-    PhotoAwdInterface {
+    PhotoWidgetInterface {
     }
 
     Labs.BackgroundModel {
@@ -1062,7 +1062,7 @@ Window {
                     window.openBook(allPhotosComponent)
                 }
                 Component.onCompleted: {
-                    awdAlbumDetailsView = albumDetailsView
+                    widgetAlbumDetailsView = albumDetailsView
                 }
             }
 
@@ -1387,7 +1387,7 @@ Window {
 
                 Component.onCompleted: {
                     showPhotoAtIndex(detailViewIndex);
-                    awdPhotoDetailsView = photodtview;
+                    widgetPhotoDetailsView = photodtview;
                 }
             }
 

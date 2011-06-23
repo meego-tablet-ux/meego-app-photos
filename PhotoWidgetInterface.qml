@@ -1,20 +1,20 @@
 import Qt 4.7
 import MeeGo.Media 0.1
-import AcerWidgetsDaemonInterface 0.1   //lib from meego-ux-media as awdapi
+import MeeGo.WidgetInterface 0.1   //lib from meego-ux-media as widgetapi
 
 Item {
-    id: photoAwdInterface
+    id: photoWidgetInterface
 
     //Other control bool
     property bool allPhotosModelUpdating: true
     property int inDetailPage: 0    //0 for in all photos
                                     //1 for in Albums or Timeline
-                                    //2 for in awdPhotoDetailsView
-                                    //3 for in awdAlbumDetailsView
+                                    //2 for in widgetPhotoDetailsView
+                                    //3 for in widgetAlbumDetailsView
     property string currentUrn
 
-    AwdClient {
-        id: awdclient
+    WidgetClient {
+        id: widgetclient
         name: "photo"
         type: "app"        
     }
@@ -30,16 +30,16 @@ Item {
         console.log("------------- inDetailPage "+inDetailPage)
         if(inDetailPage == 2) {
             currentUrn = allPhotosModel.datafromIndex(detailViewIndex, MediaItem.URN);
-            if(awdclient.getData("urn") != currentUrn) {
-                awdclient.setData("urn", currentUrn);
-                awdclient.shootData();
+            if(widgetclient.getData("urn") != currentUrn) {
+                widgetclient.setData("urn", currentUrn);
+                widgetclient.shootData();
             }
         }
         else if(inDetailPage == 3) {
             currentUrn = allPhotosModel.datafromIndex(allPhotosModel.itemIndex(currentPhotoItemId), MediaItem.URN);
-            if(awdclient.getData("urn") != currentUrn) {
-                awdclient.setData("urn", currentUrn);
-                awdclient.shootData();
+            if(widgetclient.getData("urn") != currentUrn) {
+                widgetclient.setData("urn", currentUrn);
+                widgetclient.shootData();
             }
         }
     }
@@ -47,19 +47,20 @@ Item {
     //sned init data for application
     function startup()
     {
+        requestTest.running = false;
         setDefaultData();
-        awdclient.startup();
+        widgetclient.startup();
     }
 
     function pageHandler(component) {
         switch (inDetailPage) {        
-        case 2: awdPhotoDetailsView.showPhotoAtIndex(detailViewIndex);break;
+        case 2: widgetPhotoDetailsView.showPhotoAtIndex(detailViewIndex);break;
         case 3:
         case 1:
             openBook(allPhotosComponent);
         case 0:
             //Fix me. Wrong detailViewIndex when 3 -> 2
-            detailViewIndex = allPhotosModel.getIndexfromURN(awdclient.getData("urn"));
+            detailViewIndex = allPhotosModel.getIndexfromURN(widgetclient.getData("urn"));
             addPage(photoDetailComponent);
             break;
         default:
@@ -75,16 +76,16 @@ Item {
         //[application-start] for data needed by application only when application starts
         //[application-current] for real-time data needed by application which need to be transmitted all the time
         //[other] for other data which may be needed by both widget and application or for some special occasion
-        var photoAwdData =
+        var photoWidgetData =
         {
             "urn"   : "",   //[application-widget-current]: set the current urn to sync photo detail view
         }
-        awdclient.setCurrentData(photoAwdData);
+        widgetclient.setCurrentData(photoWidgetData);
     }
 
     //handle data from daemon
     function startUpControlHandle() {
-        var identifier = awdclient.getData("urn")
+        var identifier = widgetclient.getData("urn")
         if(allPhotosModel.isURN(identifier)) {
             var itemtype = allPhotosModel.getTypefromURN(identifier);
             var title = allPhotosModel.getTitlefromURN(identifier);
@@ -104,7 +105,7 @@ Item {
 
     //handle control signal from widget
     function controlHandle() {
-        var identifier = awdclient.getData("urn")
+        var identifier = widgetclient.getData("urn")
         if(allPhotosModel.isURN(identifier)) {
             var itemtype = allPhotosModel.getTypefromURN(identifier);
             var title = allPhotosModel.getTitlefromURN(identifier);
@@ -121,7 +122,7 @@ Item {
     //init data when there is no photo at all
     function initNoPhotoData()
     {
-        awdclient.setData("urn", "");
+        widgetclient.setData("urn", "");
     }
 
     Connections {
@@ -144,13 +145,13 @@ Item {
     }
 
     Connections {
-        target: awdPhotoDetailsView
+        target: widgetPhotoDetailsView
         onCurrentItemChanged: {
             currentUrn = allPhotosModel.datafromIndex(allPhotosModel.itemIndex(currentPhotoItemId), MediaItem.URN);
             if(inDetailPage > 1) {
-                if(awdclient.getData("urn") != currentUrn) {
-                    awdclient.setData("urn", currentUrn);
-                    awdclient.shootData();
+                if(widgetclient.getData("urn") != currentUrn) {
+                    widgetclient.setData("urn", currentUrn);
+                    widgetclient.shootData();
                 }
             }
         }
