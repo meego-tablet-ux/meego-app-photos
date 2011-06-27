@@ -7,6 +7,7 @@
  */
 
 import Qt 4.7
+import MeeGo.Components 0.1
 import MeeGo.Labs.Components 0.1 as Labs
 import MeeGo.Media 0.1
 
@@ -157,8 +158,11 @@ Rectangle {
     Component {
         id: imageComponent
         LimitedImage {
+            id: limitedImage
             opacity: 0
             visible: opacity != 0
+            transformOrigin: Item.Center
+            rotation: extension.orientation * 90
             property bool waiting: false
 
             onStatusChanged: {
@@ -173,6 +177,11 @@ Rectangle {
                     waiting = false
                     timer.unpause()
                 }
+            }
+
+            ImageExtension {
+                id: extension
+                source: limitedImage.source
             }
         }
     }

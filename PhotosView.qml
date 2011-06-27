@@ -21,6 +21,7 @@ Item {
     property bool selectAll: false
     property variant selected: []
     property variant thumburis: []
+    property variant selectedIndexes: []
 
     property alias model: view.model
     property alias currentItem: view.currentItem
@@ -54,6 +55,7 @@ Item {
     onSelectionModeChanged: {
         selected = [];
         thumburis = [];
+        selectedIndexes = []
         model.clearSelected();
     }
 
@@ -121,9 +123,12 @@ Item {
                 container.toggleSelectedPhoto(payload.muri, itemSelected)
                 selected = view.model.getSelectedIDs();
                 thumburis = view.model.getSelectedURIs();
+                var list = selectedIndexes
+                list.push(payload.mindex)
+                selectedIndexes = list
             }
             else {
-                container.openPhoto(payload, false, false);
+                container.openPhoto(payload, true, false);
             }
         }
 
