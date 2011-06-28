@@ -1,13 +1,35 @@
 [Desktop Entry]
-Version=1.0
-Name=MeeGo Photo Viewer
-Comment=View Photos
-GenericName=Photo Viewer
-Exec=invoker --type=l meego-qml-launcher --opengl --cmd showTimeline --cdata %f --fullscreen --app meego-app-photos
-Terminal=false
-X-MultipleArgs=false
 Type=Application
+Name=Photos
+Name[zh_TW]=相片
+Name[zh_CN]=照片
+Name[tr]=Fotoğraflar
+Name[sv]=Foton
+Name[ru]=Фотографии
+Name[pt_PT]=Fotos
+Name[pt_BR]=Fotos
+Name[pl]=Zdjęcia
+Name[no]=Bilder
+Name[nl]=Foto's
+Name[ko]=사진
+Name[ja]=写真
+Name[it]=Foto
+Name[hu]=Fényképek
+Name[fr]=Photos
+Name[fi]=Valokuvat
+Name[es]=Fotos
+Name[en_US]=Photos
+Name[en_GB]=Photos
+Name[el]=Φωτογραφίες
+Name[de]=Fotos
+Name[da]=Fotos
+Name[cs]=Fotografie
 Icon=meego-app-photos
-Categories=Graphics;2DGraphics;
+Exec=invoker --type=l meego-qml-launcher --opengl --cmd showTimeline --cdata %f --fullscreen --app meego-app-photos
+X-MEEGO-CORE-UX=true
+X-MEEGO-CGROUP-PATH=managed
+X-MEEGO-CGROUP-CONTROLLERS=freezer
+X-MEEGO-APP-HOME-ROW=3
+X-MEEGO-APP-HOME-COLUMN=0
+X-MEEGO-APP-HOME-PAGE=0
 MimeType=image/bmp;image/g3fax;image/gif;image/x-fits;image/pcx;image/x-portable-anymap;image/x-portable-bitmap;image/x-portable-graymap;image/x-portable-pixmap;image/x-psd;image/x-sgi;image/x-tga;image/x-xbitmap;image/x-xwindowdump;image/x-xcf;image/x-compressed-xcf;image/tiff;image/jpeg;image/x-psp;image/png;image/x-icon;image/x-xpixmap;image/svg+xml;image/x-wmf;
-X-Desktop-File-Install-Version=0.16
