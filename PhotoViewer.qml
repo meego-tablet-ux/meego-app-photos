@@ -7,6 +7,7 @@
  */
 
 import Qt 4.7
+import MeeGo.Components 0.1
 import MeeGo.Labs.Components 0.1 as Labs
 import MeeGo.Media 0.1
 import Qt.labs.gestures 2.0
@@ -20,6 +21,7 @@ Rectangle {
     property alias model: photoListView.model
     property alias initialIndex: photoListView.initialIndex
     property alias currentItem: photoListView.currentItem
+    property alias currentIndex: photoListView.currentIndex
     property alias count: photoListView.count
 
     property bool fullscreen: false
@@ -81,7 +83,6 @@ Rectangle {
             id: dinstance
             width: photoViewer.width
             height: photoViewer.height
-            property alias imageExtension: extension
             property variant centerPoint
             boundsBehavior: Flickable.StopAtBounds
 
@@ -244,7 +245,7 @@ Rectangle {
                 }
             }
 
-            Labs.ImageExtension {
+            ImageExtension {
                 id: extension
                 source: uri
                 userOrientation: photoRotate
@@ -516,6 +517,9 @@ Rectangle {
             source: thumburi
             fillMode: Image.PreserveAspectCrop
             clip: true
+            transformOrigin: Item.Center
+            rotation: extension.orientation * 90
+            property string muri: uri
 
             GestureArea {
                 anchors.fill: parent
@@ -527,6 +531,11 @@ Rectangle {
                         hideThumbnailTimer.restart()
                     }
                 }
+            }
+
+            ImageExtension {
+                id: extension
+                source: thumbnail.muri
             }
         }
 

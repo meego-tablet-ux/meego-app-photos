@@ -21,9 +21,119 @@ Window {
     bookMenuModel: [labelTimeline, labelAllPhotos, labelAlbums]
     bookMenuPayload: [timelineComponent, allPhotosComponent, allAlbumsComponent]
 
+    //the following properies are used for save/restore purposes
+    property string firstPageObjectName: ""
+    property string lastAlbumTitle: ""
+    property bool okToRestoreAllAlbumsPage: true
+    property bool okToRestoreAllPhotosPage: true
+    property bool okToRestoreTimelinePage: true
+    property bool okToRestoreAlbum: true
+    property bool okToRestorePhoto: false
+    property bool okToRestorePhotoSelection: true
+    //These are needed in order to track whether the filter menu selection or a text search is the active filter.
+    //The filter menu selection and a text search are mutually exclusive, they do not get combined
+    property bool allAlbumsModelSearchActive: false
+    property bool allVirtualAlbumsModelSearchActive: false
+    property bool allPhotosModelSearchActive: false
+    property bool allAlbumsFilterMenuActive: true
+    property bool allVirtualAlbumsFilterMenuActive: true
+    property bool allPhotosFilterMenuActive: true
+
     Component.onCompleted: {
-        openBook(timelineComponent)
+        //check for restore
+        if (windowState.restoreRequired) {
+            //load our restore values
+            var firstPage = windowState.value("firstPageObjectName", "allAlbumsPage")
+            var lastPage = windowState.value("lastPageObjectName", "allAlbumsPage")
+            lastAlbumTitle = windowState.value("lastAlbumTitle", "")
+            allAlbumsModelSearchActive = windowState.value("allAlbumsModelSearchActive", false)
+            allVirtualAlbumsModelSearchActive = windowState.value("allVirtualAlbumsModelSearchActive", false)
+            allPhotosModelSearchActive = windowState.value("allPhotosModelSearchActive", false)
+            allAlbumsFilterMenuActive = windowState.value("allAlbumsFilterMenuActive", false)
+            allVirtualAlbumsFilterMenuActive = windowState.value("allVirtualAlbumsFilterMenuActive", false)
+            allPhotosFilterMenuActive = windowState.value("allPhotosFilterMenuActive", false)
+            //switch the the correct book and add the appropriate pages
+            if (lastPage == "allPhotosPage") {
+                openBook(allPhotosComponent)
+                bookMenuSelectedIndex = 1
+            }
+            else if (lastPage == "timelinePage") {
+                openBook(timelineComponent)
+                bookMenuSelectedIndex = 0
+            }
+            else if (lastPage == "photoDetailPage") {
+                if(firstPage == "allPhotosPage") {
+                    openBook(allPhotosComponent)
+                    bookMenuSelectedIndex = 1
+                    photoDetailModel = allPhotosModel
+                    okToRestorePhoto = true
+                    addPage(photoDetailComponent)
+                }
+                else {
+                    if(firstPage == "timelinePage") {
+                        openBook(timelineComponent)
+                        bookMenuSelectedIndex = 0
+                    }
+                    else {  //handle allAlbumsPage and invalid
+                        openBook(allAlbumsComponent)
+                        bookMenuSelectedIndex = 2
+                    }
+                    if(lastAlbumTitle != "") {
+                        labelSingleAlbum = lastAlbumTitle
+                        addPage(albumDetailComponent)
+                        photoDetailModel = albumModel
+                        okToRestorePhoto = true
+                        addPage(photoDetailComponent)
+                    }
+                }
+            }
+            else if (lastPage == "albumDetailPage") {
+                if(firstPage == "timelinePage") {
+                    openBook(timelineComponent)
+                    bookMenuSelectedIndex = 0
+                }
+                else {  //handle allAlbumsPage and invalid
+                    openBook(allAlbumsComponent)
+                    bookMenuSelectedIndex = 2
+                }
+                if(lastAlbumTitle != "") {
+                    labelSingleAlbum = lastAlbumTitle
+                    addPage(albumDetailComponent)
+                }
+            }
+            else {  //handle allAlbumsPage and invalid
+                openBook(allAlbumsComponent)
+                bookMenuSelectedIndex = 2
+            }
+            //load this restore value last
+            showToolBarSearch = windowState.value("showToolBarSearch", false)
+        }
+        else {
+            openBook(timelineComponent)
+        }
+
         loadingTimer.start()
+    }
+
+    SaveRestoreState {
+        id: windowState
+        onSaveRequired: {
+            var lastPageObjectName = ""
+            if(pageStack.depth > 0) {
+                lastPageObjectName = pageStack.currentPage.objectName
+            }
+            setValue("lastPageObjectName", lastPageObjectName)
+            setValue("firstPageObjectName", firstPageObjectName)
+            setValue("lastAlbumTitle", albumModel.album)
+            setValue("showToolBarSearch", showToolBarSearch)
+            setValue("allAlbumsModelSearchActive", allAlbumsModelSearchActive)
+            setValue("allVirtualAlbumsModelSearchActive", allVirtualAlbumsModelSearchActive)
+            setValue("allPhotosModelSearchActive", allPhotosModelSearchActive)
+            setValue("allAlbumsFilterMenuActive", allAlbumsFilterMenuActive)
+            setValue("allVirtualAlbumsFilterMenuActive", allVirtualAlbumsFilterMenuActive)
+            setValue("allPhotosFilterMenuActive", allPhotosFilterMenuActive)
+            sync()
+        }
     }
 
     //: This is a filter menu title
@@ -151,6 +261,7 @@ Window {
     property int detailViewIndex: 0
     property bool showFullscreen: false
     property bool showSlideshow: false
+    property int detailModelCount: 0
 
     property bool modelConnectionReady: false
 
@@ -232,10 +343,14 @@ Window {
                 photoDetailModel = singlePhotoModel
                 detailViewIndex = 0
                 labelSinglePhoto = title
-                showFullscreen = false
+                showFullscreen = true
                 showSlideshow = false
                 addPage(photoDetailComponent)
             }
+        }
+
+        onCountChanged: {
+            detailModelCount = count
         }
     }
 
@@ -252,6 +367,10 @@ Window {
         limit: 0
         album: labelSingleAlbum
         sort: PhotoListModel.SortByDefault
+
+        onCountChanged: {
+            detailModelCount = count
+        }
     }
 
     PhotoListModel {
@@ -335,11 +454,34 @@ Window {
         id: allPhotosComponent
         AppPage {
             id: allPhotosPage
+            objectName: "allPhotosPage"
             anchors.fill: parent
             pageTitle: labelAllPhotos
             fullScreen: false
 
+            property int modelCount: window.detailModelCount
+            onModelCountChanged: {
+                //our model has finished loading, restore the selected photos
+                if (allPhotosPageState.restoreRequired && okToRestorePhotoSelection) {
+                    //set our global flag to false so we don't try to restore again
+                    okToRestorePhotoSelection = false
+                    if(allPhotosView.selectionMode) {
+                        allPhotosView.model.clearSelected()
+                        var selectedIndexes = allPhotosPageState.value("allPhotosView.selectedIndexes", "")
+                        for(var i in selectedIndexes) {
+                            allPhotosView.currentIndex = selectedIndexes[i]
+                            allPhotosView.model.setSelected(allPhotosView.currentItem.mitemid, true)
+                            allPhotosToolbar.sharing.addItem(allPhotosView.currentItem.muri);
+                        }
+                        allPhotosView.selected = allPhotosView.model.getSelectedIDs();
+                        allPhotosView.thumburis = allPhotosView.model.getSelectedURIs();
+                    }
+                }
+            }
+
             onSearch: {
+                allPhotosModelSearchActive = needle == "" ? false : true
+                allPhotosFilterMenuActive = false
                 allPhotosModel.search = needle;
             }
 
@@ -348,6 +490,45 @@ Window {
             onActionMenuIconClicked: {
                 allPhotosActions.setPosition(mouseX, mouseY)
                 allPhotosActions.show()
+            }
+
+            SaveRestoreState {
+                id: allPhotosPageState
+                onSaveRequired: {
+                    save()
+                }
+
+                function save() {
+                    setValue("allPhotosActions.filterMenu.selectedIndex", filterMenu.selectedIndex)
+                    setValue("allPhotosModel.search", allPhotosModel.search)
+                    setValue("allPhotosView.selectionMode", allPhotosView.selectionMode)
+                    setValue("allPhotosView.selectedIndexes", allPhotosView.selectedIndexes)
+                    sync()
+                }
+            }
+
+            Component.onCompleted: {
+                firstPageObjectName = objectName
+                if (allPhotosPageState.restoreRequired) {
+                    if(okToRestoreAllPhotosPage) {
+                        //set our global flag to false so we don't try to restore again when this page is loaded
+                        okToRestoreAllPhotosPage = false
+                        filterMenu.selectedIndex = allPhotosPageState.value("allPhotosActions.filterMenu.selectedIndex", 0)
+                        if(allPhotosFilterMenuActive) {
+                            filterMenu.setFilter(filterMenu.model[filterMenu.selectedIndex])
+                        }
+                        else if(allPhotosModelSearchActive) {
+                            allPhotosModel.search = allPhotosPageState.value("allPhotosModel.search", "")
+                        }
+                        allPhotosView.selectionMode = allPhotosPageState.value("allPhotosView.selectionMode", false)
+                    }
+                }
+            }
+
+            Component.onDestruction: {
+                //Save here so that this page is able to be restored properly.
+                //onSaveRequired is not called when this is not the active book.
+                allPhotosPageState.save()
             }
 
             ContextMenu {
@@ -389,6 +570,7 @@ Window {
                         }
 
                         function setFilter(label) {
+                            allPhotosFilterMenuActive = true
                             if (label == labelAll) {
                                 allPhotosModel.filter = PhotoListModel.FilterAll
                                 variableAllPhotosNoContentText = labelNoPhotosText
@@ -600,11 +782,14 @@ Window {
         id: allAlbumsComponent
         AppPage {
             id: allAlbumsPage
+            objectName: "allAlbumsPage"
             anchors.fill: parent
             pageTitle: labelAlbums
             fullScreen: false
 
             onSearch: {
+                allAlbumsModelSearchActive = needle == "" ? false : true
+                allAlbumsFilterMenuActive = false
                 allAlbumsModel.search = needle;
             }
 
@@ -613,6 +798,42 @@ Window {
             onActionMenuIconClicked: {
                 allAlbumsActions.setPosition(mouseX, mouseY)
                 allAlbumsActions.show()
+            }
+
+            SaveRestoreState {
+                id: allAlbumsPageState
+                onSaveRequired: {
+                    save()
+                }
+
+                function save() {
+                    setValue("allAlbumsActions.filterMenu.selectedIndex", filterMenu.selectedIndex)
+                    setValue("allAlbumsModel.search", allAlbumsModel.search)
+                    sync()
+                }
+            }
+
+            Component.onCompleted: {
+                firstPageObjectName = objectName
+                if (allAlbumsPageState.restoreRequired) {
+                    if(okToRestoreAllAlbumsPage) {
+                        //set our global flag to false so we don't try to restore again when this page is loaded
+                        okToRestoreAllAlbumsPage = false
+                        filterMenu.selectedIndex = allAlbumsPageState.value("allAlbumsActions.filterMenu.selectedIndex", 0)
+                        if(allAlbumsFilterMenuActive) {
+                            filterMenu.setFilter(filterMenu.model[filterMenu.selectedIndex])
+                        }
+                        else if(allAlbumsModelSearchActive) {
+                            allAlbumsModel.search = allAlbumsPageState.value("allAlbumsModel.search", "")
+                        }
+                    }
+                }
+            }
+
+            Component.onDestruction: {
+                //Save here so that this page is able to be restored properly.
+                //onSaveRequired is not called when this is not the active book.
+                allAlbumsPageState.save()
             }
 
             ContextMenu {
@@ -677,6 +898,7 @@ Window {
                         }
 
                         function setFilter(label) {
+                            allAlbumsFilterMenuActive = true
                             if (label == labelAll) {
                                 allAlbumsModel.filter = PhotoListModel.FilterAll
                                 variableAllAlbumsNoContentText = labelNoAlbumsText
@@ -781,11 +1003,14 @@ Window {
         id: timelineComponent
         AppPage {
             id: timelinePage
+            objectName: "timelinePage"
             anchors.fill: parent
             pageTitle: labelTimeline
             fullScreen: false
 
             onSearch: {
+                allVirtualAlbumsModelSearchActive = needle == "" ? false : true
+                allVirtualAlbumsFilterMenuActive = false
                 allVirtualAlbumsModel.search = needle;
             }
 
@@ -794,6 +1019,42 @@ Window {
             onActionMenuIconClicked: {
                 timelineActions.setPosition(mouseX, mouseY)
                 timelineActions.show()
+            }
+
+            SaveRestoreState {
+                id: timelinePageState
+                onSaveRequired: {
+                    save()
+                }
+
+                function save() {
+                    setValue("timelineActions.filterMenu.selectedIndex", filterMenu.selectedIndex)
+                    setValue("allVirtualAlbumsModel.search", allVirtualAlbumsModel.search)
+                    sync()
+                }
+            }
+
+            Component.onCompleted: {
+                firstPageObjectName = objectName
+                if (timelinePageState.restoreRequired) {
+                    if(okToRestoreTimelinePage) {
+                        //set our global flag to false so we don't try to restore again when this page is loaded
+                        okToRestoreTimelinePage = false
+                        filterMenu.selectedIndex = timelinePageState.value("timelineActions.filterMenu.selectedIndex", 0)
+                        if(allVirtualAlbumsFilterMenuActive) {
+                            filterMenu.setFilter(filterMenu.model[filterMenu.selectedIndex])
+                        }
+                        else if(allVirtualAlbumsModelSearchActive) {
+                            allVirtualAlbumsModel.search = timelinePageState.value("allVirtualAlbumsModel.search", "")
+                        }
+                    }
+                }
+            }
+
+            Component.onDestruction: {
+                //Save here so that this page is able to be restored properly.
+                //onSaveRequired is not called when this is not the active book.
+                timelinePageState.save()
             }
 
             ContextMenu {
@@ -837,6 +1098,7 @@ Window {
                         }
 
                         function setFilter(label) {
+                            allVirtualAlbumsFilterMenuActive = true
                             if (label == labelAll) {
                                 allVirtualAlbumsModel.filter = PhotoListModel.FilterAll
                                 variableAllAlbumsNoContentText = labelNoAlbumsText
@@ -902,6 +1164,7 @@ Window {
         id: albumDetailComponent
         AppPage {
             id: albumDetailPage
+            objectName: "albumDetailPage"
             anchors.fill: parent
             pageTitle: labelAlbums
             fullScreen: false
@@ -922,6 +1185,38 @@ Window {
                     id: fuzzy
                 }
             ]
+
+            SaveRestoreState {
+                id: albumDetailPageState
+                onSaveRequired: {
+                    save()
+                }
+
+                function save() {
+                    setValue("albumModel.search", albumModel.search)
+                    sync()
+                }
+            }
+
+            Component.onCompleted: {
+                firstPageObjectName = objectName
+                if (albumDetailPageState.restoreRequired) {
+                    if(okToRestoreAlbum) {
+                        //set our global flag to false so we don't try to restore again when this page is loaded
+                        okToRestoreAlbum = false
+                        //check if this was the last album we were looking at and set the search appropriately
+                        if(lastAlbumTitle == labelSingleAlbum) {
+                            albumModel.search = albumDetailPageState.value("albumModel.search", "")
+                        }
+                    }
+                }
+            }
+
+            Component.onDestruction: {
+                //Save here so that this page is able to be restored properly.
+                //onSaveRequired is not called when this is not the active page.
+                albumDetailPageState.save()
+            }
 
             ContextMenu {
                 id: albumDetailActions
@@ -1142,10 +1437,6 @@ Window {
                     addPage(photoDetailComponent)
                 }
             }
-
-            Component.onCompleted: {
-                albumModel.album = labelSingleAlbum;
-            }
         }
     }
 
@@ -1154,9 +1445,31 @@ Window {
 
         AppPage {
             id: photoDetailPage
+            objectName: "photoDetailPage"
             anchors.fill: parent
             pageTitle: window.toolBarTitle
             disableSearch: true
+
+            property int modelCount: window.detailModelCount
+            onModelCountChanged: {
+                restorePhotoAtIndex(detailViewIndex)
+            }
+
+            function restorePhotoAtIndex(index) {
+                if (photoDetailPageState.restoreRequired && okToRestorePhoto) {
+                    //check if our desired photo has been loaded yet
+                    if(photodtview.count > index) {
+                        //set this global flag to false so we don't try to restore again
+                        okToRestorePhoto = false
+                        photodtview.currentIndex = index
+                        photodtview.showPhotoAtIndex(index)
+                        showSlideshow = photoDetailPageState.value("photodtview.startInSlideshow", 0)
+                        if(showSlideshow) {
+                            photodtview.startSlideshow()
+                        }
+                    }
+                }
+            }
 
             enableCustomActionMenu: true
             actionMenuOpen: photoDetailActions.visible
@@ -1171,6 +1484,29 @@ Window {
                     id: fuzzy
                 }
             ]
+
+            SaveRestoreState {
+                id: photoDetailPageState
+                onSaveRequired: {
+                    setValue("photodtview.currentIndex", photodtview.currentIndex)
+                    setValue("photodtview.startInFullscreen", photodtview.startInFullscreen)
+                    setValue("photodtview.startInSlideshow", photodtview.startInSlideshow)
+                    sync()
+                }
+            }
+
+            Component.onCompleted: {
+                //check the global flag
+                if (photoDetailPageState.restoreRequired && okToRestorePhoto) {
+                    detailViewIndex = photoDetailPageState.value("photodtview.currentIndex", 0)
+                    showFullscreen = photoDetailPageState.value("photodtview.startInFullscreen", 0)
+                    //try restoring the photo right away
+                    restorePhotoAtIndex(detailViewIndex);
+                }
+                else {
+                    photodtview.showPhotoAtIndex(detailViewIndex);
+                }
+            }
 
             ContextMenu {
                 id: photoDetailActions
@@ -1376,10 +1712,6 @@ Window {
                     currentPhotoCamera = currentItem.pcamera
                     currentPhotoItemId = currentItem.pitemid
                     currentPhotoURI = currentItem.puri
-                }
-
-                Component.onCompleted: {
-                    showPhotoAtIndex(detailViewIndex);
                 }
             }
 

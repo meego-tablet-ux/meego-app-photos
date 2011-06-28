@@ -24,7 +24,9 @@ Item {
     property bool startInSlideshow: false
 
     property alias initialIndex: photoViewer.initialIndex
+    property alias currentIndex: photoViewer.currentIndex
     property alias currentItem: photoViewer.currentItem
+    property alias count: photoViewer.count
     property alias toolbar: toolbar
 
     signal currentItemChanged()
@@ -40,11 +42,16 @@ Item {
 
     function startSlideshow() {
         viewMode = 1
+        startInSlideshow = true
         photoViewer.startSlideshow()
     }
 
     function toggleFavorite() {
         model.setFavorite(elementid, toolbar.isFavorite);
+    }
+
+    onViewModeChanged: {
+        startInFullscreen = viewMode ? true : false
     }
 
     Timer {
@@ -54,6 +61,8 @@ Item {
         onTriggered: {
             if (startInFullscreen)
                 viewMode = 1
+            else
+                viewMode = 0
             if (startInSlideshow)
                 startSlideshow()
         }
@@ -87,6 +96,7 @@ Item {
 
         onSlideshowStopped: {
             viewMode = 0
+            startInSlideshow = false
         }
     }
 
