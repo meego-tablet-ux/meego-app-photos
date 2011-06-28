@@ -87,6 +87,8 @@ Window {
     //: This is an action menu rename photo text entry area's default text
     property string labelDefaultNewPhotoName: qsTr("Type in a new name")
 
+    //: This is a label for the photo deletion confirmation modal dialog when removing a photo
+    property string labelDeletePhotoText: qsTr("Are you sure you want to delete this photo?")
     //: This is a label for the photo deletion confirmation modal dialog when removing an album
     property string labelDeleteAlbumText: qsTr("Are you sure you want to delete this album?")
 
