@@ -3,7 +3,7 @@ Version=1.0
 Name=MeeGo Photo Viewer
 Comment=View Photos
 GenericName=Photo Viewer
-Exec=meego-qml-launcher --opengl --cmd showTimeline --cdata %f --fullscreen --app meego-app-photos
+Exec=invoker --type=l meego-qml-launcher --opengl --cmd showTimeline --cdata %f --fullscreen --app meego-app-photos
 Terminal=false
 X-MultipleArgs=false
 Type=Application
