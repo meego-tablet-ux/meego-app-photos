@@ -265,6 +265,9 @@ Window {
 
     property bool modelConnectionReady: false
 
+    property variant widgetPhotoDetailsView
+    property variant widgetAlbumDetailsView
+
     overlayItem: Item {
         ShareObj {
             id: shareObj
@@ -296,6 +299,9 @@ Window {
             console.log("Unexpected component in openBook")
         }
         switchBook(component)
+    }
+
+    PhotoWidgetInterface {
     }
 
     Labs.BackgroundModel {
@@ -1352,6 +1358,9 @@ Window {
                 onNoContentAction: {
                     window.openBook(allPhotosComponent)
                 }
+                Component.onCompleted: {
+                    widgetAlbumDetailsView = albumDetailsView
+                }
             }
 
             ContextMenu {
@@ -1712,6 +1721,11 @@ Window {
                     currentPhotoCamera = currentItem.pcamera
                     currentPhotoItemId = currentItem.pitemid
                     currentPhotoURI = currentItem.puri
+                }
+
+                Component.onCompleted: {
+                    showPhotoAtIndex(detailViewIndex);
+                    widgetPhotoDetailsView = photodtview;
                 }
             }
 
