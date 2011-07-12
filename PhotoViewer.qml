@@ -27,6 +27,10 @@ Rectangle {
     property bool fullscreen: false
     property variant slideshow
 
+    // Minimum and maximum photo scale factors.
+    property real minScaleFactor: 1.0
+    property real maxScaleFactor: 8.0
+
     signal slideshowStopped()
 
     function startSlideshow() {
@@ -393,7 +397,7 @@ Rectangle {
                     onUpdated: {
                         var cw = dinstance.contentWidth;
                         var ch = dinstance.contentHeight;
-                        image.scale = Math.max(0.75, Math.min(2.0, image.scale * gesture.scaleFactor))
+                        image.scale = Math.max(0.75, Math.min(maxScaleFactor, image.scale * gesture.scaleFactor))
                         fullImage.scale = image.scale;
                         if (fullImage.scale < 1.0) {
                             dinstance.contentX =  0;
@@ -406,8 +410,8 @@ Rectangle {
                     }
 
                     onFinished: {
-                        if (image.scale < 1.0) {
-                            image.scale = 1.0
+                        if (image.scale < minScaleFactor) {
+                            image.scale = minScaleFactor
                         }
                         fullImage.scale = image.scale;
 
