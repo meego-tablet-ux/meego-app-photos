@@ -124,7 +124,6 @@ Item {
             PropertyChanges {
                 target: appPage
                 fullScreen: false
-                pageUsingFullScreen: true
             }
             PropertyChanges {
                 target: photoViewer
@@ -142,7 +141,6 @@ Item {
             PropertyChanges {
                 target: appPage
                 fullScreen: true
-                pageUsingFullScreen: true
             }
             PropertyChanges {
                 target: photoViewer
