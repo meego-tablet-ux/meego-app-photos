@@ -94,7 +94,6 @@ Item {
         id: mode2Buttons
         anchors.left: parent.left
         anchors.right: parent.right
-        width: parent.width
         anchors.verticalCenter: parent.verticalCenter
         spacing: (width - 200)/3
         visible: mode == 2
@@ -115,8 +114,8 @@ Item {
         IconButton {
             id: shareButton
             anchors.verticalCenter: parent.verticalCenter
-            icon: "image://themedimage/icons/actionbar/media-share"
-            iconDown: "image://themedimage/icons/actionbar/media-share-active"
+            icon: "image://themedimage/icons/actionbar/share"
+            iconDown: "image://themedimage/icons/actionbar/share-active"
             hasBackground: false
             onClicked: {
                 var map = mapToItem(topItem.topItem, width / 2, 0);
@@ -124,8 +123,9 @@ Item {
             }
         }
         IconButton {
-            icon: "image://themedimage/icons/actionbar/media_multiselectcancel"
-            iconDown: "image://themedimage/icons/actionbar/media_multiselectcancel-active"
+	    anchors.verticalCenter: parent.verticalCenter
+            icon: "image://themedimage/icons/actionbar/edit-cancel"
+            iconDown: "image://themedimage/icons/actionbar/edit-cancel-active"
             hasBackground: false
             onClicked: container.cancel()
         }
