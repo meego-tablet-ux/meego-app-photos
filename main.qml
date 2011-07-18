@@ -1458,6 +1458,7 @@ Window {
             anchors.fill: parent
             pageTitle: window.toolBarTitle
             disableSearch: true
+            pageUsingFullScreen: true
 
             property int modelCount: window.detailModelCount
             onModelCountChanged: {
