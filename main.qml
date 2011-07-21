@@ -109,7 +109,8 @@ Window {
             showToolBarSearch = windowState.value("showToolBarSearch", false)
         }
         else {
-            openBook(timelineComponent)
+            // Workaround broken "call" signal in mainWindow.
+            parseCommandLine(mainWindow.call)
         }
 
         loadingTimer.start()
@@ -396,7 +397,7 @@ Window {
             var itemid = allAlbumsModel.getIDfromURN(identifier)
             var title = allAlbumsModel.getTitlefromURN(identifier);
             var index = allAlbumsModel.getIndexfromURN(identifier);
-            if (itemtype == 1) {
+            if (itemtype == MediaItem.PhotoAlbumItem) {
                 labelSingleAlbum = title;
                 albumId = itemid;
                 addPage(albumDetailComponent)
@@ -414,7 +415,7 @@ Window {
             var itemid = allVirtualAlbumsModel.getIDfromURN(identifier)
             var title = allVirtualAlbumsModel.getTitlefromURN(identifier);
             var index = allVirtualAlbumsModel.getIndexfromURN(identifier);
-            if (itemtype == 1) {
+            if (itemtype == MediaItem.PhotoAlbumItem) {
                 labelSingleAlbum = title;
                 albumId = itemid;
                 addPage(albumDetailComponent)
@@ -431,22 +432,33 @@ Window {
         }
     }
 
+    function parseCommandLine(parameters) {
+        var cmd = parameters[0];
+        var cdata = parameters[1];
+
+        if (cmd == "showPhoto" || (cmd == "showTimeline" && cdata != "")) {
+            // Either we got an explicit "showPhoto" command or the default
+            // "showTimeline" command with an additional argument.  The latter
+            // case occurs when "xdg-open foo.png" is executed, for example.
+            allPhotosModel.requestItem(MediaItem.PhotoItem, cdata);
+        }
+        else if (cmd == "showAlbum") {
+            allAlbumsModel.requestItem(MediaItem.PhotoAlbumItem, cdata);
+        }
+        else if (cmd == "showTimeline" || cmd == undefined) {
+            // cmd will be undefined if no command was given on the command line.  In that case
+            // we default to the timeline.
+            openBook(timelineComponent)
+        }
+        else {
+            console.log("Got unknown cmd "+ cmd)
+        }
+    }
+
     Connections {
          target: mainWindow
          onCall: {
-             var cmd = parameters[0];
-             var cdata = parameters[1];
-             if (cmd == "showPhoto") {
-                 allPhotosModel.requestItem(0, cdata);
-             }
-             else if (cmd == "showAlbum") {
-                 allAlbumsModel.requestItem(1, cdata);
-             }
-             else if (cmd == "showTimeline") {
-             }
-             else {
-                 console.log("Got unknown cmd "+ cmd)
-             }
+             parseCommandLine(parameters)
          }
      }
 
