@@ -39,6 +39,19 @@ Window {
     property bool allVirtualAlbumsFilterMenuActive: true
     property bool allPhotosFilterMenuActive: true
 
+
+    onOrientationChangeStarted: {
+        if (pageStack.currentPage && pageStack.currentPage.objectName == "photoDetailPage") {
+            pageStack.currentPage.orientationNotification = "started"
+        }
+    }
+
+    onOrientationChangeFinished: {
+        if (pageStack.currentPage && pageStack.currentPage.objectName == "photoDetailPage") {
+            pageStack.currentPage.orientationNotification = "finished"
+        }
+    }
+
     Component.onCompleted: {
         //check for restore
         if (windowState.restoreRequired) {
@@ -1462,6 +1475,9 @@ Window {
             pageTitle: window.toolBarTitle
             disableSearch: true
             pageUsingFullScreen: true
+
+            property alias orientationNotification: photodtview.orientationNotification
+
 
             property int modelCount: window.detailModelCount
             onModelCountChanged: {

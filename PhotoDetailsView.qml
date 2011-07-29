@@ -29,6 +29,8 @@ Item {
     property alias count: photoViewer.count
     property alias toolbar: toolbar
 
+    property alias orientationNotification: photoViewer.orientationNotification
+
     signal currentItemChanged()
     signal pressAndHoldOnPhoto(variant mouse, variant instance)
 

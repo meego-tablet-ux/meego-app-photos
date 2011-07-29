@@ -24,6 +24,9 @@ Rectangle {
     property alias currentIndex: photoListView.currentIndex
     property alias count: photoListView.count
 
+    property alias orientationNotification: photoListView.orientationNotification
+
+
     property bool fullscreen: false
     property variant slideshow
 
@@ -81,7 +84,20 @@ Rectangle {
         property int rotateDuration: 0
         property int initialIndex: 0
 
+        property string orientationNotification: ""
+
         signal startingSlideshow()
+
+        onOrientationNotificationChanged: {
+            if (orientationNotification == "started") {
+                snapMode = ListView.NoSnap
+            }
+            else if (orientationNotification == "finished") {
+                showPhotoAtIndex(currentIndex)
+                snapMode = ListView.SnapOneItem
+            }
+            orientationNotification = ""
+        }
 
         delegate: Flickable {
             id: dinstance
