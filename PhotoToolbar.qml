@@ -37,6 +37,7 @@ Item {
 
     ShareObj {
         id: shareObj
+        snrPrefix: "PhotoToolbarShareObj"
     }
 
     // block all gestures from falling through
